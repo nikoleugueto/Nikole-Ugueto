@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Base: reset, typography, chrome, shared primitives
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font);
+  font-weight: 400;
+  font-size: var(--t-body);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper-mid);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;              /* the home view is a fixed stage */
+  overflow-x: clip;              /* the artwork bleeds; the page never scrolls sideways */
+}
+
+body[data-scrollable="true"] { overflow: auto; }
+
+img { display: block; max-width: 100%; }
+
+button {
+  font: inherit; color: inherit; margin: 0;
+  background: none; border: 0; padding: 0; cursor: pointer;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* The ring has to hold on a pale document *and* on the contact skyline, so it
+   carries its own light halo rather than relying on the backdrop for contrast. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(246, 244, 241, .92);
+  border-radius: 2px;
+}
+/* On the dark destination layer the halo inverts. */
+.stage[data-mounted="true"] .cs :focus-visible { box-shadow: 0 0 0 5px rgba(246, 244, 241, .92); }
+
+.u-label {
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.u-visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed; top: .5rem; left: .5rem; z-index: 999;
+  padding: .625rem 1rem; background: var(--ink); color: var(--on-dark);
+  transform: translateY(-160%);
+  transition: transform var(--dur-s) var(--ease-out);
+}
+.skip-link:focus-visible { transform: none; }
+
+/* --- backdrop ------------------------------------------------------------
+   Reproduces the render's own diagonal gradient so the feathered edges of the
+   hero plate have nothing to blend against but themselves. */
+.backdrop {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(104% 84% at 4% 12%, rgba(255,255,255,.30), rgba(255,255,255,0) 54%),
+    linear-gradient(107deg,
+      var(--paper-warm)  0%,
+      #DCD7D5           34%,
+      #C9C7C8           66%,
+      var(--paper-deep) 100%);
+}
+/* Film grain. Kept extremely low: it stops the large flat gradient from
+   banding on 8-bit panels, which is the only reason it is here. */
+.backdrop::after {
+  content: ""; position: absolute; inset: 0;
+  opacity: .5; mix-blend-mode: multiply; pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'>\
+<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/>\
+<feColorMatrix type='saturate' values='0'/></filter>\
+<rect width='140' height='140' filter='url(%23n)' opacity='.22'/></svg>");
+}
+
+/* Darkening veil that closes in as the camera pushes into the mind. */
+.veil {
+  position: fixed; inset: 0; z-index: 6; pointer-events: none;
+  opacity: var(--veil, 0);
+  background:
+    radial-gradient(78% 62% at 50% 44%, rgba(8,10,14,0) 0%, rgba(8,10,14,.86) 100%),
+    rgba(8,10,14,.42);
+}
+
+/* --- header -------------------------------------------------------------- */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-chrome);
+  height: var(--header-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--gutter);
+  mix-blend-mode: multiply;     /* keeps the chrome sitting *in* the image */
+  transition: opacity var(--dur-m) var(--ease-out);
+}
+.site-header[data-hidden="true"] { opacity: 0; pointer-events: none; }
+
+.brand { display: flex; align-items: center; gap: .875rem; }
+.brand__mark {
+  font-size: 1.0625rem; font-weight: 500; letter-spacing: -.02em; line-height: 1;
+}
+.brand__rule { width: 2.25rem; height: 1px; background: var(--rule); }
+.brand__name { color: var(--ink-soft); }
+
+.site-nav { display: flex; align-items: center; gap: clamp(1.25rem, 2.6vw, 2.75rem); }
+.site-nav a { color: var(--ink-soft); position: relative; padding-block: .35rem; }
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform var(--dur-s) var(--ease-out);
+}
+.site-nav a:hover::after,
+.site-nav a[aria-current="page"]::after { transform: scaleX(1); }
+.site-nav a[aria-current="page"] { color: var(--ink); }
+
+/* Small screens: the wordmark gives way to the monogram rather than letting
+   the header wrap or overflow. */
+@media (max-width: 46rem) {
+  :root { --header-h: 3.75rem; }
+  .brand__rule, .brand__name { display: none; }
+  .site-nav { gap: 1.15rem; }
+  .site-nav a { font-size: var(--t-micro); }
+}
+
+/* ==========================================================================
+   .world-row — the four worlds as a readable index.
+   Used by the Home hero and the Worlds scene in the stacked composition, so it
+   lives here rather than in either one's stylesheet.
+   ========================================================================== */
+@media not all and (min-width: 1180px) and (min-aspect-ratio: 3/2) {
+  .world-row {
+    display: grid; grid-template-columns: 2.5rem 1fr auto;
+    align-items: baseline; gap: 1rem; width: 100%;
+    padding: 1.15rem 0; text-align: left;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .world-row__no    { color: var(--ink-muted); }
+  .world-row__name  { font-size: 1.125rem; font-weight: 400; letter-spacing: -.01em; }
+  .world-row__sub   { display: block; color: var(--ink-muted); margin-top: .2rem; }
+  .world-row__go    { color: var(--ink-muted); transition: transform var(--dur-s) var(--ease-out); }
+  .world-row:hover .world-row__go,
+  .world-row:active .world-row__go { transform: translateX(.35rem); color: var(--ink); }
+}
+
+/* --- no scripting --------------------------------------------------------
+   The router and every destination are scripted, so the nav would appear to do
+   nothing. Say so plainly and give the one thing that still works: a way to
+   make contact. */
+.noscript {
+  position: relative; z-index: var(--z-chrome);
+  max-width: 34rem;
+  margin: calc(var(--header-h) + 1.5rem) var(--gutter) 0;
+  padding: 1rem 1.15rem;
+  border-left: 2px solid var(--focus);
+  background: rgba(31, 92, 107, .06);
+  font-size: .875rem; line-height: 1.6; color: var(--ink-soft);
+}
+.noscript p { margin: 0; }
+.noscript p + p { margin-top: .6rem; }
+.noscript a { text-decoration: underline; text-underline-offset: .2em; }

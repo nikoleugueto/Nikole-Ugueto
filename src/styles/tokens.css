@@ -1,0 +1,76 @@
+/* ==========================================================================
+   Design tokens
+   Colour values are sampled directly from the reference render
+   (tools/prep-assets.py prints them) so the CSS backdrop and the hero plate
+   are the same material and the plate's feathered edges disappear into it.
+   ========================================================================== */
+
+:root {
+  /* --- surface ---------------------------------------------------------- */
+  --paper-warm:  #DFDAD8;   /* top-left of the render   */
+  --paper-mid:   #D6D1CF;
+  --paper-cool:  #BAB8BB;   /* top-right                */
+  --paper-deep:  #A2A6AC;   /* bottom-right             */
+  --paper-flat:  #E6E3E1;   /* flat surfaces: cards, sheets */
+
+  /* --- ink -------------------------------------------------------------- */
+  --ink:         #16191E;
+  --ink-soft:    #3D434B;
+  /* Every ink below this line is used for real text, so each one clears WCAG
+     AA (4.5:1) against every light surface in the system — including the
+     darkest, --paper-mid. Audited with tools/contrast.js. */
+  --ink-muted:   #565B64;
+  /* Decorative only: aria-hidden separators, hairline borders, tick marks.
+     It clears 3:1 for non-text UI but NOT 4.5:1, so it must never carry
+     content. */
+  --ink-quiet:   #6E7480;
+  --on-dark:     #F2F0EE;
+
+  /* --- structure -------------------------------------------------------- */
+  --rule:        rgba(22, 25, 30, .18);
+  --rule-soft:   rgba(22, 25, 30, .10);
+  --rule-light:  rgba(255, 255, 255, .55);
+
+  /* Focus is the one saturated colour in the system: it must never be
+     mistaken for decoration. */
+  --focus:       #1F5C6B;
+
+  /* --- type ------------------------------------------------------------- */
+  --font: "Switzer", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --t-display: clamp(2.75rem, 4.55vw, 4.35rem);
+  --t-title:   clamp(1.75rem, 2.4vw, 2.5rem);
+  --t-lede:    clamp(.95rem, 1.02vw, 1.0625rem);
+  --t-body:    .9375rem;
+  --t-label:   .6875rem;   /* 11px, always uppercase + tracked */
+  --t-micro:   .625rem;
+
+  --track-label: .16em;
+  --track-tight: -.028em;
+
+  /* --- space ------------------------------------------------------------ */
+  --gutter: clamp(1.25rem, 4.3vw, 5rem);
+  --header-h: 4.75rem;
+
+  /* --- motion ----------------------------------------------------------- */
+  /* One easing vocabulary, used everywhere, so the whole site moves with the
+     same physical character. */
+  --ease-out:  cubic-bezier(.19, 1, .22, 1);      /* reveals, settles      */
+  --ease-mid:  cubic-bezier(.36, .18, 0, 1);      /* travel between states */
+  --ease-in:   cubic-bezier(.7, 0, .84, 0);       /* departures            */
+
+  --dur-xs: 140ms;
+  --dur-s:  260ms;
+  --dur-m:  520ms;
+  --dur-l:  900ms;
+
+  --z-plate: 1;
+  --z-annotations: 3;
+  --z-copy: 4;
+  --z-chrome: 20;
+  --z-cursor: 90;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-xs: 1ms; --dur-s: 1ms; --dur-m: 1ms; --dur-l: 1ms; }
+}

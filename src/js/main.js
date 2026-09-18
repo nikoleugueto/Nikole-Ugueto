@@ -1,0 +1,274 @@
+import { prefs } from './prefs.js';
+import { mountCursorPortrait } from './cursor-portrait.js';
+import { mountAnnotations } from './annotations.js';
+import { createCamera } from './camera.js';
+import { createStage } from './stage.js';
+import { worldsView } from './views/worlds.js';
+import { worldView } from './views/world.js';
+import { caseStudyView } from './views/case-study.js';
+import { aboutView } from './views/about.js';
+import { archiveView } from './views/archive.js';
+import { contactView } from './views/contact.js';
+import { notFoundView } from './views/not-found.js';
+import { caseStudyById } from '../../content/case-studies.js';
+import { worlds as worldsList } from '../../content/worlds.js';
+
+const $ = (sel) => document.querySelector(sel);
+
+const hero    = $('.hero');
+const plate   = $('#plate');
+const header  = $('.site-header');
+const brain   = $('#brain');
+const cue     = $('#enter-cue');
+const cueLbl  = $('#enter-cue-label');
+const stageEl = $('#stage');
+const live    = $('#live');
+const index   = $('#world-index');
+
+/* --------------------------------------------------------------- routing
+   The universe is one continuous stage, so levels are states rather than
+   documents — that is what lets the camera travel between them. They still get
+   real URLs, so a world can be linked, bookmarked and reached with Back.
+
+     /                    the portrait
+     /worlds              the island                     (camera: in)
+     /worlds?from=<id>    the island, that world lit
+     /worlds/<id>         one world                      (camera: in, deeper)
+     /work/<id>           a case study                   (camera: in, deepest)
+     /archive             the creative index              (no camera)
+     /about  /contact     plain screens                  (no camera)
+*/
+const HOME = () => go('/');
+
+/** Screens reached directly rather than through the camera. */
+const FLAT = new Set(['/about', '/contact', '/archive']);
+
+let route = location.pathname + location.search;
+
+function go(path, { replace = false } = {}) {
+  if (path === route) return;
+  route = path;
+  history[replace ? 'replaceState' : 'pushState']({ path }, '', path);
+  apply(path);
+}
+
+/* ----------------------------------------------------------------- views */
+const stage = createStage(stageEl, { behind: document.getElementById('main') });
+
+const viewForWorlds = (from) => worldsView({
+  arrivedFrom: from,
+  onBack: () => go('/'),
+  onChoose: (id) => go(`/worlds/${id}`),
+});
+
+const viewNotFound = (path) => notFoundView({
+  path,
+  onBack: HOME,
+  onWorlds: () => go('/worlds'),
+  onWorld: (id) => go(`/worlds/${id}`),
+});
+
+const viewForWorld = (id) => worldView({
+  worldId: id,
+  onBack: () => go('/'),
+  onUp: () => go('/worlds'),
+  onOpenCase: (caseId) => go(`/work/${caseId}`),
+  onOpenArchive: () => go('/archive'),
+});
+
+const viewForCase = (id) => caseStudyView({
+  caseId: id,
+  onBack: () => go('/'),
+  onUp: () => go('/worlds'),
+  onWorld: () => {
+    const c = caseStudyById(id);
+    go(c ? `/worlds/${c.world}` : '/worlds');
+  },
+});
+
+let viewKey = null, viewCached = null;
+
+/** What the stage should be showing for a given path, or null for home.
+ *  Memoised: onProgress asks for this on every frame of the arrival, and
+ *  rebuilding the markup sixty times a second would be wasteful. */
+function viewFor(path) {
+  if (path !== viewKey) { viewKey = path; viewCached = buildView(path); }
+  return viewCached;
+}
+
+function buildView(path) {
+  const [pathname, query] = path.split('?');
+  const seg = pathname.split('/').filter(Boolean);
+  if (seg[0] === 'worlds') {
+    if (seg[1]) return viewForWorld(seg[1]) || viewNotFound(pathname);
+    return viewForWorlds(new URLSearchParams(query || '').get('from'));
+  }
+  if (seg[0] === 'work' && seg[1]) return viewForCase(seg[1]) || viewNotFound(pathname);
+  if (pathname === '/about') return aboutView({ onBack: HOME, onContact: () => go('/contact') });
+  if (pathname === '/contact') return contactView({ onBack: HOME });
+  if (pathname === '/archive') return archiveView({ onBack: HOME, onUp: () => go('/worlds') });
+  if (pathname !== '/') return viewNotFound(pathname);
+  return null;
+}
+
+/* ---------------------------------------------------------------- camera */
+const camera = createCamera({
+  hero, plate, header, cue, cueLabel: cueLbl, live,
+  onCommit: () => {
+    const view = viewFor(route);
+    if (view) stage.show(view);
+    live.textContent = announceFor(route.split('?')[0]);
+  },
+  onRelease: () => {
+    stage.hide();
+    live.textContent = 'Back at the portrait.';
+    brain.focus({ preventScroll: true });
+  },
+  onProgress: (p) => {
+    if (p > 0.45) stage.prepare(viewFor(route));
+    else stage.setMounted(false);
+  },
+});
+
+/* ------------------------------------------------------------ navigation */
+/** Short spoken name for a route, for the live region. */
+function announceFor(pathname) {
+  const seg = pathname.split('/').filter(Boolean);
+  if (seg[0] === 'worlds' && seg[1]) {
+    const w = worldsList.find((x) => x.id === seg[1]);
+    return w ? `${w.name} world. Press Escape to go back to the map.` : 'World.';
+  }
+  if (seg[0] === 'worlds') return 'The worlds. Four bodies of work. Press Escape to go back.';
+  if (seg[0] === 'work' && seg[1]) {
+    const c = caseStudyById(seg[1]);
+    return c ? `${c.title} case study. Press Escape to go back.` : 'Case study.';
+  }
+  if (pathname === '/about') return 'About.';
+  if (pathname === '/contact') return 'Contact.';
+  if (pathname === '/archive') return 'Creative archive.';
+  if (pathname === '/') return 'Home. The portrait.';
+  return 'Page not found.';
+}
+
+/** Document titles: bookmarkable, and read out on navigation. */
+function titleFor(pathname) {
+  const seg = pathname.split('/').filter(Boolean);
+  if (seg[0] === 'worlds' && seg[1]) {
+    const w = worldsList.find((x) => x.id === seg[1]);
+    return w ? `${w.name} — Nikole Ugueto` : 'The worlds — Nikole Ugueto';
+  }
+  if (seg[0] === 'worlds') return 'The worlds — Nikole Ugueto';
+  if (seg[0] === 'work' && seg[1]) {
+    const c = caseStudyById(seg[1]);
+    return c ? `${c.title} — Nikole Ugueto` : 'Work — Nikole Ugueto';
+  }
+  if (pathname === '/about') return 'About — Nikole Ugueto';
+  if (pathname === '/contact') return 'Contact — Nikole Ugueto';
+  if (pathname === '/archive') return 'Creative archive — Nikole Ugueto';
+  return 'Nikole Ugueto — UX/UI & Product Design';
+}
+
+function apply(path) {
+  const pathname = path.split('?')[0];
+  document.title = titleFor(pathname);
+
+  document.querySelectorAll('.site-nav a').forEach((a) => {
+    const on = new URL(a.href, location.origin).pathname === pathname;
+    if (on) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+
+  const view = viewFor(path);
+
+  /* A dead link should not make you sit through a cinematic push-in before it
+     admits nothing is there — so this is checked before the camera routes. */
+  if (FLAT.has(pathname) || view?.id.startsWith('404:')) {
+    if (camera.progress > 0) camera.set(0);            // drop out of the journey
+    stage.showStandalone(view);
+    live.textContent = announceFor(pathname);
+    return;
+  }
+
+  if (pathname.startsWith('/worlds') || pathname.startsWith('/work')) {
+    if (camera.committed) {                            // already inside: swap level
+      stage.show(view);
+      live.textContent = announceFor(pathname);
+    } else {
+      camera.enter();                                  // onCommit announces on arrival
+    }
+    return;
+  }
+
+  // home
+  if (camera.progress > 0) camera.exit();              // onRelease clears the stage
+  else stage.hide();
+}
+
+/* Escape goes *up* one level rather than straight home, so the hierarchy is
+   reversible the same way it was entered. */
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const [pathname] = route.split('?');
+  const seg = pathname.split('/').filter(Boolean);
+  if (seg[0] === 'work' && seg[1]) {
+    e.preventDefault();
+    const c = caseStudyById(seg[1]);
+    go(c ? `/worlds/${c.world}` : '/worlds');
+  } else if (seg[0] === 'worlds' && seg[1]) { e.preventDefault(); go('/worlds'); }
+  else if (pathname !== '/') { e.preventDefault(); go('/'); }
+});
+
+addEventListener('popstate', () => {
+  route = location.pathname + location.search;
+  apply(route);
+});
+
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="/"]');
+  if (!a || a.target || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  go(new URL(a.href).pathname);
+});
+
+/* -------------------------------------------------------- the experience */
+mountAnnotations(plate, index, {
+  onChoose: (worldId) => {
+    hero.dataset.brainActive = 'false';
+    go(`/worlds?from=${worldId}`);
+  },
+});
+
+brain.addEventListener('click', () => go('/worlds'));
+cue.addEventListener('click', () => go(camera.committed ? '/' : '/worlds'));
+
+/* The brain is a large soft target: telegraph it from anywhere over the head,
+   not only on the pixels of the button itself. */
+brain.addEventListener('pointerenter', () => { hero.dataset.brainActive = 'true'; });
+brain.addEventListener('pointerleave', () => { hero.dataset.brainActive = 'false'; });
+brain.dataset.cursor = 'Enter my mind';
+brain.dataset.cursorScale = '1.5';
+
+mountCursorPortrait($('#cursor'), $('#cursor-caption'));
+
+/* Entrance: hold the reveal until the artwork is actually painted, so the
+   staggered copy and the image arrive together instead of racing. */
+const art = plate.querySelector('.plate__img');
+const ready = () => {
+  document.body.classList.add('is-ready');
+  camera.remeasure();
+};
+if (art.complete) ready();
+else art.addEventListener('load', ready, { once: true });
+addEventListener('load', ready, { once: true });
+
+prefs.subscribe(() => camera.remeasure());
+apply(route);
+
+/* Tuning hook: /?p=0.55 freezes the camera mid-journey so a single frame of
+   the transition can be looked at properly. Inert without the parameter. */
+const frozen = new URLSearchParams(location.search).get('p');
+if (frozen !== null) {
+  const value = Math.max(0, Math.min(1, parseFloat(frozen) || 0));
+  const park = () => camera.set(value);
+  if (art.complete) park(); else art.addEventListener('load', park, { once: true });
+}

@@ -1,0 +1,39 @@
+# OS / editor cruft
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Logs and scratch
+*.log
+npm-debug.log*
+
+# Python (the asset pipeline in tools/)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node — there are no runtime dependencies, but keep this honest if any appear
+node_modules/
+.npm/
+
+# Local env, should any ever be added
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Deliberately NOT ignored:
+#
+#   assets/img/         Generated, but committed on purpose. There is no build
+#                       step on deploy — the host serves these files directly,
+#                       so the site does not work without them in the repo.
+#
+#   assets/reference/   The source mockups. They are the inputs to the scripts
+#                       in tools/, so without them the assets cannot be
+#                       regenerated. ~8 MB, which is worth the reproducibility.
+# ---------------------------------------------------------------------------

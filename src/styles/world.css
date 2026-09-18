@@ -1,0 +1,149 @@
+/* ==========================================================================
+   An individual world.
+   One island in its own sky. The other worlds are never present here — that
+   is the point of the level.
+   ========================================================================== */
+
+.world {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: calc(var(--header-h) + .5rem) var(--gutter) clamp(1rem, 3vh, 2rem);
+  /* Each world's sky is sampled from its own crop, so the four differ in
+     light without anything being invented. */
+  background:
+    radial-gradient(120% 80% at 70% 10%, var(--sky-a) 0%, rgba(255,255,255,0) 70%),
+    linear-gradient(168deg, var(--sky-a) 0%, var(--sky-b) 62%, #F2EFEA 100%);
+}
+
+.world__grid {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(15rem, 1fr) minmax(0, 1.85fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+}
+
+.world__no { color: var(--ink-muted); margin: 0 0 1rem; }
+.world__title {
+  margin: 0; font-weight: 300;
+  font-size: clamp(1.6rem, 2.5vw, 2.6rem);
+  line-height: 1.1; letter-spacing: var(--track-tight);
+  max-width: 14em;
+}
+.world__line {
+  margin: 1rem 0 0; max-width: 24rem;
+  font-size: var(--t-lede); color: var(--ink-soft);
+}
+
+/* --- the case study card ------------------------------------------------ */
+.world__case {
+  margin-top: clamp(1.75rem, 5vh, 3rem);
+  padding-top: clamp(1.25rem, 3vh, 1.75rem);
+  border-top: 1px solid var(--rule-soft);
+  max-width: 24rem;
+}
+.world__case-label { color: var(--ink-muted); margin: 0 0 .6rem; }
+.world__case-title {
+  margin: 0; font-size: 1.375rem; font-weight: 400; letter-spacing: -.015em;
+}
+.world__case-sub { margin: .3rem 0 1.25rem; color: var(--ink-muted); font-size: .8125rem; }
+
+.world__case-note {
+  display: inline-block; padding: .7rem 1rem;
+  border: 1px dashed var(--rule); color: var(--ink-muted);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .75rem 1.2rem;
+  border: 1px solid var(--rule);
+  font-size: var(--t-label); font-weight: 500;
+  letter-spacing: var(--track-label); text-transform: uppercase;
+  transition: background var(--dur-s) var(--ease-out),
+              border-color var(--dur-s) var(--ease-out);
+}
+.btn:hover { background: rgba(22, 25, 30, .06); border-color: var(--ink-soft); }
+.btn span { transition: transform var(--dur-s) var(--ease-out); }
+.btn:hover span { transform: translateX(.25rem); }
+
+/* --- the island --------------------------------------------------------- */
+.world__scene { display: flex; align-items: center; justify-content: center; min-height: 0; }
+/* The plates are ~400px native, so left alone they render postage-stamp sized
+   in this column. The container is sized and the image contained inside it:
+   that scales up without the aspect distortion you get from setting width and
+   max-height together on an <img>. */
+.scene {
+  perspective: 1400px;
+  width: 100%; height: min(58svh, 32rem);
+  display: flex; justify-content: center;
+}
+.scene__img {
+  width: 100%; height: 100%; object-fit: contain;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 1.1s var(--ease-out);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scene__img { animation: island-float 12s var(--ease-mid) infinite alternate; }
+}
+
+/* --- the five beats ----------------------------------------------------- */
+.world__journey {
+  flex: none;
+  padding-top: clamp(1rem, 2.5vh, 1.5rem);
+  border-top: 1px solid var(--rule-soft);
+}
+.world__journey h3 { margin: 0 0 1rem; color: var(--ink-muted); font-weight: 500; }
+
+.beats {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: clamp(.75rem, 2vw, 1.75rem);
+}
+.beat { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto;
+        column-gap: .75rem; align-items: center; }
+.beat__disc {
+  grid-row: 1 / 4; width: clamp(2.5rem, 4vw, 3.5rem); aspect-ratio: 1;
+  border-radius: 50%; overflow: hidden; border: 1px solid var(--rule-soft);
+}
+.beat__disc img { width: 100%; height: 100%; object-fit: cover; }
+.beat__no { color: var(--ink-muted); }
+.beat__title { color: var(--ink); }
+.beat__q { font-size: var(--t-micro); color: var(--ink-muted); }
+
+/* --- arrival ------------------------------------------------------------ */
+.world .scene__img, .world__intro, .world__journey { opacity: 0; }
+.world[data-ready="true"] .scene__img { opacity: 1; transition: opacity var(--dur-l) var(--ease-out); }
+.world[data-ready="true"] .world__intro { opacity: 1; transition: opacity var(--dur-l) var(--ease-out) 120ms; }
+.world[data-ready="true"] .world__journey { opacity: 1; transition: opacity var(--dur-l) var(--ease-out) 260ms; }
+
+/* Departure into the case study: the island recedes, the words stay longest. */
+.world[data-leaving] .scene__img {
+  opacity: 0; transform: scale(1.12);
+  transition: opacity 380ms var(--ease-in), transform 460ms var(--ease-in);
+}
+.world[data-leaving] .world__journey,
+.world[data-leaving] .worlds__crumb { opacity: 0; transition: opacity 240ms var(--ease-in); }
+.world[data-leaving] .world__intro { opacity: 0; transition: opacity 320ms var(--ease-in) 60ms; }
+
+/* ==========================================================================
+   Stacked
+   ========================================================================== */
+@media not all and (min-width: 1180px) and (min-aspect-ratio: 3/2) {
+  .world { position: static; min-height: 100svh; padding-bottom: clamp(2rem, 6vh, 3.5rem); }
+  .world__grid { grid-template-columns: 1fr; gap: clamp(1.5rem, 5vh, 2.5rem); align-items: start; }
+  .world__scene { order: -1; }
+  .scene { height: min(42svh, 20rem); }
+  .world__case { max-width: none; }
+  .beats { grid-template-columns: 1fr; gap: .9rem; }
+  .beat { grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; }
+  .beat__disc { grid-row: 1 / 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world[data-leaving] .scene__img,
+  .world[data-leaving] .world__journey,
+  .world[data-leaving] .worlds__crumb,
+  .world[data-leaving] .world__intro { transition-duration: 1ms; }
+  .scene__img { transition-duration: 1ms; }
+}

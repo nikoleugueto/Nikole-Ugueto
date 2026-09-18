@@ -1,0 +1,17 @@
+{
+  "name": "nikole-ugueto-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive UX/UI portfolio. No dependencies and no build step — the scripts below are conveniences, not a toolchain.",
+  "scripts": {
+    "dev": "python3 tools/serve.py",
+    "assets": "python3 tools/prep-assets.py && python3 tools/prep-worlds.py && python3 tools/prep-world-scenes.py && python3 tools/prep-pages.py",
+    "check": "node tools/check.js && node tools/contrast.js",
+    "e2e": "node tools/e2e.js",
+    "test": "node tools/check.js && node tools/contrast.js && node tools/e2e.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

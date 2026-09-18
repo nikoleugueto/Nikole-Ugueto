@@ -1,0 +1,55 @@
+{
+  "scenes": {
+    "healthcare": {
+      "w": 417,
+      "h": 290,
+      "aspect": 1.4379,
+      "sky": {
+        "topLeft": "#A5BCD4",
+        "topRight": "#8AA8C7",
+        "bottomLeft": "#F0E2D3",
+        "bottomRight": "#A17937"
+      }
+    },
+    "ai": {
+      "w": 394,
+      "h": 298,
+      "aspect": 1.3221,
+      "sky": {
+        "topLeft": "#9FAFC5",
+        "topRight": "#92ABC5",
+        "bottomLeft": "#765022",
+        "bottomRight": "#FEDEB5"
+      }
+    },
+    "product": {
+      "w": 386,
+      "h": 300,
+      "aspect": 1.2867,
+      "sky": {
+        "topLeft": "#FEECD3",
+        "topRight": "#9B7B60",
+        "bottomLeft": "#B5AEB3",
+        "bottomRight": "#FEF0D4"
+      }
+    },
+    "creative": {
+      "w": 370,
+      "h": 260,
+      "aspect": 1.4231,
+      "sky": {
+        "topLeft": "#DDC9BD",
+        "topRight": "#C6AEAB",
+        "bottomLeft": "#F4F3EF",
+        "bottomRight": "#F4F3EF"
+      }
+    }
+  },
+  "journey": [
+    "journey-1.webp",
+    "journey-2.webp",
+    "journey-3.webp",
+    "journey-4.webp",
+    "journey-5.webp"
+  ]
+}

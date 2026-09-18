@@ -1,0 +1,278 @@
+/* ==========================================================================
+   The Worlds scene — one island, four districts.
+
+   Composition follows reference 02: a narrow intro column, the map, and a
+   journey column. All four cards are visible at rest, as they are in the
+   reference; interest promotes one and recedes the others. Nothing important
+   is hidden behind a hover.
+   ========================================================================== */
+
+.worlds {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: calc(var(--header-h) + .5rem) var(--gutter) clamp(1rem, 3vh, 2rem);
+}
+
+.worlds__crumb {
+  display: flex; align-items: center; gap: .55rem;
+  color: var(--ink-muted); flex: none;
+}
+.crumb__link { color: inherit; }
+.crumb__link:hover { color: var(--ink); text-decoration: underline; text-underline-offset: .25em; }
+.worlds__crumb [aria-current] { color: var(--ink); }
+
+.worlds__grid {
+  flex: 1; min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(11rem, 1fr) minmax(0, 3.5fr) minmax(9.5rem, .9fr);
+  gap: clamp(1rem, 2.6vw, 3rem);
+  align-items: center;
+}
+
+.worlds__eyebrow { color: var(--ink-muted); margin: 0 0 1.1rem; }
+
+.worlds__title {
+  margin: 0; font-weight: 300;
+  font-size: clamp(1.5rem, 2.1vw, 2.2rem);
+  line-height: 1.12; letter-spacing: var(--track-tight);
+}
+.worlds__body {
+  margin: 1.2rem 0 0; max-width: 19rem;
+  font-size: .8125rem; line-height: 1.68; color: var(--ink-soft);
+}
+
+/* --- the world list: canonical navigation, and a legend for the map ------ */
+.wlist { list-style: none; margin: clamp(1.75rem, 5vh, 3.25rem) 0 0; padding: 0; }
+.wlist__item { position: relative; }
+/* the connector rail between the dots */
+.wlist__item:not(:last-child)::after {
+  content: ""; position: absolute; left: 4px; top: 1.65rem; bottom: -.35rem;
+  width: 1px; background: var(--rule-soft);
+}
+.wlist__btn {
+  display: flex; align-items: center; gap: .85rem;
+  width: 100%; padding: .5rem 0; text-align: left;
+  color: var(--ink-soft);
+  transition: color var(--dur-s) var(--ease-out);
+}
+.wlist__dot {
+  flex: none; width: 9px; height: 9px; border-radius: 50%;
+  border: 1px solid var(--ink-quiet); background: transparent;
+  transition: background var(--dur-s) var(--ease-out),
+              border-color var(--dur-s) var(--ease-out),
+              transform var(--dur-s) var(--ease-out);
+}
+.wlist__name { font-size: .8125rem; }
+
+/* --- the map ------------------------------------------------------------ */
+.worlds__map {
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(.5rem, 2vh, 1.25rem);
+  min-height: 0;
+}
+
+.island {
+  position: relative;
+  container-type: size; container-name: island;
+  width: min(100%, calc(var(--island-h, 65svh) * 1.4027));
+  aspect-ratio: 728 / 519;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.island__img {
+  width: 100%; height: 100%; object-fit: fill;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 1.1s var(--ease-out);
+  will-change: transform;
+}
+/* A very slow float. The island is airborne; holding perfectly still reads as
+   a flat picture. Amplitude is small enough to notice only if you look. */
+@media (prefers-reduced-motion: no-preference) {
+  .island__img { animation: island-float 11s var(--ease-mid) infinite alternate; }
+}
+@keyframes island-float {
+  from { translate: 0 -5px; }
+  to   { translate: 0 5px; }
+}
+
+/* --- districts: redundant pointer targets, hidden from AT --------------- */
+.district {
+  position: absolute;
+  left: calc(var(--x) * 100%); top: calc(var(--y) * 100%);
+  width: 16%; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  cursor: pointer;
+}
+.district::before {
+  content: ""; position: absolute; inset: 14%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .9);
+  box-shadow: 0 0 0 1px rgba(22, 25, 30, .1), 0 10px 34px -12px rgba(12, 16, 22, .5);
+  background: radial-gradient(circle, rgba(255,255,255,.28), rgba(255,255,255,0) 70%);
+  opacity: 0; transform: scale(.7);
+  transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-m) var(--ease-out);
+}
+
+/* --- district cards ----------------------------------------------------- */
+/* Sized in container units so the cards keep the reference's proportion to the
+   island at any viewport — a fixed rem width makes the labels wrap as soon as
+   the map is smaller than the mockup was. */
+.dcard {
+  position: absolute;
+  left: calc(var(--x) * 100%); top: calc(var(--y) * 100%);
+  width: 23cqw; min-width: 7.5rem;
+  display: block; padding: 2cqw 2.3cqw 2.2cqw;
+  background: rgba(253, 252, 251, .93);
+  box-shadow: 0 1px 2px rgba(12,16,22,.06), 0 14px 40px -20px rgba(12, 16, 22, .45);
+  pointer-events: none;
+  transition: opacity var(--dur-m) var(--ease-out),
+              transform var(--dur-m) var(--ease-out),
+              box-shadow var(--dur-m) var(--ease-out);
+}
+.dcard__head { display: flex; align-items: baseline; justify-content: space-between; gap: .6em; }
+.dcard__name { font-size: clamp(.6875rem, 2cqw, .8125rem); letter-spacing: -.005em; white-space: nowrap; }
+.dcard__go { color: var(--ink-muted); transition: transform var(--dur-s) var(--ease-out); }
+.dcard__line {
+  display: block; margin-top: .35em;
+  font-size: clamp(.5625rem, 1.6cqw, .6875rem); line-height: 1.5; color: var(--ink-muted);
+}
+
+/* --- interest: promote one world, recede the rest -----------------------
+   JS stamps every element carrying a world with data-state: "rest" when
+   nothing is selected, "on" for the chosen world, "off" for the others. That
+   keeps this readable — the alternative is sixteen attribute selectors that
+   all have to stay in sync. Elements have no data-state until the scene is
+   ready, which is what holds the cards back during the arrival. */
+
+.dcard[data-state="rest"] { opacity: .92; }
+.dcard[data-state="off"]  { opacity: .3; }
+.dcard[data-state="on"] {
+  opacity: 1;
+  transform: translateY(-4px);
+  box-shadow: 0 2px 4px rgba(12,16,22,.07), 0 22px 54px -22px rgba(12, 16, 22, .5);
+}
+.dcard[data-state="on"] .dcard__go { transform: translateX(.3rem); }
+
+.district[data-state="on"]::before { opacity: 1; transform: none; }
+
+.wlist__btn[data-state="on"]  { color: var(--ink); }
+.wlist__btn[data-state="off"] { color: var(--ink-muted); }   /* dimmed, still AA */
+.wlist__btn[data-state="on"] .wlist__dot {
+  background: var(--ink); border-color: var(--ink); transform: scale(1.15);
+}
+
+.journey__item[data-state="off"] { opacity: .42; }
+
+/* --- the cue under the map ---------------------------------------------- */
+.worlds__cue {
+  display: flex; align-items: center; gap: .7rem;
+  align-self: flex-start;
+  color: var(--ink-muted); margin: 0; flex: none;
+}
+.worlds__cue-mark {
+  width: 13px; height: 19px; border: 1px solid var(--rule); border-radius: 7px;
+  position: relative;
+}
+.worlds__cue-mark::after {
+  content: ""; position: absolute; left: 50%; top: 4px;
+  width: 1px; height: 4px; background: var(--ink-quiet);
+  transform: translateX(-50%);
+}
+
+/* --- the journey column ------------------------------------------------- */
+.journey { list-style: none; margin: 0; padding: 0; }
+.journey__item {
+  display: grid; grid-template-columns: 1.6rem 1fr; gap: .5rem;
+  padding: .55rem 0;
+  transition: opacity var(--dur-s) var(--ease-out);
+}
+.journey__no { color: var(--ink-muted); }
+.journey__line { display: block; font-size: .8125rem; line-height: 1.32; }
+.journey__kicker {
+  display: block; margin-top: .3rem;
+  font-size: var(--t-micro); color: var(--ink-muted);
+}
+.worlds__quote {
+  margin: clamp(1.25rem, 4vh, 2.25rem) 0 0;
+  padding-top: clamp(1rem, 3vh, 1.75rem);
+  border-top: 1px solid var(--rule-soft);
+  font-size: .8125rem; line-height: 1.6; font-style: italic; color: var(--ink-soft);
+}
+
+/* --- arrival + departure ------------------------------------------------ */
+.worlds .island__img,
+.worlds__intro,
+.worlds__journey { opacity: 0; }
+.dcard { opacity: 0; }        /* until JS stamps a data-state */
+
+.worlds[data-ready="true"] .island__img { opacity: 1; transition: opacity var(--dur-l) var(--ease-out); }
+.worlds[data-ready="true"] .worlds__intro,
+.worlds[data-ready="true"] .worlds__journey {
+  opacity: 1; transition: opacity var(--dur-l) var(--ease-out) 140ms;
+}
+.worlds[data-ready="true"] .dcard { transition-delay: 300ms; }
+
+/* Departure: the camera keeps travelling, aimed at the district you chose. */
+.worlds[data-leaving] .island {
+  transform: scale(2.1);
+  transform-origin: var(--focus-x, 50%) var(--focus-y, 50%);
+  opacity: 0;
+  transition: transform 680ms var(--ease-in), opacity 620ms var(--ease-in) 60ms;
+}
+.worlds[data-leaving] .worlds__intro,
+.worlds[data-leaving] .worlds__journey,
+.worlds[data-leaving] .worlds__crumb,
+.worlds[data-leaving] .worlds__cue {
+  opacity: 0; transition: opacity 260ms var(--ease-in);
+}
+.worlds[data-leaving] .dcard { opacity: 0; transition: opacity 220ms var(--ease-in); }
+
+/* ==========================================================================
+   Stacked composition — the map becomes an illustration, the list the control
+   ========================================================================== */
+.worlds__index { display: none; }
+
+@media not all and (min-width: 1180px) and (min-aspect-ratio: 3/2) {
+  .worlds { position: static; padding-bottom: clamp(2rem, 6vh, 3.5rem); }
+
+  .worlds__grid {
+    grid-template-columns: 1fr;
+    gap: clamp(1.75rem, 5vh, 2.75rem);
+    align-items: start;
+  }
+  .worlds__body { max-width: 34rem; font-size: var(--t-body); }
+  .worlds__title { font-size: clamp(1.6rem, 6vw, 2.2rem); }
+
+  /* The list moves to the index below; the rail and dots would duplicate it. */
+  .wlist { display: none; }
+
+  /* Read order: the map, then what it is, then how to enter, then the
+     narrative. The index is the primary control, so it comes before it. */
+  .worlds__map     { order: 1; }
+  .worlds__intro   { order: 2; }
+  .worlds__index   { order: 3; }
+  .worlds__journey { order: 4; }
+  .island { width: 100%; }
+  .district { pointer-events: none; }
+  /* Cards are anchored to a desktop-sized map; at this width they collide. */
+  .dcard { display: none; }
+  .worlds__cue { display: none; }
+
+  .journey__item[data-state] { opacity: 1; }
+
+  .worlds__index { display: block; border-top: 1px solid var(--rule-soft); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The departure timings are hand-written in ms, so the duration tokens do
+     not reach them. Cut them here rather than leaving one stray animation. */
+  .worlds[data-leaving] .island,
+  .worlds[data-leaving] .worlds__intro,
+  .worlds[data-leaving] .worlds__journey,
+  .worlds[data-leaving] .worlds__crumb,
+  .worlds[data-leaving] .worlds__cue,
+  .worlds[data-leaving] .dcard { transition-duration: 1ms; }
+  .island__img { transition-duration: 1ms; }
+}

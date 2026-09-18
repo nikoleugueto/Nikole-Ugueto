@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikole Ugueto — UX/UI &amp; Product Design</title>
+<meta name="description" content="A visual journey through the projects, thoughts and systems that shape my work. UX/UI and product design across healthcare, AI and technology.">
+<meta name="theme-color" content="#D6D1CF">
+
+<!-- Monogram favicon, inline so it costs no request -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23DFDAD8'/%3E%3Ctext x='16' y='22' font-family='Helvetica,Arial,sans-serif' font-size='18' font-weight='500' fill='%2316191E' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nikole Ugueto — UX/UI &amp; Product Design">
+<meta property="og:description" content="A visual journey through the projects, thoughts and systems that shape my work.">
+<meta property="og:image" content="/assets/img/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Set before first paint: everything that starts hidden for the entrance is
+     gated on this, so with scripting off the page is readable rather than blank. -->
+<script>document.documentElement.classList.add('js');</script>
+
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500&display=swap">
+
+<link rel="preload" as="image" href="/assets/img/hero-plate.webp" type="image/webp" fetchpriority="high">
+<link rel="prefetch" as="image" href="/assets/img/worlds-island.webp" type="image/webp">
+<link rel="stylesheet" href="/src/styles/tokens.css">
+<link rel="stylesheet" href="/src/styles/base.css">
+<link rel="stylesheet" href="/src/styles/hero.css">
+<link rel="stylesheet" href="/src/styles/cursor.css">
+<link rel="stylesheet" href="/src/styles/views.css">
+<link rel="stylesheet" href="/src/styles/worlds.css">
+<link rel="stylesheet" href="/src/styles/world.css">
+<link rel="stylesheet" href="/src/styles/case-study.css">
+<link rel="stylesheet" href="/src/styles/pages.css">
+</head>
+
+<body data-pointer="coarse">
+
+<a class="skip-link u-label" href="#main">Skip to content</a>
+
+<div class="backdrop" aria-hidden="true"></div>
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="Nikole Ugueto — home">
+    <span class="brand__mark">N</span>
+    <span class="brand__rule" aria-hidden="true"></span>
+    <span class="brand__name u-label">Nikole Ugueto</span>
+  </a>
+  <nav class="site-nav u-label" aria-label="Primary">
+    <a href="/" aria-current="page">Home</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+  </nav>
+</header>
+
+<main id="main">
+  <noscript>
+    <div class="noscript">
+      <p><strong>This portfolio needs JavaScript</strong> — the work is reached by
+      travelling through it, and that machinery is scripted.</p>
+      <p>You can still reach me directly:
+        <a href="mailto:nikoleugueto@gmail.com">nikoleugueto@gmail.com</a> ·
+        New York, NY</p>
+    </div>
+  </noscript>
+
+  <section class="hero" aria-labelledby="hero-title">
+
+    <!-- The artwork. Annotations are injected here so they stay in the same
+         coordinate space and inherit the camera transform. -->
+    <div class="plate" id="plate" style="--fx:.5789; --fy:.355">
+      <img class="plate__img" src="/assets/img/hero-plate.webp"
+           width="760" height="845" fetchpriority="high" decoding="async"
+           alt="Nikole Ugueto in profile, her hair rendered as a city of towers, parks and roads — the worlds inside her mind.">
+      <img class="plate__img plate__img--blur" src="/assets/img/hero-plate-blur.webp"
+           width="380" height="422" aria-hidden="true" decoding="async" alt="">
+
+      <button class="brain" id="brain" type="button"
+              aria-describedby="brain-hint">
+        <span class="u-visually-hidden">Enter the worlds inside my mind — four bodies of work</span>
+      </button>
+    </div>
+
+    <div class="hero__copy">
+      <p class="hero__eyebrow u-label reveal" style="--delay:120ms">
+        Healthcare <span aria-hidden="true">&times;</span>
+        Tech <span aria-hidden="true">&times;</span>
+        UX/UI
+      </p>
+      <h1 class="hero__title reveal" id="hero-title" style="--delay:220ms">
+        Ideas, people<br>and technology<br>in my mind.
+      </h1>
+      <p class="hero__lede reveal" style="--delay:360ms">
+        A visual journey through the projects, thoughts and systems
+        that shape my work.
+      </p>
+    </div>
+
+    <button class="enter-cue reveal" id="enter-cue" type="button" style="--delay:520ms">
+      <svg class="enter-cue__ring" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <circle class="track" cx="17" cy="17" r="11"></circle>
+        <circle class="fill"  cx="17" cy="17" r="11" pathLength="100" style="--ring-len:100"></circle>
+      </svg>
+      <span class="enter-cue__stem" aria-hidden="true"></span>
+      <span class="u-label" id="enter-cue-label">Scroll to explore</span>
+    </button>
+
+    <p class="u-visually-hidden" id="brain-hint">
+      Scroll, or activate this control, to move into the city inside the portrait
+      and reach the four worlds.
+    </p>
+
+    <!-- Stacked composition only: the annotations as a readable index. -->
+    <nav class="hero__mobile-index" id="world-index" aria-label="The worlds"></nav>
+  </section>
+</main>
+
+<div class="veil" aria-hidden="true"></div>
+
+<!-- Destination layer -->
+<section class="stage" id="stage" aria-hidden="true" tabindex="-1"></section>
+
+<!-- Pointer portrait + its static counterpart -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <img class="cursor__img" src="/assets/img/portrait-cursor.webp" width="360" height="360" alt="" decoding="async">
+  <span class="cursor__caption u-label" id="cursor-caption"></span>
+</div>
+<div class="portrait-badge" aria-hidden="true">
+  <img src="/assets/img/portrait-cursor.webp" width="360" height="360" alt="" decoding="async" loading="lazy">
+</div>
+
+<p class="u-visually-hidden" role="status" aria-live="polite" id="live"></p>
+
+<script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
