@@ -53,37 +53,79 @@
   border: 1px dashed var(--rule); color: var(--ink-muted);
 }
 
+/* Sentence case at a readable size, with no tracking at all. Letterspaced
+   uppercase reads as "spread apart" whether or not you are hovering, and
+   nothing here animates spacing — the hover moves the arrow and lifts the
+   surface instead. */
 .btn {
-  display: inline-flex; align-items: center; gap: .6rem;
-  padding: .75rem 1.2rem;
+  display: inline-flex; align-items: center; gap: .65rem;
+  padding: .8rem 1.35rem;
   border: 1px solid var(--rule);
-  font-size: var(--t-label); font-weight: 500;
-  letter-spacing: var(--track-label); text-transform: uppercase;
+  font-size: .9375rem; font-weight: 500;
+  letter-spacing: 0; text-transform: none;
   transition: background var(--dur-s) var(--ease-out),
-              border-color var(--dur-s) var(--ease-out);
+              border-color var(--dur-s) var(--ease-out),
+              transform var(--dur-s) var(--ease-out);
 }
-.btn:hover { background: rgba(22, 25, 30, .06); border-color: var(--ink-soft); }
+.btn:hover {
+  background: rgba(22, 25, 30, .05);
+  border-color: var(--ink-soft);
+  transform: translateY(-1px);
+}
 .btn span { transition: transform var(--dur-s) var(--ease-out); }
-.btn:hover span { transform: translateX(.25rem); }
+.btn:hover span { transform: translateX(.3rem); }
 
 /* --- the island --------------------------------------------------------- */
-.world__scene { display: flex; align-items: center; justify-content: center; min-height: 0; }
+.world__scene {
+  display: flex; align-items: center; justify-content: center; min-height: 0;
+  perspective: 1400px;                 /* the tilt lives on .scene now */
+}
 /* The plates are ~400px native, so left alone they render postage-stamp sized
    in this column. The container is sized and the image contained inside it:
    that scales up without the aspect distortion you get from setting width and
    max-height together on an <img>. */
+/* The pointer tilt is applied here, one level above the picture, so the
+   image is free to carry its own hover transform without the two
+   overwriting each other on the same property. */
 .scene {
-  perspective: 1400px;
   width: 100%; height: min(58svh, 32rem);
   display: flex; justify-content: center;
-}
-.scene__img {
-  width: 100%; height: 100%; object-fit: contain;
   transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 1.1s var(--ease-out);
   will-change: transform;
 }
+/* The artwork is the second door into the project. It carries a quiet cue on
+   interest rather than a panel over the picture — the image itself is the
+   affordance. */
+.scene__hit {
+  display: block; position: relative;
+  width: 100%; height: 100%;
+  cursor: pointer;
+}
+.scene__cue {
+  position: absolute; left: 50%; bottom: 4%;
+  transform: translate(-50%, .4rem);
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1rem;
+  font-size: .875rem; font-weight: 500; letter-spacing: 0;
+  color: var(--ink);
+  background: rgba(252, 251, 249, .9);
+  box-shadow: 0 10px 30px -14px rgba(12, 16, 22, .5);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-m) var(--ease-out);
+}
+.scene__cue span { transition: transform var(--dur-s) var(--ease-out); }
+.scene__hit:is(:hover, :focus-visible) .scene__cue { opacity: 1; transform: translate(-50%, 0); }
+.scene__hit:is(:hover, :focus-visible) .scene__cue span { transform: translateX(.3rem); }
+.scene__hit:is(:hover, :focus-visible) .scene__img { transform: scale(1.02) translateY(-2px); }
+
+.scene__img {
+  width: 100%; height: 100%; object-fit: contain;
+  transition: transform var(--dur-m) var(--ease-out);
+}
 @media (prefers-reduced-motion: no-preference) {
+  /* `translate` is its own property, so the float composes with the hover
+     transform instead of replacing it. */
   .scene__img { animation: island-float 12s var(--ease-mid) infinite alternate; }
 }
 
@@ -119,8 +161,8 @@
 
 /* Departure into the case study: the island recedes, the words stay longest. */
 .world[data-leaving] .scene__img {
-  opacity: 0; transform: scale(1.12);
-  transition: opacity 380ms var(--ease-in), transform 460ms var(--ease-in);
+  opacity: 0; transform: scale(1.18);
+  transition: opacity 420ms var(--ease-in), transform 520ms var(--ease-in);
 }
 .world[data-leaving] .world__journey,
 .world[data-leaving] .worlds__crumb { opacity: 0; transition: opacity 240ms var(--ease-in); }
@@ -134,6 +176,7 @@
   .world__grid { grid-template-columns: 1fr; gap: clamp(1.5rem, 5vh, 2.5rem); align-items: start; }
   .world__scene { order: -1; }
   .scene { height: min(42svh, 20rem); }
+  .scene__cue { opacity: 1; transform: translate(-50%, 0); font-size: .8125rem; }
   .world__case { max-width: none; }
   .beats { grid-template-columns: 1fr; gap: .9rem; }
   .beat { grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; }
@@ -141,6 +184,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scene { transition-duration: 1ms; }
   .world[data-leaving] .scene__img,
   .world[data-leaving] .world__journey,
   .world[data-leaving] .worlds__crumb,

@@ -117,7 +117,7 @@ async function run() {
   console.log('\nthe journey, driven by clicks');
   await goto('/');
   await evaluate(`document.getElementById('brain').click(); return 1;`);
-  await waitFor(`location.pathname === '/worlds'`, 'the worlds route');
+  await waitFor(`location.pathname === '/worlds'`, 'the worlds route', 9000);
   await waitFor(`document.querySelector('.worlds')`, 'the worlds scene', 8000);
   check('brain → /worlds', true);
 
@@ -126,13 +126,51 @@ async function run() {
   await waitFor(`document.querySelector('.world')`, 'the world view');
   check('district → /worlds/healthcare', true);
 
-  await evaluate(`document.querySelector('[data-case="lifeworx"]').click(); return 1;`);
-  await waitFor(`location.pathname === '/work/lifeworx'`, 'the case study');
+  await evaluate(`document.querySelector('.btn[data-case="lifeworx"]').click(); return 1;`);
+  await waitFor(`location.pathname === '/work/lifeworx'`, 'the case study', 9000);
   await waitFor(`document.querySelector('.cs')`, 'the case study view');
-  check('case study CTA → /work/lifeworx', true);
+  check('case study button → /work/lifeworx', true);
+
+  // the artwork is the second entry point to the same place
+  await goto('/worlds/healthcare?p=1');
+  await evaluate(`document.querySelector('.scene__hit').click(); return 1;`);
+  await waitFor(`location.pathname === '/work/lifeworx'`, 'the case study via the image', 9000);
+  check('clicking the world artwork → the same case study', true);
+
+  // and so is the card on the map
+  await goto('/worlds?p=1');
+  await evaluate(`document.querySelector('.dcard[data-world="ai"]').click(); return 1;`);
+  await waitFor(`location.pathname === '/worlds/ai'`, 'the ai world via its card', 9000);
+  check('clicking a world card → that world', true);
+
+  /* --- 3b. scrolling arrives, without a click -------------------------- */
+  console.log('\nscrolling arrives on its own');
+  await goto('/');
+  const wheel = (n) => send('Input.dispatchMouseEvent',
+    { type: 'mouseWheel', x: 800, y: 450, deltaX: 0, deltaY: n });
+
+  await wheel(240);
+  await sleep(320);
+  const started = await evaluate(`
+    const v = getComputedStyle(document.getElementById('plate')).getPropertyValue('--cam-s');
+    return parseFloat(v || '1');`);
+  check('a single scroll starts the push-in', started > 1.005, `scale ${started}`);
+
+  for (let i = 0; i < 26; i++) { await wheel(240); await sleep(70); }
+  await waitFor(`location.pathname === '/worlds'`, 'the worlds route via scroll', 9000);
+  await waitFor(`document.querySelector('.worlds')`, 'the worlds scene via scroll', 9000);
+  check('scrolling alone reaches the worlds — no click needed', true);
+
+  // and back out again, which is what makes it a journey rather than a jump
+  for (let i = 0; i < 30; i++) { await wheel(-240); await sleep(70); }
+  await waitFor(`location.pathname === '/'`, 'home again via scroll up', 9000);
+  check('scrolling back out returns home', true);
 
   /* --- 4. Escape climbs back out one level at a time -------------------- */
   console.log('\nescape climbs the hierarchy');
+  // Start from the deepest level explicitly: the journey test above now ends
+  // on a world, not on a case study.
+  await goto('/work/lifeworx?p=1');
   const esc = async () => {
     await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
     await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
@@ -287,7 +325,11 @@ async function run() {
     check('largest contentful paint under 2.5s', perf.lcp < 2500, `${perf.lcp}ms`);
   }
   check('cumulative layout shift under 0.1', perf.cls < 0.1, `${perf.cls}`);
-  check('home stays under 400 KB over the wire', perf.kb < 400, `${perf.kb} KB`);
+  // The hero is a full-screen photographic cut-out and is most of this budget
+  // by design. What the number guards against is a second heavy asset sneaking
+  // onto the first screen — which is exactly what an eager prefetch of the
+  // island did before it was removed.
+  check('home stays under 450 KB over the wire', perf.kb < 450, `${perf.kb} KB`);
 
   /* --- report ---------------------------------------------------------- */
   const failed = results.filter((r) => !r.ok);

@@ -25,12 +25,14 @@
 .plate__img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
-  object-fit: fill;              /* the box already carries the exact aspect */
+  object-fit: contain;           /* a cut-out with real edges; never stretch it */
   user-select: none; -webkit-user-drag: none;
 }
 /* Pre-blurred twin. Cross-fading to a small blurred bitmap costs nothing;
    filter:blur() on an 800px plate scaled 3x costs a frame budget. */
-.plate__img--blur { opacity: var(--blur-mix, 0); will-change: opacity; }
+/* The pre-blurred twin is gone: the cut-out has no background of its own, so
+   there is nothing to cross-fade to. Depth at the end of the push-in now comes
+   from the veil and the destination rising behind it. */
 
 /* --- the brain: the primary call to action ------------------------------- */
 .brain {
@@ -194,11 +196,17 @@
    Composition A — cinematic (wide landscape)
    ========================================================================== */
 @media (min-width: 1180px) and (min-aspect-ratio: 3/2) {
-  .hero { --plate-gap: 16.1vw; }
+  .hero { --plate-gap: 13vw; }
 
+  /* The cut-out is trimmed to the artwork, so unlike the old plate it carries
+     no empty margin on its left to buffer the headline. Its width is capped
+     against the viewport rather than driven purely by height, which keeps the
+     face clear of the type at every aspect ratio. */
   .plate {
     right: var(--plate-gap); bottom: 0;
-    height: 100svh; aspect-ratio: 760 / 845;
+    width: min(47vw, calc(98svh * 1195 / 1202));
+    aspect-ratio: 1195 / 1202;
+    height: auto;
   }
   .hero__copy {
     left: var(--gutter); top: 50%;
@@ -218,7 +226,7 @@
    relative to the copy, and the headline starts running into its feathered
    edge. Shortening the plate narrows it and gives the words room back. */
 @media (min-width: 1180px) and (max-width: 1400px) and (min-aspect-ratio: 3/2) {
-  .plate { height: 88svh; }
+  .plate { width: min(44vw, calc(88svh * 1195 / 1202)); }
   .hero__title { font-size: clamp(2.4rem, 4vw, 3.2rem); }
 }
 
@@ -236,7 +244,7 @@
     position: relative; margin-left: auto;
     width: min(118%, 40rem);
     right: -7%;
-    aspect-ratio: 760 / 845;
+    aspect-ratio: 1195 / 1202;
     height: auto;
     max-height: 62svh;
     margin-top: calc(var(--header-h) * -.2);

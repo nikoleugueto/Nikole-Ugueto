@@ -83,9 +83,28 @@ export function worldView({ worldId, onBack, onUp, onOpenCase, onOpenArchive }) 
 
         <div class="world__scene">
           <div class="scene" id="scene">
-            <img class="scene__img" src="/assets/img/world-${w.id}.webp"
-                 alt="${w.name}: a floating island holding a scene of this work, seen above cloud."
-                 decoding="async">
+            ${cta.target ? `
+              <button class="scene__hit" type="button" data-case="${cta.target}"
+                      data-cursor="${cta.action}"
+                      aria-label="${cta.action}: ${cta.title}">
+                <img class="scene__img"
+                     src="/assets/img/world-${w.id}-640.webp"
+                     srcset="/assets/img/world-${w.id}-640.webp 640w,
+                             /assets/img/world-${w.id}-960.webp 960w,
+                             /assets/img/world-${w.id}-1280.webp 1280w"
+                     sizes="(min-width: 1180px) 56vw, 100vw"
+                     alt="${w.name}: a floating island holding a scene of this work."
+                     decoding="async">
+                <span class="scene__cue">${cta.action} <span aria-hidden="true">&rarr;</span></span>
+              </button>` : `
+              <img class="scene__img"
+                   src="/assets/img/world-${w.id}-640.webp"
+                   srcset="/assets/img/world-${w.id}-640.webp 640w,
+                           /assets/img/world-${w.id}-960.webp 960w,
+                           /assets/img/world-${w.id}-1280.webp 1280w"
+                   sizes="(min-width: 1180px) 56vw, 100vw"
+                   alt="${w.name}: a floating island holding a scene of this work."
+                   decoding="async">`}
           </div>
         </div>
       </div>

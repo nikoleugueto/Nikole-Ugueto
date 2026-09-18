@@ -23,8 +23,9 @@
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@300,400,500&display=swap">
 
-<link rel="preload" as="image" href="/assets/img/hero-plate.webp" type="image/webp" fetchpriority="high">
-<link rel="prefetch" as="image" href="/assets/img/worlds-island.webp" type="image/webp">
+<link rel="preload" as="image" href="/assets/img/hero-plate-760.webp" type="image/webp"
+      imagesrcset="/assets/img/hero-plate-760.webp 760w, /assets/img/hero-plate-1140.webp 1140w, /assets/img/hero-plate-1195.webp 1195w"
+      imagesizes="(min-width:1180px) 46vw, 120vw" fetchpriority="high">
 <link rel="stylesheet" href="/src/styles/tokens.css">
 <link rel="stylesheet" href="/src/styles/base.css">
 <link rel="stylesheet" href="/src/styles/hero.css">
@@ -70,12 +71,15 @@
 
     <!-- The artwork. Annotations are injected here so they stay in the same
          coordinate space and inherit the camera transform. -->
-    <div class="plate" id="plate" style="--fx:.5789; --fy:.355">
-      <img class="plate__img" src="/assets/img/hero-plate.webp"
-           width="760" height="845" fetchpriority="high" decoding="async"
+    <div class="plate" id="plate" style="--fx:.55; --fy:.30">
+      <img class="plate__img"
+           src="/assets/img/hero-plate-760.webp"
+           srcset="/assets/img/hero-plate-760.webp 760w,
+                   /assets/img/hero-plate-1140.webp 1140w,
+                   /assets/img/hero-plate-1195.webp 1195w"
+           sizes="(min-width: 1180px) 46vw, 120vw"
+           width="1195" height="1202" fetchpriority="high" decoding="async"
            alt="Nikole Ugueto in profile, her hair rendered as a city of towers, parks and roads — the worlds inside her mind.">
-      <img class="plate__img plate__img--blur" src="/assets/img/hero-plate-blur.webp"
-           width="380" height="422" aria-hidden="true" decoding="async" alt="">
 
       <button class="brain" id="brain" type="button"
               aria-describedby="brain-hint">

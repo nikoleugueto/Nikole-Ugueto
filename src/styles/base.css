@@ -152,7 +152,11 @@ a { color: inherit; text-decoration: none; }
   .world-row__no    { color: var(--ink-muted); }
   .world-row__name  { font-size: 1.125rem; font-weight: 400; letter-spacing: -.01em; }
   .world-row__sub   { display: block; color: var(--ink-muted); margin-top: .2rem; }
-  .world-row__go    { color: var(--ink-muted); transition: transform var(--dur-s) var(--ease-out); }
+  .world-row__go {
+    color: var(--ink-muted); letter-spacing: 0; text-transform: none;
+    font-size: .875rem; font-weight: 500;
+    transition: transform var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out);
+  }
   .world-row:hover .world-row__go,
   .world-row:active .world-row__go { transform: translateX(.35rem); color: var(--ink); }
 }

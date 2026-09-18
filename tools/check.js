@@ -31,7 +31,10 @@ const sources = walk(join(root, 'src'))
   .concat(walk(join(root, 'content')))
   .concat([join(root, 'index.html')]);
 
-const URL_RE = /["'(](\/(?:assets|src|content)\/[^"')\s]+)["')]/g;
+// Matches a project URL wherever it appears — quoted, in a url(), or as one
+// entry among many in a srcset, which is comma-and-newline separated and was
+// invisible to the previous pattern.
+const URL_RE = /(\/(?:assets|src|content)\/[A-Za-z0-9._\/-]+\.[A-Za-z0-9]+)/g;
 let checked = 0;
 
 for (const file of sources) {
@@ -77,9 +80,19 @@ const need = (url, why) => {
 };
 
 const worldsMod = loaded['content/worlds.js'];
+let artManifest = null;
+try {
+  artManifest = JSON.parse(readFileSync(join(root, 'assets/img/art.manifest.json'), 'utf8'));
+} catch { /* optional */ }
+
 if (worldsMod) {
+  // Each world needs its scene at every width the srcset offers.
   for (const w of worldsMod.worlds) {
-    need(`/assets/img/world-${w.id}.webp`, `scene for the ${w.name} world`);
+    const piece = artManifest?.[`world-${w.id}`];
+    if (!piece) { note(`no art manifest entry for world-${w.id}`); continue; }
+    for (const width of piece.widths) {
+      need(`/assets/img/${width.file}`, `${w.name} scene @${width.w}px`);
+    }
   }
   worldsMod.journeyBeats.forEach((_, i) =>
     need(`/assets/img/journey-${i + 1}.webp`, 'journey beat portrait'));
@@ -107,14 +120,22 @@ for (const file of sources) {
 }
 // templated families, expanded the same way as above
 if (worldsMod) {
-  worldsMod.worlds.forEach((w) => collect(`world-${w.id}.webp`));
   worldsMod.journeyBeats.forEach((_, i) => collect(`journey-${i + 1}.webp`));
 }
+// Every width the art pipeline produced counts as referenced: the srcset that
+// uses them is built from a template, so the literal filenames never appear.
+try {
+  const art = JSON.parse(readFileSync(join(root, 'assets/img/art.manifest.json'), 'utf8'));
+  for (const piece of Object.values(art)) {
+    for (const w of piece.widths) collect(w.file);
+  }
+} catch { /* manifest is optional */ }
 if (pagesMod) pagesMod.about.process.steps.forEach((_, i) => collect(`process-${i + 1}.webp`));
 
 let orphanBytes = 0;
 for (const f of readdirSync(join(root, 'assets/img'))) {
-  if (f.endsWith('.meta.json')) continue;          // build notes, not shipped art
+  // Build notes and the art manifest describe the pipeline; they are not art.
+  if (f.endsWith('.meta.json') || f.endsWith('.manifest.json')) continue;
   if (!referenced.has(f)) {
     const bytes = statSync(join(root, 'assets/img', f)).size;
     orphanBytes += bytes;

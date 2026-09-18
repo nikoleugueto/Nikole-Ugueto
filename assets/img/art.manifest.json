@@ -1,0 +1,230 @@
+{
+  "hero-plate": {
+    "source": "originals/hero.png",
+    "sourceSize": [
+      1308,
+      1202
+    ],
+    "trimBox": [
+      113,
+      0,
+      1308,
+      1202
+    ],
+    "natural": [
+      1195,
+      1202
+    ],
+    "aspect": 0.99418,
+    "widths": [
+      {
+        "file": "hero-plate-760.webp",
+        "w": 760,
+        "h": 764,
+        "kb": 137.3
+      },
+      {
+        "file": "hero-plate-1140.webp",
+        "w": 1140,
+        "h": 1147,
+        "kb": 255.3
+      },
+      {
+        "file": "hero-plate-1195.webp",
+        "w": 1195,
+        "h": 1202,
+        "kb": 267.1
+      }
+    ]
+  },
+  "worlds-island": {
+    "source": "originals/island.png",
+    "sourceSize": [
+      1394,
+      1128
+    ],
+    "trimBox": [
+      29,
+      16,
+      1332,
+      1128
+    ],
+    "natural": [
+      1303,
+      1112
+    ],
+    "aspect": 1.17176,
+    "widths": [
+      {
+        "file": "worlds-island-760.webp",
+        "w": 760,
+        "h": 649,
+        "kb": 159.1
+      },
+      {
+        "file": "worlds-island-1140.webp",
+        "w": 1140,
+        "h": 973,
+        "kb": 300.9
+      },
+      {
+        "file": "worlds-island-1303.webp",
+        "w": 1303,
+        "h": 1112,
+        "kb": 347.9
+      }
+    ]
+  },
+  "world-healthcare": {
+    "source": "originals/world-healthcare.png",
+    "sourceSize": [
+      1400,
+      1123
+    ],
+    "trimBox": [
+      15,
+      26,
+      1395,
+      1123
+    ],
+    "natural": [
+      1380,
+      1097
+    ],
+    "aspect": 1.25798,
+    "widths": [
+      {
+        "file": "world-healthcare-640.webp",
+        "w": 640,
+        "h": 509,
+        "kb": 112.4
+      },
+      {
+        "file": "world-healthcare-960.webp",
+        "w": 960,
+        "h": 763,
+        "kb": 216.6
+      },
+      {
+        "file": "world-healthcare-1280.webp",
+        "w": 1280,
+        "h": 1018,
+        "kb": 326.9
+      }
+    ]
+  },
+  "world-ai": {
+    "source": "originals/world-ai.png",
+    "sourceSize": [
+      1375,
+      1144
+    ],
+    "trimBox": [
+      24,
+      3,
+      1363,
+      1139
+    ],
+    "natural": [
+      1339,
+      1136
+    ],
+    "aspect": 1.1787,
+    "widths": [
+      {
+        "file": "world-ai-640.webp",
+        "w": 640,
+        "h": 543,
+        "kb": 118.7
+      },
+      {
+        "file": "world-ai-960.webp",
+        "w": 960,
+        "h": 814,
+        "kb": 227.5
+      },
+      {
+        "file": "world-ai-1280.webp",
+        "w": 1280,
+        "h": 1086,
+        "kb": 344.2
+      }
+    ]
+  },
+  "world-product": {
+    "source": "originals/world-product.png",
+    "sourceSize": [
+      1433,
+      1098
+    ],
+    "trimBox": [
+      14,
+      0,
+      1419,
+      1094
+    ],
+    "natural": [
+      1405,
+      1094
+    ],
+    "aspect": 1.28428,
+    "widths": [
+      {
+        "file": "world-product-640.webp",
+        "w": 640,
+        "h": 498,
+        "kb": 115.6
+      },
+      {
+        "file": "world-product-960.webp",
+        "w": 960,
+        "h": 748,
+        "kb": 228.7
+      },
+      {
+        "file": "world-product-1280.webp",
+        "w": 1280,
+        "h": 997,
+        "kb": 345.6
+      }
+    ]
+  },
+  "world-creative": {
+    "source": "originals/world-creative.png",
+    "sourceSize": [
+      1572,
+      1001
+    ],
+    "trimBox": [
+      19,
+      5,
+      1552,
+      1001
+    ],
+    "natural": [
+      1533,
+      996
+    ],
+    "aspect": 1.53916,
+    "widths": [
+      {
+        "file": "world-creative-640.webp",
+        "w": 640,
+        "h": 416,
+        "kb": 103.6
+      },
+      {
+        "file": "world-creative-960.webp",
+        "w": 960,
+        "h": 624,
+        "kb": 207.3
+      },
+      {
+        "file": "world-creative-1280.webp",
+        "w": 1280,
+        "h": 832,
+        "kb": 322.4
+      }
+    ]
+  }
+}

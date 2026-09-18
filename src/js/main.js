@@ -45,11 +45,36 @@ const FLAT = new Set(['/about', '/contact', '/archive']);
 
 let route = location.pathname + location.search;
 
+/* While you are at home, the camera is already travelling somewhere — the
+   worlds. Naming that destination is what makes scrolling arrive: without it
+   the stage is asked to build the view for "/", which has no destination, so
+   the zoom ran to completion and landed on nothing. That is why clicking felt
+   compulsory. */
+const HOME_DESTINATION = '/worlds';
+const isHome = (path) => path.split('?')[0] === '/';
+const stageRoute = () => (isHome(route) ? HOME_DESTINATION : route);
+
 function go(path, { replace = false } = {}) {
   if (path === route) return;
   route = path;
   history[replace ? 'replaceState' : 'pushState']({ path }, '', path);
   apply(path);
+}
+
+/** Update the URL for a gesture that is already under way, without re-entering
+ *  the router — the camera is mid-flight and must not be restarted. Scrolling
+ *  replaces rather than pushes, so sweeping in and out a few times does not
+ *  fill the back stack with a dozen entries. */
+function syncUrl(path) {
+  if (path === route) return;
+  route = path;
+  history.replaceState({ path }, '', path);
+  document.title = titleFor(path.split('?')[0]);
+  document.querySelectorAll('.site-nav a').forEach((a) => {
+    const on = new URL(a.href, location.origin).pathname === path.split('?')[0];
+    if (on) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
 }
 
 /* ----------------------------------------------------------------- views */
@@ -115,17 +140,24 @@ function buildView(path) {
 const camera = createCamera({
   hero, plate, header, cue, cueLabel: cueLbl, live,
   onCommit: () => {
-    const view = viewFor(route);
+    // Arriving by scroll: the destination is where the camera was heading, and
+    // the URL catches up to it now rather than the other way round.
+    const dest = stageRoute();
+    const view = viewFor(dest);
     if (view) stage.show(view);
-    live.textContent = announceFor(route.split('?')[0]);
+    syncUrl(dest);
+    live.textContent = announceFor(dest.split('?')[0]);
   },
   onRelease: () => {
     stage.hide();
+    syncUrl('/');                       // scrolled back out: the URL follows
     live.textContent = 'Back at the portrait.';
     brain.focus({ preventScroll: true });
   },
   onProgress: (p) => {
-    if (p > 0.45) stage.prepare(viewFor(route));
+    // Build the destination while the camera is still travelling, so the
+    // arrival has something to fade in rather than appearing all at once.
+    if (p > 0.38) stage.prepare(viewFor(stageRoute()));
     else stage.setMounted(false);
   },
 });
@@ -168,9 +200,15 @@ function titleFor(pathname) {
   return 'Nikole Ugueto — UX/UI & Product Design';
 }
 
+/* The portrait is large on the two screens where it is part of the artwork,
+   and small everywhere else. */
+const FEATURE_CURSOR = new Set(['/', '/worlds']);
+
 function apply(path) {
   const pathname = path.split('?')[0];
   document.title = titleFor(pathname);
+  document.body.dataset.cursorScope =
+    FEATURE_CURSOR.has(pathname) ? 'feature' : 'quiet';
 
   document.querySelectorAll('.site-nav a').forEach((a) => {
     const on = new URL(a.href, location.origin).pathname === pathname;

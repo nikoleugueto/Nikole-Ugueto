@@ -7,16 +7,25 @@
      - it *reacts* to interactive targets, so it doubles as a hit indicator
    ========================================================================== */
 
+/* Prominent where the portrait is the subject — home and the worlds — and
+   restrained everywhere else, where it should read as a recurring motif rather
+   than compete with the content. Set by the router on <body>. */
+:root { --cursor-size: 52px; }
+body[data-cursor-scope="feature"] { --cursor-size: 96px; }
+
 .cursor {
   position: fixed; left: 0; top: 0; z-index: var(--z-cursor);
-  width: var(--size, 64px); height: var(--size, 64px);
-  margin: calc(var(--size, 64px) / -2);
+  width: var(--size, var(--cursor-size)); height: var(--size, var(--cursor-size));
+  margin: calc(var(--size, var(--cursor-size)) / -2);
+  transition: width var(--dur-m) var(--ease-out),
+              height var(--dur-m) var(--ease-out),
+              margin var(--dur-m) var(--ease-out),
+              opacity var(--dur-m) var(--ease-out);
   pointer-events: none;
   opacity: 0;
   transform: translate3d(var(--x, 50vw), var(--y, 50vh), 0)
              rotate(var(--rot, 0deg)) scale(var(--scale, 1));
   will-change: transform;
-  transition: opacity var(--dur-m) var(--ease-out);
 }
 .cursor[data-visible="true"] { opacity: 1; }
 

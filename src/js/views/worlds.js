@@ -62,6 +62,12 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
 
   const html = `
     <div class="worlds" data-active="">
+      <div class="worlds__sky" aria-hidden="true">
+        <span class="worlds__cloud worlds__cloud--a"></span>
+        <span class="worlds__cloud worlds__cloud--b"></span>
+        <span class="worlds__cloud worlds__cloud--c"></span>
+      </div>
+
       <nav class="worlds__crumb u-label" aria-label="Breadcrumb">
         <button class="crumb__link" type="button" data-back>Home</button>
         <span aria-hidden="true">&rsaquo;</span>
@@ -78,8 +84,13 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
 
         <div class="worlds__map">
           <div class="island" id="island">
-            <img class="island__img" src="/assets/img/worlds-island.webp"
-                 width="728" height="519" decoding="async"
+            <img class="island__img"
+                 src="/assets/img/worlds-island-760.webp"
+                 srcset="/assets/img/worlds-island-760.webp 760w,
+                         /assets/img/worlds-island-1140.webp 1140w,
+                         /assets/img/worlds-island-1303.webp 1303w"
+                 sizes="(min-width: 1180px) 56vw, 100vw"
+                 width="1303" height="1112" decoding="async"
                  alt="An island city seen from above, floating in cloud. Four districts sit around a central fountain: pale civic buildings, glass towers, a low technical quarter, and a rose-lit plaza.">
             ${districts}
             ${cards}
@@ -139,7 +150,7 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
       island.style.setProperty('--focus-x', `${w.district.x * 100}%`);
       island.style.setProperty('--focus-y', `${w.district.y * 100}%`);
       scene.dataset.leaving = id;
-      const delay = prefs.reducedMotion ? 0 : 620;
+      const delay = prefs.reducedMotion ? 0 : 880;
       setTimeout(() => onChoose(id), delay);
     });
 

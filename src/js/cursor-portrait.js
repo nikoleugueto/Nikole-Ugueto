@@ -11,15 +11,23 @@ import { prefs } from './prefs.js';
  *  3. One rAF loop, transform-only writes, and it parks itself when the pointer
  *     stops moving — no permanent animation frame cost.
  */
-const LERP = 0.15;        // position follow
-const ROT_LERP = 0.1;
-const ROT_PER_PX = 0.5;   // degrees of tilt per px/frame of horizontal speed
-const ROT_MAX = 13;
-const REST_EPSILON = 0.05;
+/* Inertia, not attachment.
+   The portrait chases a lead point, and the lead point chases the cursor. Two
+   soft stages instead of one give it weight: it lags going out, overshoots
+   nothing, drifts a beat behind on a direction change, and settles rather than
+   snapping when the cursor stops. A single lerp — however low — still reads as
+   glued, because it always moves straight at the pointer. */
+const LEAD_LERP = 0.115;  // how fast the lead point tracks the cursor
+const BODY_LERP = 0.085;  // how fast the portrait tracks the lead point
+const ROT_LERP = 0.055;
+const ROT_PER_PX = 0.62;  // degrees of tilt per px/frame of horizontal speed
+const ROT_MAX = 10;
+const REST_EPSILON = 0.06;
 
 export function mountCursorPortrait(el, captionEl) {
-  let px = innerWidth / 2, py = innerHeight / 2;
-  let tx = px, ty = py;
+  let px = innerWidth / 2, py = innerHeight / 2;   // the portrait
+  let lx = px, ly = py;                            // the lead point it follows
+  let tx = px, ty = py;                            // the cursor
   let rot = 0, targetRot = 0;
   let scale = 1, targetScale = 1;
   let running = false, visible = false;
@@ -27,23 +35,27 @@ export function mountCursorPortrait(el, captionEl) {
   const setVar = (k, v) => el.style.setProperty(k, v);
 
   function frame() {
-    const dx = tx - px, dy = ty - py;
-    px += dx * LERP;
-    py += dy * LERP;
+    lx += (tx - lx) * LEAD_LERP;
+    ly += (ty - ly) * LEAD_LERP;
 
-    // Tilt reads pointer velocity, so the portrait leans into the movement
-    // and settles level when you stop.
-    targetRot = Math.max(-ROT_MAX, Math.min(ROT_MAX, dx * LERP * ROT_PER_PX));
+    const dx = lx - px, dy = ly - py;
+    px += dx * BODY_LERP;
+    py += dy * BODY_LERP;
+
+    // Tilt reads the portrait's own velocity rather than the cursor's, so the
+    // lean belongs to the object and unwinds as it coasts to a stop.
+    targetRot = Math.max(-ROT_MAX, Math.min(ROT_MAX, dx * BODY_LERP * ROT_PER_PX));
     rot += (targetRot - rot) * ROT_LERP;
-    scale += (targetScale - scale) * 0.16;
+    scale += (targetScale - scale) * 0.1;
 
     setVar('--x', `${px.toFixed(2)}px`);
     setVar('--y', `${py.toFixed(2)}px`);
     setVar('--rot', `${rot.toFixed(2)}deg`);
     setVar('--scale', scale.toFixed(3));
 
-    const settled = Math.abs(dx) < REST_EPSILON && Math.abs(dy) < REST_EPSILON
-                 && Math.abs(targetRot - rot) < 0.01
+    const settled = Math.abs(tx - px) < REST_EPSILON && Math.abs(ty - py) < REST_EPSILON
+                 && Math.abs(dx) < REST_EPSILON && Math.abs(dy) < REST_EPSILON
+                 && Math.abs(targetRot - rot) < 0.02
                  && Math.abs(targetScale - scale) < 0.002;
     if (settled) { running = false; return; }
     requestAnimationFrame(frame);

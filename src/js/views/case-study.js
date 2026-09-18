@@ -4,33 +4,29 @@ import { byId } from '../../../content/worlds.js';
 /**
  * A case study.
  *
- * The structure here is finished; the content is not written, and it is not
- * invented. Each unwritten section renders as a visibly marked placeholder
- * carrying the brief for what belongs in it, so the page is useful to write
- * against rather than being a lorem-ipsum mock. Fill `body` in
- * content/case-studies.js and drop `placeholder`, and the section renders as
- * ordinary finished work with no special treatment.
+ * Presented as a project rather than as a page with a project inside it: the
+ * content takes the full column, the chrome is a thin rail that reports where
+ * you are and otherwise stays out of the way, and media runs full-bleed. The
+ * sidebar index this replaced occupied a fifth of the screen on every scroll
+ * position, which made the work feel like a passenger in someone's layout.
  *
- * The outcomes section is deliberately the loudest placeholder on the page.
- * The reference mockups carried invented metrics; saying plainly that the real
- * ones are not in yet is better than either repeating them or leaving a gap
- * that reads as an oversight.
+ * Structure is finished; content is not written, and it is not invented. Each
+ * unwritten chapter renders as a visibly marked placeholder carrying the brief
+ * for what belongs in it, so the page is useful to write against. Fill `body`
+ * in content/case-studies.js and drop `placeholder`, and the chapter renders as
+ * ordinary finished work.
+ *
+ * The outcome chapter is deliberately the loudest placeholder on the page: the
+ * reference mockups carried invented metrics, and saying plainly that the real
+ * ones are not in yet beats repeating them or leaving a silent gap.
  */
-const MEDIA_NOTE = {
-  ia: 'Sitemap or before/after structure diagram',
-  flows: 'Flow diagrams',
-  wireframes: 'Wireframes, including a rejected direction',
-  visual: 'Type, colour and component specimens',
-  interaction: 'States, transitions and edge cases',
-  final: 'Final screens, in the order a user meets them',
-};
 
-function placeholderBlock(s) {
-  if (s.kind === 'outcomes') {
+function placeholder(ch) {
+  if (ch.kind === 'outcome') {
     return `
       <div class="ph ph--loud">
-        <p class="ph__chip u-label">Placeholder — no metrics</p>
-        <p class="ph__prompt">${s.prompt}</p>
+        <p class="ph__chip">Placeholder — no metrics</p>
+        <p class="ph__prompt">${ch.prompt}</p>
         <p class="ph__note">
           The numbers in the original mockups (−40% support tickets, +60% activation,
           8.5/10 satisfaction) were generated to fill a layout. They are not used
@@ -39,29 +35,42 @@ function placeholderBlock(s) {
         </p>
       </div>`;
   }
-  if (s.kind === 'media') {
+  if (ch.kind === 'media') {
     return `
       <div class="ph">
-        <p class="ph__chip u-label">Placeholder — images</p>
-        <p class="ph__prompt">${s.prompt}</p>
-        <div class="ph__frames" aria-hidden="true">
-          <span class="ph__frame"></span><span class="ph__frame"></span>
-        </div>
-        <p class="ph__note">${MEDIA_NOTE[s.id] || 'Images to be added'}</p>
-      </div>`;
+        <p class="ph__chip">Placeholder — images</p>
+        <p class="ph__prompt">${ch.prompt}</p>
+      </div>
+      <div class="cs__media" aria-hidden="true">
+        <span class="cs__frame cs__frame--wide"></span>
+        <span class="cs__frame"></span>
+        <span class="cs__frame"></span>
+      </div>
+      <p class="cs__mediacap">${ch.mediaNote || 'Images to be added'}</p>`;
   }
-  if (s.kind === 'meta') {
+  if (ch.kind === 'close') {
     return `
       <div class="ph ph--slim">
-        <p class="ph__chip u-label">Placeholder</p>
-        <p class="ph__prompt">${s.prompt}</p>
+        <p class="ph__chip">Placeholder</p>
+        <p class="ph__prompt">${ch.prompt}</p>
       </div>`;
   }
   return `
     <div class="ph">
-      <p class="ph__chip u-label">Placeholder — ${s.kind === 'list' ? 'method &amp; findings' : 'writing'}</p>
-      <p class="ph__prompt">${s.prompt}</p>
+      <p class="ph__chip">Placeholder — writing</p>
+      <p class="ph__prompt">${ch.prompt}</p>
     </div>`;
+}
+
+/** A full-viewport editorial spread carrying one already-known fact. */
+function statement(st) {
+  if (!st) return '';
+  return `
+    <section class="spread" aria-label="${st.lead}">
+      <p class="spread__lead u-label">${st.lead}</p>
+      <p class="spread__value">${st.value}</p>
+      ${st.note ? `<p class="spread__note">${st.note}</p>` : ''}
+    </section>`;
 }
 
 export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
@@ -75,28 +84,29 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
       ${known.map(([k, v]) => `<div><dt class="u-label">${k}</dt><dd>${v}</dd></div>`).join('')}
     </dl>` : '';
 
-  const nav = c.sections.map((s) => `
-    <li><a class="cs__navlink" href="#cs-${s.id}" data-sec="${s.id}">
-      <span class="cs__navno u-label">${s.no}</span><span>${s.title}</span>
-    </a></li>`).join('');
-
-  const body = c.sections.map((s) => `
-    <section class="cs__section" id="cs-${s.id}" data-sec="${s.id}"
-             aria-labelledby="cs-${s.id}-h">
-      <p class="cs__no u-label">${s.no}</p>
-      <div class="cs__content">
-        <h3 class="cs__h" id="cs-${s.id}-h">${s.title}</h3>
-        ${s.placeholder || !s.body
-          ? placeholderBlock(s)
-          : `<div class="cs__prose">${s.body}</div>`}
+  const chapters = c.chapters.map((ch) => `
+    ${statement(ch.statement)}
+    <section class="cs__chapter" id="cs-${ch.id}" data-sec="${ch.id}"
+             aria-labelledby="cs-${ch.id}-h">
+      <header class="cs__chead">
+        <p class="cs__ckicker u-label"><span class="cs__cno">${ch.no}</span>${ch.kicker}</p>
+        <h3 class="cs__h" id="cs-${ch.id}-h">${ch.title}</h3>
+      </header>
+      <div class="cs__cbody">
+        ${ch.placeholder || !ch.body ? placeholder(ch) : `<div class="cs__prose">${ch.body}</div>`}
       </div>
     </section>`).join('');
 
+  const rail = c.chapters.map((ch) => `
+    <li><a class="rail__dot" href="#cs-${ch.id}" data-sec="${ch.id}">
+      <span class="u-visually-hidden">${ch.no} ${ch.title}</span>
+    </a></li>`).join('');
+
   const banner = c.contentStatus === 'undefined-project'
-    ? `<p class="cs__banner">This project is still being defined. The structure below is
-       real and ready; nothing about the work itself has been written or invented.</p>`
-    : `<p class="cs__banner">Structure complete — content to be written. Every section
-       below carries the brief for what goes in it.</p>`;
+    ? `This project is still being defined. The structure below is real and ready;
+       nothing about the work itself has been written or invented.`
+    : `Structure complete — content to be written. Each chapter carries the brief
+       for what goes in it.`;
 
   const html = `
     <article class="cs" data-case="${c.id}">
@@ -115,16 +125,14 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
         <h2 class="cs__title">${c.title}</h2>
         <p class="cs__sub">${c.subtitle}</p>
         ${meta}
-        ${banner}
+        <p class="cs__banner">${banner}</p>
       </header>
 
-      <div class="cs__body">
-        <nav class="cs__nav" aria-label="Case study sections">
-          <p class="u-label cs__navhead">Sections</p>
-          <ol class="cs__navlist">${nav}</ol>
-        </nav>
-        <div class="cs__sections">${body}</div>
-      </div>
+      <nav class="rail" aria-label="Chapters">
+        <ol class="rail__list">${rail}</ol>
+      </nav>
+
+      <div class="cs__chapters">${chapters}</div>
 
       <footer class="cs__foot">
         <button class="btn" type="button" data-world data-cursor="Back to the world">
@@ -135,13 +143,12 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
 
   function mount(root) {
     const cleanup = [];
-    const scroller = root;           // the stage scrolls
 
     const onClick = (e) => {
-      const link = e.target.closest('.cs__navlink');
-      if (link) {
+      const dot = e.target.closest('.rail__dot');
+      if (dot) {
         e.preventDefault();
-        const el = root.querySelector(`#cs-${link.dataset.sec}`);
+        const el = root.querySelector(`#cs-${dot.dataset.sec}`);
         el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         el?.setAttribute('tabindex', '-1');
         el?.focus({ preventScroll: true });
@@ -154,21 +161,35 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
     root.addEventListener('click', onClick);
     cleanup.push(() => root.removeEventListener('click', onClick));
 
-    /* Which section you are in, marked in the index. IntersectionObserver
+    /* Which chapter you are in, marked on the rail. IntersectionObserver
        rather than a scroll handler: no work on frames where nothing crosses. */
-    const links = new Map([...root.querySelectorAll('.cs__navlink')]
-      .map((a) => [a.dataset.sec, a]));
+    const dots = new Map([...root.querySelectorAll('.rail__dot')].map((a) => [a.dataset.sec, a]));
     const seen = new Set();
     const io = new IntersectionObserver((entries) => {
       for (const en of entries) {
         const id = en.target.dataset.sec;
         if (en.isIntersecting) seen.add(id); else seen.delete(id);
-        en.target.dataset.inview = String(en.isIntersecting);
       }
-      links.forEach((a, id) => a.toggleAttribute('data-current', seen.has(id)));
-    }, { root: scroller, rootMargin: '-45% 0px -45% 0px' });
-    root.querySelectorAll('.cs__section').forEach((s) => io.observe(s));
+      dots.forEach((a, id) => a.toggleAttribute('data-current', seen.has(id)));
+    }, { root, rootMargin: '-45% 0px -45% 0px' });
+    root.querySelectorAll('.cs__chapter').forEach((s) => io.observe(s));
     cleanup.push(() => io.disconnect());
+
+    /* The rail is chrome. It shows itself once you are into the piece and
+       hides again at the top and the very bottom, so the project has the
+       screen to itself where it matters. */
+    const railEl = root.querySelector('.rail');
+    const hero = root.querySelector('.cs__hero');
+    const foot = root.querySelector('.cs__foot');
+    const edges = new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (en.target === hero) railEl.dataset.hidden = String(en.isIntersecting);
+        if (en.target === foot && en.isIntersecting) railEl.dataset.hidden = 'true';
+      }
+    }, { root, rootMargin: '0px 0px -60% 0px' });
+    if (hero) edges.observe(hero);
+    if (foot) edges.observe(foot);
+    cleanup.push(() => edges.disconnect());
 
     requestAnimationFrame(() => { root.querySelector('.cs').dataset.ready = 'true'; });
     return () => cleanup.forEach((fn) => fn());

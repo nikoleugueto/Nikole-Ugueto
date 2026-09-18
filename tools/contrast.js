@@ -37,17 +37,21 @@ const ratio = (a, b) => {
 const TEXT_INKS = ['ink', 'ink-soft', 'ink-muted', 'focus'];
 const SURFACES = ['paper-warm', 'paper-mid', 'paper-flat'];
 const DOC = '#EFEDEA';                       // the document surface in views.css
+// The Worlds sky, sampled at its extremes from worlds.css. Text sits directly
+// on this, so expanding the sky is only safe while these still pass.
+const SKY = { 'sky top': '#CBD8E4', 'sky mid': '#DCE4EA', 'sky low': '#EDE8E2' };
 
 let failed = 0;
 const pad = (s, n) => String(s).padEnd(n);
 
 console.log('\nWCAG AA — text inks (need 4.5:1)\n');
-console.log(pad('ink', 12) + [...SURFACES, 'document'].map((s) => pad(s, 13)).join(''));
-console.log('-'.repeat(12 + 13 * 4));
+const COLS = [...SURFACES, 'document', ...Object.keys(SKY)];
+console.log(pad('ink', 12) + COLS.map((s) => pad(s, 13)).join(''));
+console.log('-'.repeat(12 + 13 * COLS.length));
 
 for (const ink of TEXT_INKS) {
   let row = pad(ink, 12);
-  for (const s of [...SURFACES.map(token), DOC]) {
+  for (const s of [...SURFACES.map(token), DOC, ...Object.values(SKY)]) {
     const r = ratio(token(ink), s);
     const ok = r >= 4.5;
     if (!ok) failed++;
@@ -57,7 +61,7 @@ for (const ink of TEXT_INKS) {
 }
 
 console.log('\nDecorative only (need 3:1, must never carry text)\n');
-for (const s of [...SURFACES.map(token), DOC]) {
+for (const s of [...SURFACES.map(token), DOC, ...Object.values(SKY)]) {
   const r = ratio(token('ink-quiet'), s);
   if (r < 3) failed++;
   console.log(`  ink-quiet on ${pad(s, 10)} ${r.toFixed(2)}${r >= 3 ? '' : '  FAIL'}`);

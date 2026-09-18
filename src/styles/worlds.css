@@ -1,4 +1,46 @@
 /* ==========================================================================
+   The sky.
+
+   The island is a cut-out with no sky of its own, so the environment is built
+   here — which keeps it sharp at any resolution, costs no bytes, and can be
+   tuned without re-exporting artwork. It is deliberately simple: a high
+   atmosphere, a warmer band near the horizon, and three very soft cloud forms.
+   Nothing detailed enough to compete with the island or to change what the
+   artwork means.
+
+   The columns of text sit over the palest part of it, and each carries its own
+   light wash, so expanding the sky never costs readability. That was the
+   constraint: text first, sky second.
+   ========================================================================== */
+.worlds__sky {
+  position: absolute; inset: 0; z-index: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(to bottom,
+      #CBD8E4 0%,
+      #DCE4EA 34%,
+      #EDE8E2 68%,
+      #F2EFEA 100%);
+  transition: opacity var(--dur-l) var(--ease-out);
+}
+/* Soft, formless, and slow. They give the sky depth without becoming scenery. */
+.worlds__cloud {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.85), rgba(255,255,255,0));
+  filter: blur(6px);
+}
+.worlds__cloud--a { left: -8%;  top: 12%; width: 52%; height: 34%; opacity: .7; }
+.worlds__cloud--b { right: -10%; top: 30%; width: 58%; height: 40%; opacity: .55; }
+.worlds__cloud--c { left: 18%;  bottom: -12%; width: 70%; height: 38%; opacity: .8; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .worlds__cloud--a { animation: drift-a 48s ease-in-out infinite alternate; }
+  .worlds__cloud--b { animation: drift-b 62s ease-in-out infinite alternate; }
+}
+@keyframes drift-a { to { translate: 4% -2%; } }
+@keyframes drift-b { to { translate: -5% 2%; } }
+
+/* ==========================================================================
    The Worlds scene — one island, four districts.
 
    Composition follows reference 02: a narrow intro column, the map, and a
@@ -12,6 +54,8 @@
   display: flex; flex-direction: column;
   padding: calc(var(--header-h) + .5rem) var(--gutter) clamp(1rem, 3vh, 2rem);
 }
+/* everything above the sky */
+.worlds > *:not(.worlds__sky) { position: relative; z-index: 1; }
 
 .worlds__crumb {
   display: flex; align-items: center; gap: .55rem;
@@ -28,6 +72,12 @@
   gap: clamp(1rem, 2.6vw, 3rem);
   align-items: center;
 }
+
+/* No scrim behind the columns. `node tools/contrast.js` checks every text ink
+   against the sky's top, middle and lower bands, and the worst case — muted
+   ink on the deepest blue — is 4.71:1. So the sky can be completely open,
+   which is the whole point of it. If the sky is ever darkened, run that check
+   again before assuming the text still holds. */
 
 .worlds__eyebrow { color: var(--ink-muted); margin: 0 0 1.1rem; }
 
@@ -74,14 +124,14 @@
 .island {
   position: relative;
   container-type: size; container-name: island;
-  width: min(100%, calc(var(--island-h, 65svh) * 1.4027));
-  aspect-ratio: 728 / 519;
+  width: min(100%, calc(var(--island-h, 72svh) * 1.1718));
+  aspect-ratio: 1303 / 1112;
   perspective: 1400px;
   transform-style: preserve-3d;
 }
 
 .island__img {
-  width: 100%; height: 100%; object-fit: fill;
+  width: 100%; height: 100%; object-fit: contain;
   transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
   transition: transform 1.1s var(--ease-out);
   will-change: transform;
@@ -126,7 +176,11 @@
   display: block; padding: 2cqw 2.3cqw 2.2cqw;
   background: rgba(253, 252, 251, .93);
   box-shadow: 0 1px 2px rgba(12,16,22,.06), 0 14px 40px -20px rgba(12, 16, 22, .45);
-  pointer-events: none;
+  /* The card is a target in its own right. Pointing at the words and pointing
+     at the district should not behave differently. */
+  pointer-events: auto;
+  cursor: pointer;
+  border: 1px solid transparent;
   transition: opacity var(--dur-m) var(--ease-out),
               transform var(--dur-m) var(--ease-out),
               box-shadow var(--dur-m) var(--ease-out);
@@ -151,6 +205,7 @@
 .dcard[data-state="on"] {
   opacity: 1;
   transform: translateY(-4px);
+  border-color: rgba(22, 25, 30, .12);
   box-shadow: 0 2px 4px rgba(12,16,22,.07), 0 22px 54px -22px rgba(12, 16, 22, .5);
 }
 .dcard[data-state="on"] .dcard__go { transform: translateX(.3rem); }
@@ -214,20 +269,26 @@
 }
 .worlds[data-ready="true"] .dcard { transition-delay: 300ms; }
 
-/* Departure: the camera keeps travelling, aimed at the district you chose. */
+/* Departure: the camera keeps travelling, aimed at the district you chose.
+   Deliberately a long, deep push — this is the moment you enter a world, and it
+   should read as being pulled in rather than as a page changing. The opacity
+   holds most of the way so the scale is what you notice. */
 .worlds[data-leaving] .island {
-  transform: scale(2.1);
+  transform: scale(3.6);
   transform-origin: var(--focus-x, 50%) var(--focus-y, 50%);
   opacity: 0;
-  transition: transform 680ms var(--ease-in), opacity 620ms var(--ease-in) 60ms;
+  transition: transform 900ms cubic-bezier(.55, 0, .78, .3),
+              opacity 420ms var(--ease-in) 470ms;
 }
+/* Everything else clears out early so the island has the screen to itself. */
+.worlds[data-leaving] .worlds__sky { opacity: 0; transition: opacity 640ms var(--ease-in); }
 .worlds[data-leaving] .worlds__intro,
 .worlds[data-leaving] .worlds__journey,
 .worlds[data-leaving] .worlds__crumb,
 .worlds[data-leaving] .worlds__cue {
   opacity: 0; transition: opacity 260ms var(--ease-in);
 }
-.worlds[data-leaving] .dcard { opacity: 0; transition: opacity 220ms var(--ease-in); }
+.worlds[data-leaving] .dcard { opacity: 0; transition: opacity 200ms var(--ease-in); }
 
 /* ==========================================================================
    Stacked composition — the map becomes an illustration, the list the control

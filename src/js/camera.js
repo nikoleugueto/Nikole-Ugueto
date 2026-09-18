@@ -22,7 +22,7 @@ import { prefs } from './prefs.js';
  */
 
 const MAX_SCALE   = 3.3;
-const WHEEL_SPAN  = 1500;   // wheel pixels to travel the full journey
+const WHEEL_SPAN  = 2600;   // wheel pixels to travel the full journey
 const FOCUS_Y     = 0.46;   // where in the viewport the brain lands
 
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
@@ -162,7 +162,10 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
     nudge((e.deltaY * unit) / WHEEL_SPAN);
   }
 
-  hero.addEventListener('wheel', onWheel, { passive: false });
+  // Bound to the window in the capture phase: the destination layer mounts
+  // over the hero part-way through the journey, and a hero-bound listener
+  // would stop receiving events at precisely that moment.
+  addEventListener('wheel', onWheel, { passive: false, capture: true });
   addEventListener('resize', () => { rest = null; measure(); render(); }, { passive: true });
 
   measure(); render(); setCueLabel();
