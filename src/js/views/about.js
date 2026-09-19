@@ -46,11 +46,11 @@ export function aboutView({ onBack, onContact }) {
 
       <header class="ab__hero">
         <figure class="ab__portrait">
-          <img src="/assets/img/about-portrait-360.webp"
-               srcset="/assets/img/about-portrait-360.webp 360w,
-                       /assets/img/about-portrait-540.webp 540w,
-                       /assets/img/about-portrait-720.webp 720w"
-               sizes="(min-width: 62rem) 23rem, 66vw"
+          <img src="/assets/img/about-portrait-380.webp"
+               srcset="/assets/img/about-portrait-380.webp 380w,
+                       /assets/img/about-portrait-580.webp 580w,
+                       /assets/img/about-portrait-860.webp 860w"
+               sizes="(min-width: 62rem) 27rem, 72vw"
                width="1024" height="1536" decoding="async"
                alt="Nikole Ugueto, seated on a terrace at sunset, turning to camera.">
         </figure>

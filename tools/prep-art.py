@@ -41,11 +41,11 @@ ART = {
     "world-creative":  {"src": "originals/world-creative.png",   "widths": [640, 960, 1280]},
     # Opaque: a photograph, not a cut-out. The pipeline notices and drops the
     # alpha channel rather than paying for one that is entirely solid.
-    # Capped at 720 on purpose. The portrait renders at 288px, so 720 is already
-    # 2.5x; and its film grain — which is exactly what makes it read as a
-    # photograph rather than a render — compresses badly, so a 1024 export cost
-    # 435KB to serve detail nothing can show.
-    "about-portrait":  {"src": "originals/about-portrait.jpg",   "widths": [360, 540, 720]},
+    # Capped below native on purpose. The portrait renders at ~430px, so 860
+    # covers 2x exactly; its film grain — which is what makes it read as a
+    # photograph rather than a render — compresses badly, and a full 1024
+    # export cost 435KB to serve detail nothing can show.
+    "about-portrait":  {"src": "originals/about-portrait.jpg",   "widths": [380, 580, 860]},
 }
 
 # These cut-outs are dominated by the cost of their alpha channel, not by RGB

@@ -253,22 +253,22 @@
     "aspect": 0.66667,
     "widths": [
       {
-        "file": "about-portrait-360.webp",
-        "w": 360,
-        "h": 540,
-        "kb": 19.2
+        "file": "about-portrait-380.webp",
+        "w": 380,
+        "h": 570,
+        "kb": 22.0
       },
       {
-        "file": "about-portrait-540.webp",
-        "w": 540,
-        "h": 810,
-        "kb": 51.4
+        "file": "about-portrait-580.webp",
+        "w": 580,
+        "h": 870,
+        "kb": 65.1
       },
       {
-        "file": "about-portrait-720.webp",
-        "w": 720,
-        "h": 1080,
-        "kb": 134.0
+        "file": "about-portrait-860.webp",
+        "w": 860,
+        "h": 1290,
+        "kb": 237.0
       }
     ]
   }

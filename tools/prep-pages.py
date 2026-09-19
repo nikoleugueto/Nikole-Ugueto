@@ -4,7 +4,7 @@ Process discs (reference 06).
 
 The About portrait and the contact sky used to be built here. The portrait is
 now a real high-resolution photograph handled by prep-art.py, and the sky is
-recreated at 3200px by make-contact-sky.py — neither needs the inpainting this
+built from her own photograph by prep-contact-sky.py — neither needs the inpainting this
 script was built around.
 
 Same principle as the other prep scripts: the mockups have their copy painted

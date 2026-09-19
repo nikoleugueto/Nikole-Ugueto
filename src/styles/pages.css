@@ -27,10 +27,11 @@
 /* ---------------------------------------------------------------- about --- */
 .ab__hero {
   display: grid;
-  /* The portrait column was carrying less weight than the words beside it.
-     Wider, with the headline column giving up the difference — the crop,
-     ratio and source are untouched, it simply occupies more of the row. */
-  grid-template-columns: minmax(15rem, 23rem) minmax(0, 1.45fr) minmax(10.5rem, .85fr);
+  /* The portrait column carries more of the row than the words beside it now.
+     The crop, the ratio and the source file are untouched — only the column it
+     sits in is wider, so nothing is stretched or re-cropped. Measured: 432px on
+     a 1500px desktop, up from 288 originally. */
+  grid-template-columns: minmax(16rem, 27rem) minmax(0, 1.35fr) minmax(10rem, .8fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: start;
   padding: clamp(2rem, 6vh, 3.5rem) 0 clamp(2rem, 5vh, 3rem);
@@ -179,8 +180,16 @@
   padding-inline: var(--gutter);
 }
 .ct__sky {
-  position: absolute; inset: 0; z-index: 0;
+  /* Up behind the header too: the page's top padding was leaving a band of
+     flat paper above the photograph, which broke the full bleed. */
+  position: absolute; inset: calc(-1 * (var(--header-h) + .5rem)) 0 0; z-index: 0;
   background:
+    /* A soft lift under the right-hand column. The new photograph is far more
+       vivid than the one it replaced, and the pull-quote was landing on lit
+       water at 4.43:1 — just under AA. This raises only the patch the contact
+       rows and the quote sit on, so the skyline itself keeps its light. */
+    radial-gradient(64% 52% at 74% 56%,
+      rgba(244, 241, 236, .52) 0%, rgba(244, 241, 236, 0) 72%),
     /* Lightened at both ends: the top so the headline holds, the bottom so the
        discipline tags are not sitting on the skyline at 2:1. */
     linear-gradient(to bottom,
@@ -189,12 +198,12 @@
       rgba(242,239,234,0)   58%,
       rgba(242,239,234,.55) 86%,
       rgba(242,239,234,.88) 100%),
-    image-set(url("/assets/img/contact-sky-1145.webp") 1x,
-              url("/assets/img/contact-sky-1718.webp") 1.5x,
-              url("/assets/img/contact-sky-2290.webp") 2x) center 70% / cover no-repeat;
-  /* Note: at most desktop aspect ratios `cover` fills the height exactly, so
-     the vertical position is inert and only bites on very wide, short windows.
-     To move the horizon, change HORIZON in tools/make-contact-sky.py. */
+    image-set(url("/assets/img/contact-sky-640.webp")  1x,
+              url("/assets/img/contact-sky-960.webp")  1.5x,
+              url("/assets/img/contact-sky-1254.webp") 2x) center 62% / cover no-repeat;
+  /* The source is square and the section is a wide band, so `cover` crops the
+     sky and the foreground water and keeps the skyline. 62% places the towers
+     just below centre, where the copy clears them. */
 }
 .ct__grid {
   flex: 1; display: grid;
@@ -226,6 +235,10 @@
 .ch__note {
   color: var(--ink-muted);
   border: 1px dashed var(--rule); padding: .15rem .45rem;
+  /* These markers sit straight on the photograph, where the brightest lit
+     windows drop muted ink to about 4.2:1. A faint plate under them is enough
+     to clear AA without turning a placeholder into a component. */
+  background: rgba(246, 244, 241, .74);
 }
 a.ch__row:hover { color: var(--focus); }
 a.ch__row:hover .ch__icon { color: var(--focus); }
@@ -241,7 +254,7 @@ a.ch__row:hover .ch__icon { color: var(--focus); }
    ========================================================================== */
 @media (max-width: 62rem) {
   .ab__hero { grid-template-columns: 1fr; gap: 1.75rem; }
-  .ab__portrait { max-width: 22rem; }
+  .ab__portrait { max-width: 26rem; }
   .ab__process { grid-template-columns: 1fr; }
   .steps { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
   .ab__sec { grid-template-columns: 1fr; gap: .35rem; }

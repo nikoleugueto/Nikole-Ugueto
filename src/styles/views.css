@@ -35,7 +35,18 @@
 
 /* The .stage__* family that lived here belonged to the placeholder screens the
    real About, Contact, Archive and 404 views replaced. Nothing emits those
-   classes any more, so the rules are gone with them. */
+   classes any more, so the rules are gone with them.
+
+   This rule is NOT dead and was removed with them by mistake: documents — case
+   studies, About, Archive, Contact, 404 — bring their own padding and want the
+   full column. Without it the stage's own centring padding insets every one of
+   them, and the contact photograph stops reaching the edges. */
+.stage:has(.cs),
+.stage:has(.page) {
+  place-items: start stretch;
+  padding: 0;
+  background: #EFEDEA;
+}
 
 .stage > .worlds__crumb {
   position: absolute; left: var(--gutter); top: var(--header-h);
@@ -43,6 +54,5 @@
 
 @media (max-width: 46rem) {
   .stage { place-items: safe start center; }
-  .stage__figure img { max-height: 34svh; }
   .stage > .worlds__crumb { position: static; margin-bottom: 1.25rem; }
 }
