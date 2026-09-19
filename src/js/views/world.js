@@ -54,6 +54,7 @@ export function worldView({ worldId, onBack, onUp, onOpenCase, onOpenArchive }) 
   const html = `
     <div class="world" data-world="${w.id}"
          style="--sky-a:${w.scene.sky[0]}; --sky-b:${w.scene.sky[1]}">
+      <div class="world__sky" aria-hidden="true"></div>
       <nav class="worlds__crumb u-label" aria-label="Breadcrumb">
         <button class="crumb__link" type="button" data-back>Home</button>
         <span aria-hidden="true">&rsaquo;</span>

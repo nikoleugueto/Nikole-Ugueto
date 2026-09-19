@@ -161,10 +161,60 @@ async function run() {
   await waitFor(`document.querySelector('.worlds')`, 'the worlds scene via scroll', 9000);
   check('scrolling alone reaches the worlds — no click needed', true);
 
-  // and back out again, which is what makes it a journey rather than a jump
-  for (let i = 0; i < 30; i++) { await wheel(-240); await sleep(70); }
-  await waitFor(`location.pathname === '/'`, 'home again via scroll up', 9000);
-  check('scrolling back out returns home', true);
+  /* Reversibility belongs to the journey, not to the destination. Part way in
+     — before the camera commits — scrolling back must unwind it. After it has
+     committed the wheel belongs to the page, which is covered below. */
+  await goto('/');
+  for (let i = 0; i < 6; i++) { await wheel(240); await sleep(70); }
+  const midway = await evaluate(`
+    return parseFloat(getComputedStyle(document.getElementById('plate'))
+             .getPropertyValue('--cam-s') || '1');`);
+  for (let i = 0; i < 14; i++) { await wheel(-240); await sleep(70); }
+  await sleep(500);
+  const unwound = await evaluate(`
+    return { scale: parseFloat(getComputedStyle(document.getElementById('plate'))
+                      .getPropertyValue('--cam-s') || '1'),
+             path: location.pathname };`);
+  check('a journey not yet committed can be scrolled back out',
+    midway > 1.05 && unwound.scale < 1.02 && unwound.path === '/',
+    `went to ${midway.toFixed(2)}, returned to ${unwound.scale.toFixed(2)} on ${unwound.path}`);
+
+  /* --- 3c. scrolling inside a page must never navigate ------------------ */
+  console.log('\nscrolling inside a page never navigates');
+  const spin = (n) => send('Input.dispatchMouseEvent',
+    { type: 'mouseWheel', x: 760, y: 470, deltaX: 0, deltaY: n });
+
+  await goto('/work/lifeworx?p=1');
+  const startPath = await evaluate(`return location.pathname;`);
+
+  for (let i = 0; i < 16; i++) { await spin(320); await sleep(45); }
+  const down = await evaluate(`
+    return { path: location.pathname,
+             top: Math.round(document.getElementById('stage').scrollTop) };`);
+  check('scrolling down stays on the case study and moves the page',
+    down.path === startPath && down.top > 200,
+    `path ${down.path}, scrollTop ${down.top}`);
+
+  // Back up, well past the top — this is what a trackpad's momentum does at
+  // the end of a flick, and it used to haul the camera home.
+  for (let i = 0; i < 34; i++) { await spin(-320); await sleep(45); }
+  const up = await evaluate(`
+    return { path: location.pathname,
+             top: Math.round(document.getElementById('stage').scrollTop),
+             camera: parseFloat(getComputedStyle(document.getElementById('plate'))
+                       .getPropertyValue('--cam-s') || '1') };`);
+  check('scrolling back up stays on the case study',
+    up.path === startPath, `ended on ${up.path}`);
+  check('scrolling up does not pull the camera back out',
+    up.camera > 3, `camera scale fell to ${up.camera}`);
+
+  // The worlds view fits the viewport, so there is nothing to scroll — an
+  // upward wheel there must still do nothing rather than exit.
+  await goto('/worlds?p=1');
+  for (let i = 0; i < 20; i++) { await spin(-320); await sleep(45); }
+  check('scrolling up on the worlds does not return home',
+    await evaluate(`return location.pathname === '/worlds';`),
+    await evaluate(`return location.pathname;`));
 
   /* --- 4. Escape climbs back out one level at a time -------------------- */
   console.log('\nescape climbs the hierarchy');

@@ -158,10 +158,21 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
 
   function onWheel(e) {
     if (!prefs.cinematic || prefs.reducedMotion) return;
-    // Only capture the wheel while the journey is in play: at rest and
-    // scrolling up, or fully in and scrolling down, the page keeps its scroll.
-    const goingIn = e.deltaY > 0;
-    if ((committed && goingIn) || (p === 0 && !goingIn)) return;
+
+    /* Once you have arrived, the wheel belongs to the page — completely.
+     *
+     * This used to allow scrolling back out of a destination, which read as a
+     * nice symmetry and was in practice a trap: every case study is a long
+     * scroll, and a trackpad flick ends in a few small upward deltas as the
+     * momentum unwinds. Those deltas were enough to start hauling the camera
+     * home while someone was simply reading. Leaving is deliberate — Escape,
+     * the breadcrumb, the back control, or the browser's own back button.
+     */
+    if (committed) return;
+
+    // At rest, scrolling up is not the beginning of a journey.
+    if (p === 0 && e.deltaY <= 0) return;
+
     e.preventDefault();
     const unit = e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? innerHeight : 1;
     nudge((e.deltaY * unit) / WHEEL_SPAN);

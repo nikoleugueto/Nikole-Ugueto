@@ -50,7 +50,7 @@ export function aboutView({ onBack, onContact }) {
                srcset="/assets/img/about-portrait-360.webp 360w,
                        /assets/img/about-portrait-540.webp 540w,
                        /assets/img/about-portrait-720.webp 720w"
-               sizes="(min-width: 62rem) 18rem, 60vw"
+               sizes="(min-width: 62rem) 23rem, 66vw"
                width="1024" height="1536" decoding="async"
                alt="Nikole Ugueto, seated on a terrace at sunset, turning to camera.">
         </figure>

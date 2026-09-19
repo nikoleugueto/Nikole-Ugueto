@@ -62,11 +62,7 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
 
   const html = `
     <div class="worlds" data-active="">
-      <div class="worlds__sky" aria-hidden="true">
-        <span class="worlds__cloud worlds__cloud--a"></span>
-        <span class="worlds__cloud worlds__cloud--b"></span>
-        <span class="worlds__cloud worlds__cloud--c"></span>
-      </div>
+      <div class="worlds__sky" aria-hidden="true"></div>
 
       <nav class="worlds__crumb u-label" aria-label="Breadcrumb">
         <button class="crumb__link" type="button" data-back>Home</button>

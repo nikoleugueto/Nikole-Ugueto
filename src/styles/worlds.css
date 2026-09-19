@@ -16,29 +16,21 @@
   position: absolute; inset: 0; z-index: 0;
   overflow: hidden;
   background:
-    linear-gradient(to bottom,
-      #CBD8E4 0%,
-      #DCE4EA 34%,
-      #EDE8E2 68%,
-      #F2EFEA 100%);
+    image-set(url("/assets/img/world-sky-1280.webp") 1x,
+              url("/assets/img/world-sky-1920.webp") 1.5x,
+              url("/assets/img/world-sky-2560.webp") 2x) center 58% / cover no-repeat;
   transition: opacity var(--dur-l) var(--ease-out);
 }
-/* Soft, formless, and slow. They give the sky depth without becoming scenery. */
-.worlds__cloud {
-  position: absolute; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.85), rgba(255,255,255,0));
-  filter: blur(6px);
+/* Lifted a little further here than on the world pages: this screen carries two
+   columns of type and four cards, and the sky's job is to hold them, not to be
+   looked at. */
+.worlds__sky::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(170deg,
+    rgba(246,245,242,.34) 0%, rgba(246,245,242,.20) 45%, rgba(246,245,242,.52) 100%);
 }
-.worlds__cloud--a { left: -8%;  top: 12%; width: 52%; height: 34%; opacity: .7; }
-.worlds__cloud--b { right: -10%; top: 30%; width: 58%; height: 40%; opacity: .55; }
-.worlds__cloud--c { left: 18%;  bottom: -12%; width: 70%; height: 38%; opacity: .8; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .worlds__cloud--a { animation: drift-a 48s ease-in-out infinite alternate; }
-  .worlds__cloud--b { animation: drift-b 62s ease-in-out infinite alternate; }
-}
-@keyframes drift-a { to { translate: 4% -2%; } }
-@keyframes drift-b { to { translate: -5% 2%; } }
+/* The hand-drawn cloud shapes that used to live here are gone: the sky is a
+   photograph now and has its own. */
 
 /* ==========================================================================
    The Worlds scene — one island, four districts.

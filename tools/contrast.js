@@ -37,9 +37,17 @@ const ratio = (a, b) => {
 const TEXT_INKS = ['ink', 'ink-soft', 'ink-muted', 'focus'];
 const SURFACES = ['paper-warm', 'paper-mid', 'paper-flat'];
 const DOC = '#EFEDEA';                       // the document surface in views.css
-// The Worlds sky, sampled at its extremes from worlds.css. Text sits directly
-// on this, so expanding the sky is only safe while these still pass.
-const SKY = { 'sky top': '#CBD8E4', 'sky mid': '#DCE4EA', 'sky low': '#EDE8E2' };
+// The sky is a photograph now, not a gradient, so these are measured from the
+// exported image by tools/prep-world-sky.py — the darkest bands on the left,
+// where the type actually sits. Re-run that script and paste its output here if
+// the sky ever changes; text over a picture is the easiest thing to get wrong.
+const SKY = {
+  'sky top':   '#D3D7DB',
+  'sky upper': '#D5D2D0',
+  'sky mid':   '#DED5CC',
+  'sky low':   '#DFD5CD',
+  'sky foot':  '#DDDAD9',
+};
 
 let failed = 0;
 const pad = (s, n) => String(s).padEnd(n);

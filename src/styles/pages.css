@@ -27,7 +27,10 @@
 /* ---------------------------------------------------------------- about --- */
 .ab__hero {
   display: grid;
-  grid-template-columns: minmax(12rem, 18rem) minmax(0, 1.6fr) minmax(11rem, .9fr);
+  /* The portrait column was carrying less weight than the words beside it.
+     Wider, with the headline column giving up the difference — the crop,
+     ratio and source are untouched, it simply occupies more of the row. */
+  grid-template-columns: minmax(15rem, 23rem) minmax(0, 1.45fr) minmax(10.5rem, .85fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: start;
   padding: clamp(2rem, 6vh, 3.5rem) 0 clamp(2rem, 5vh, 3rem);
@@ -186,9 +189,9 @@
       rgba(242,239,234,0)   58%,
       rgba(242,239,234,.55) 86%,
       rgba(242,239,234,.88) 100%),
-    image-set(url("/assets/img/contact-sky-1600.webp") 1x,
-              url("/assets/img/contact-sky-2400.webp") 1.5x,
-              url("/assets/img/contact-sky-3200.webp") 2x) center 70% / cover no-repeat;
+    image-set(url("/assets/img/contact-sky-1145.webp") 1x,
+              url("/assets/img/contact-sky-1718.webp") 1.5x,
+              url("/assets/img/contact-sky-2290.webp") 2x) center 70% / cover no-repeat;
   /* Note: at most desktop aspect ratios `cover` fills the height exactly, so
      the vertical position is inert and only bites on very wide, short windows.
      To move the horizon, change HORIZON in tools/make-contact-sky.py. */
@@ -238,7 +241,7 @@ a.ch__row:hover .ch__icon { color: var(--focus); }
    ========================================================================== */
 @media (max-width: 62rem) {
   .ab__hero { grid-template-columns: 1fr; gap: 1.75rem; }
-  .ab__portrait { max-width: 18rem; }
+  .ab__portrait { max-width: 22rem; }
   .ab__process { grid-template-columns: 1fr; }
   .steps { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
   .ab__sec { grid-template-columns: 1fr; gap: .35rem; }

@@ -78,17 +78,21 @@ respectively.
 
 ```bash
 pip3 install --user Pillow numpy
-python3 tools/prep-assets.py        # hero: portrait plate, blurred twin, cursor
-python3 tools/prep-worlds.py        # worlds: the island plate
-python3 tools/prep-world-scenes.py  # the four world scenes + journey portraits
-python3 tools/prep-pages.py         # about portrait, process discs, contact sky
+python3 tools/prep-art.py           # hero, island, 4 world scenes, about portrait
+python3 tools/prep-world-sky.py     # the atmospheric sky behind the worlds
+python3 tools/prep-contact-sky.py   # the contact skyline, from the photograph
+python3 tools/prep-world-scenes.py  # journey portraits
+python3 tools/prep-pages.py         # process discs
+python3 tools/prep-assets.py        # cursor portrait + share card (run last)
 ```
 
-Both read `assets/reference/` and write `assets/img/`. They strip the
-annotations that the mockups have baked into their pixels — labels, leader
-lines, district cards — so the site can rebuild them as real, focusable DOM.
-Run them whenever new reference artwork arrives; the measured coordinates sit
-at the top of each file.
+They read `assets/reference/` and write `assets/img/`. `prep-art.py` is
+manifest-driven: to swap in better artwork, drop the file in
+`assets/reference/originals/` and change one `src` line. It never upscales past
+the source, and it exports several widths for srcset.
+
+The two sky scripts repair the photographs they are built from — removing the
+copy the mockups painted over them — rather than recreating them.
 
 ---
 

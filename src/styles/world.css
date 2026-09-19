@@ -8,12 +8,28 @@
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   padding: calc(var(--header-h) + .5rem) var(--gutter) clamp(1rem, 3vh, 2rem);
-  /* Each world's sky is sampled from its own crop, so the four differ in
-     light without anything being invented. */
-  background:
-    radial-gradient(120% 80% at 70% 10%, var(--sky-a) 0%, rgba(255,255,255,0) 70%),
-    linear-gradient(168deg, var(--sky-a) 0%, var(--sky-b) 62%, #F2EFEA 100%);
+  background: #F2EFEA;                 /* under the sky, and the reduced case */
 }
+
+/* A photographed sky rather than a gradient: layered cloud, a warm horizon,
+   peaks far below. The islands float above cloud in the artwork, so this puts
+   them somewhere instead of on a colour ramp. One image serves all four
+   worlds; the tint below is what makes each of them its own place. */
+.world__sky {
+  position: absolute; inset: 0; z-index: 0;
+  overflow: hidden;
+  background:
+    image-set(url("/assets/img/world-sky-1280.webp") 1x,
+              url("/assets/img/world-sky-1920.webp") 1.5x,
+              url("/assets/img/world-sky-2560.webp") 2x) center 62% / cover no-repeat;
+}
+.world__sky::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(162deg,
+    var(--sky-a) 0%, rgba(255,255,255,0) 46%, var(--sky-b) 100%);
+  opacity: .46;
+}
+.world > *:not(.world__sky) { position: relative; z-index: 1; }
 
 .world__grid {
   flex: 1; min-height: 0;
