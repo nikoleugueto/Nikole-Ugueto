@@ -260,6 +260,89 @@ async function run() {
     await evaluate(`return getComputedStyle(document.querySelector('.portrait-badge')).display !== 'none';`));
   await send('Emulation.setEmulatedMedia', { features: [] });
 
+  /* --- 8b. buttons must never be letterspaced -------------------------- */
+  console.log('\ntypography');
+  for (const r of ['/', '/worlds', '/worlds/healthcare', '/work/lifeworx', '/about', '/contact']) {
+    await goto(r + (r.startsWith('/work') || r.startsWith('/worlds/') ? '?p=1' : ''));
+    const tracked = await evaluate(`
+      // A control's own text must sit at normal spacing. Small uppercase
+      // eyebrows and chips are labels, not buttons, and keep their tracking.
+      const isLabel = (el) => el.classList.contains('u-label')
+                           || el.classList.contains('ph__chip');
+      return [...document.querySelectorAll('a, button')]
+        .filter(el => !el.closest('[inert]') && !isLabel(el))
+        .map(el => {
+          const cs = getComputedStyle(el);
+          const em = cs.letterSpacing === 'normal'
+            ? 0 : parseFloat(cs.letterSpacing) / parseFloat(cs.fontSize);
+          return { cls: el.className || el.tagName, em };
+        })
+        // 0.085em is the line: below it uppercase micro-type stays legible,
+        // above it a control starts to read as deliberately spread out.
+        .filter(x => Math.abs(x.em) > 0.085)
+        .map(x => x.cls + ' @ ' + x.em.toFixed(3) + 'em');
+    `);
+    check(`${r}: no control is letterspaced`, tracked.length === 0, tracked.join(', '));
+  }
+
+  /* --- 8c. srcset actually serves more pixels on a dense display -------- */
+  console.log('\nretina');
+  await send('Emulation.setDeviceMetricsOverride',
+    { width: 1600, height: 900, deviceScaleFactor: 2, mobile: false });
+  await goto('/');
+  const heroDense = await evaluate(`
+    const i = document.querySelector('.plate__img');
+    return { picked: (i.currentSrc || '').split('/').pop(), css: Math.round(i.clientWidth) };`);
+  check('hero picks a larger source at 2x',
+    /-(1140|1195)\.webp$/.test(heroDense.picked),
+    `${heroDense.picked} for a ${heroDense.css}px box`);
+
+  await goto('/worlds/healthcare?p=1');
+  const sceneDense = await evaluate(`
+    const i = document.querySelector('.scene__img');
+    return { picked: (i.currentSrc || '').split('/').pop(), css: Math.round(i.clientWidth) };`);
+  check('world scene picks a larger source at 2x',
+    /-(960|1280)\.webp$/.test(sceneDense.picked),
+    `${sceneDense.picked} for a ${sceneDense.css}px box`);
+
+  await send('Emulation.clearDeviceMetricsOverride');
+
+  /* --- 8d. the cursor portrait lags, then settles ----------------------- */
+  console.log('\ncursor inertia');
+  await goto('/');
+  const inertia = await evaluate(`
+    const el = document.getElementById('cursor');
+    const at = () => {
+      const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+      return { x: m.m41, y: m.m42 };
+    };
+    const move = (x, y) => window.dispatchEvent(
+      new PointerEvent('pointermove', { clientX: x, clientY: y, bubbles: true }));
+    const frame = () => new Promise(r => requestAnimationFrame(r));
+
+    move(300, 300);
+    for (let i = 0; i < 90; i++) await frame();      // let it arrive and settle
+    const settledStart = at();
+
+    move(1100, 700);                                  // a long, sudden jump
+    await frame(); await frame();
+    const justAfter = at();
+    const lag = Math.hypot(1100 - justAfter.x, 700 - justAfter.y);
+    const moved = Math.hypot(justAfter.x - settledStart.x, justAfter.y - settledStart.y);
+
+    for (let i = 0; i < 150; i++) await frame();      // stop, and let it catch up
+    const rest = at();
+    const restErr = Math.hypot(1100 - rest.x, 700 - rest.y);
+    return { lag: Math.round(lag), moved: Math.round(moved), restErr: Math.round(restErr) };
+  `);
+  console.log(`      two frames after an 894px jump it has moved ${inertia.moved}px, ` +
+              `still ${inertia.lag}px behind; at rest it is ${inertia.restErr}px off`);
+  check('it lags well behind the pointer rather than tracking it',
+    inertia.lag > 400, `only ${inertia.lag}px behind — too attached`);
+  check('it does move toward the pointer', inertia.moved > 5, `moved ${inertia.moved}px`);
+  check('it settles onto the pointer once movement stops',
+    inertia.restErr < 12, `${inertia.restErr}px off`);
+
   /* --- 9. the page is readable with scripting off ---------------------- */
   console.log('\nno scripting');
   await send('Emulation.setScriptExecutionDisabled', { value: true });

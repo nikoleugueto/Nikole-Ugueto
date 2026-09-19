@@ -117,7 +117,14 @@ a { color: inherit; text-decoration: none; }
 .brand__name { color: var(--ink-soft); }
 
 .site-nav { display: flex; align-items: center; gap: clamp(1.25rem, 2.6vw, 2.75rem); }
-.site-nav a { color: var(--ink-soft); position: relative; padding-block: .35rem; }
+/* The nav inherits the label tracking from its parent, which at 0.16em makes
+   three short words read as spread apart. These are controls, not eyebrows, so
+   they come back most of the way in — enough to keep small uppercase legible
+   without the letters drifting. */
+.site-nav a {
+  color: var(--ink-soft); position: relative; padding-block: .35rem;
+  letter-spacing: .07em;
+}
 .site-nav a::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0;
   height: 1px; background: currentColor;

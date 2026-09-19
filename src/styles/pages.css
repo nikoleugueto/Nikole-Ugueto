@@ -45,8 +45,8 @@
 
 .ab__title {
   margin: 0; font-weight: 300;
-  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
-  line-height: 1.1; letter-spacing: var(--track-tight);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.04; letter-spacing: -.03em;
 }
 .ab__intro {
   margin: 1.1rem 0 1.75rem; max-width: 34rem;
@@ -66,14 +66,19 @@
 .ab__sections { margin-top: clamp(2rem, 6vh, 3.5rem); }
 .ab__sec {
   display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 1rem;
-  padding: clamp(1.5rem, 4vh, 2.5rem) 0;
+  padding: clamp(2rem, 6vh, 3.25rem) 0;
   border-top: 1px solid var(--rule-soft);
 }
 .ab__sec:first-child { border-top: 0; padding-top: 0; }
 .ab__no { color: var(--ink-muted); margin: .35rem 0 0; }
+/* About and the case studies are both long-form documents and should read as
+   one family. This sits deliberately below the case-study chapter scale — the
+   projects are the showcase — but close enough that moving between them does
+   not feel like moving between two sites. */
 .ab__h {
-  margin: 0 0 1rem; font-weight: 400;
-  font-size: clamp(1.125rem, 1.7vw, 1.4rem); letter-spacing: -.012em;
+  margin: 0 0 1.1rem; font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.08; letter-spacing: -.022em;
 }
 
 /* --- process ------------------------------------------------------------ */
@@ -114,8 +119,8 @@
 .ar__hero { max-width: 40rem; padding: clamp(2rem, 6vh, 4rem) 0 clamp(1.5rem, 4vh, 2.5rem); }
 .ar__title {
   margin: 0; font-weight: 300;
-  font-size: clamp(1.75rem, 3.4vw, 2.9rem);
-  line-height: 1.08; letter-spacing: var(--track-tight);
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.04; letter-spacing: -.03em;
 }
 .ar__body { margin: 1.1rem 0 1.5rem; font-size: var(--t-lede); line-height: 1.68; color: var(--ink-soft); }
 .ar__tags { color: var(--ink-muted); margin: 0; }

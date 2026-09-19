@@ -176,7 +176,27 @@
   .world__grid { grid-template-columns: 1fr; gap: clamp(1.5rem, 5vh, 2.5rem); align-items: start; }
   .world__scene { order: -1; }
   .scene { height: min(42svh, 20rem); }
-  .scene__cue { opacity: 1; transform: translate(-50%, 0); font-size: .8125rem; }
+
+  /* No hover here, so the artwork needs a permanent affordance — but the
+     button directly beneath already says "Open the case study", and repeating
+     it verbatim over the picture is noise. A small arrow marks the image as
+     tappable without saying the same thing twice. */
+  .scene__cue {
+    opacity: 1;
+    left: auto; right: 4%; bottom: 6%;
+    transform: none;
+    width: 2.75rem; height: 2.75rem; padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    font-size: 0;                       /* hides the words, keeps the arrow */
+  }
+  .scene__cue span { font-size: 1rem; }
+
+  /* The beats were laying their title into a third column, which right-aligned
+     it away from its own number. Disc on the left, everything else stacked. */
+  .beat { grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; }
+  .beat__disc { grid-row: 1 / 4; }
+  .beat__no, .beat__title, .beat__q { grid-column: 2; }
   .world__case { max-width: none; }
   .beats { grid-template-columns: 1fr; gap: .9rem; }
   .beat { grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; }
