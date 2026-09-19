@@ -30,7 +30,7 @@
   grid-template-columns: minmax(12rem, 18rem) minmax(0, 1.6fr) minmax(11rem, .9fr);
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: start;
-  padding: clamp(2rem, 6vh, 4rem) 0 clamp(2rem, 5vh, 3rem);
+  padding: clamp(2rem, 6vh, 3.5rem) 0 clamp(2rem, 5vh, 3rem);
   border-bottom: 1px solid var(--rule-soft);
 }
 /* The source is a full-length 2:3 frame. Cropped to 4:5 and biased upward it
@@ -116,7 +116,7 @@
 .step__line { font-size: var(--t-micro); color: var(--ink-muted); line-height: 1.5; }
 
 /* -------------------------------------------------------------- archive --- */
-.ar__hero { max-width: 40rem; padding: clamp(2rem, 6vh, 4rem) 0 clamp(1.5rem, 4vh, 2.5rem); }
+.ar__hero { max-width: 44rem; padding: clamp(2rem, 6vh, 3.5rem) 0 clamp(1.5rem, 4vh, 2.5rem); }
 .ar__title {
   margin: 0; font-weight: 300;
   font-size: clamp(2rem, 4.4vw, 3.4rem);

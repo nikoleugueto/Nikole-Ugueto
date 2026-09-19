@@ -1,8 +1,8 @@
 /* ==========================================================================
    Home — the hero stage
-   Two intentional compositions, not one that shrinks:
-     .is-cinematic  wide landscape screens: the reference composition
-     .is-stacked    everything else: portrait above, editorial index below
+   Two intentional compositions, not one that shrinks. They are selected by
+   media query rather than by class — see the two blocks at the foot of this
+   file — and body[data-layout] carries the current one for scripts.
    ========================================================================== */
 
 .hero {
@@ -19,7 +19,8 @@
   container-name: plate;
   transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
   transform: translate3d(var(--cam-x, 0px), var(--cam-y, 0px), 0) scale(var(--cam-s, 1));
-  will-change: transform;
+  opacity: var(--plate-out, 1);
+  will-change: transform, opacity;
 }
 
 .plate__img {
@@ -31,8 +32,9 @@
 /* Pre-blurred twin. Cross-fading to a small blurred bitmap costs nothing;
    filter:blur() on an 800px plate scaled 3x costs a frame budget. */
 /* The pre-blurred twin is gone: the cut-out has no background of its own, so
-   there is nothing to cross-fade to. Depth at the end of the push-in now comes
-   from the veil and the destination rising behind it. */
+   there is nothing to cross-fade to. Depth at the end of the push-in comes
+   from the plate dissolving (--plate-out) while the veil peaks and the
+   destination rises behind it. */
 
 /* --- the brain: the primary call to action ------------------------------- */
 .brain {

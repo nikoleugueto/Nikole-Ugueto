@@ -72,7 +72,12 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
     plate.style.setProperty('--cam-x', `${camX.toFixed(2)}px`);
     plate.style.setProperty('--cam-y', `${camY.toFixed(2)}px`);
     plate.style.setProperty('--cam-s', scale.toFixed(4));
-    plate.style.setProperty('--blur-mix', ramp(p, 0.55, 0.92).toFixed(3));
+    /* The portrait dissolves on its way in rather than sitting underneath the
+       destination at full strength. Without this the two compositions overlap
+       for a third of the journey and you can read both at once — a double
+       exposure, not a transition. It clears just as the veil peaks, so the
+       handoff happens in the dark. */
+    plate.style.setProperty('--plate-out', (1 - ramp(p, 0.50, 0.80)).toFixed(3));
 
     // Copy and annotations leave first: they belong to the outside.
     hero.style.setProperty('--copy-out', (1 - ramp(p, 0, 0.2)).toFixed(3));
@@ -82,8 +87,8 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
     const veil = p < 0.78 ? ramp(p, 0.2, 0.78) * 0.92
                           : 0.92 - ramp(p, 0.78, 1) * 0.74;
     root.style.setProperty('--veil', veil.toFixed(3));
-    root.style.setProperty('--stage-in', ramp(p, 0.66, 1).toFixed(3));
-    root.style.setProperty('--stage-s', (1.22 - 0.22 * ramp(p, 0.66, 1)).toFixed(4));
+    root.style.setProperty('--stage-in', ramp(p, 0.70, 1).toFixed(3));
+    root.style.setProperty('--stage-s', (1.22 - 0.22 * ramp(p, 0.70, 1)).toFixed(4));
     cue.style.setProperty('--p', p.toFixed(3));
 
     // Guarded: these are the only non-custom-property DOM writes in the loop.
