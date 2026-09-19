@@ -135,7 +135,10 @@
   display: flex; align-items: center; gap: .75rem;
   color: var(--ink-soft); margin: 0 0 clamp(1.25rem, 2.4vw, 2rem);
 }
-.hero__eyebrow span[aria-hidden] { color: var(--ink-quiet); }
+/* One step darker than the decorative grey. These separators are the only
+   thing in this column that was forcing the sky behind them to be washed out,
+   and the difference between the two greys is imperceptible at 11px. */
+.hero__eyebrow span[aria-hidden] { color: var(--ink-muted); }
 
 .hero__title {
   margin: 0;

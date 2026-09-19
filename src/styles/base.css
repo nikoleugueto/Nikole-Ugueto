@@ -67,15 +67,21 @@ a { color: inherit; text-decoration: none; }
 /* --- backdrop ------------------------------------------------------------
    Reproduces the render's own diagonal gradient so the feathered edges of the
    hero plate have nothing to blend against but themselves. */
+/* --- backdrop -----------------------------------------------------------
+   The home screen's sky. A photograph rather than a gradient, lifted toward
+   the paper by tools/prep-home-sky.py so it stays behind the portrait instead
+   of competing with it, and so the headline column clears AA on it.
+
+   `cover` with the position low: the cloud bank sits in the lower half of the
+   source, and putting it under the portrait rather than behind the headline
+   keeps the left column open. The gradient underneath is the fallback and the
+   colour the image is graded toward, so there is no flash of the wrong hue. */
 .backdrop {
   position: fixed; inset: 0; z-index: 0;
   background:
-    radial-gradient(104% 84% at 4% 12%, rgba(255,255,255,.30), rgba(255,255,255,0) 54%),
-    linear-gradient(107deg,
-      var(--paper-warm)  0%,
-      #DCD7D5           34%,
-      #C9C7C8           66%,
-      var(--paper-deep) 100%);
+    image-set(url("/assets/img/home-sky-1280.webp") 1x,
+              url("/assets/img/home-sky-1536.webp") 1.6x) center 78% / cover no-repeat,
+    linear-gradient(107deg, var(--paper-warm) 0%, #DCD7D5 46%, #CFCFD1 100%);
 }
 /* Film grain. Kept extremely low: it stops the large flat gradient from
    banding on 8-bit panels, which is the only reason it is here. */
