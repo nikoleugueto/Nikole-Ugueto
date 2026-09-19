@@ -39,6 +39,13 @@ ART = {
     "world-ai":        {"src": "originals/world-ai.png",         "widths": [640, 960, 1280]},
     "world-product":   {"src": "originals/world-product.png",    "widths": [640, 960, 1280]},
     "world-creative":  {"src": "originals/world-creative.png",   "widths": [640, 960, 1280]},
+    # Opaque: a photograph, not a cut-out. The pipeline notices and drops the
+    # alpha channel rather than paying for one that is entirely solid.
+    # Capped at 720 on purpose. The portrait renders at 288px, so 720 is already
+    # 2.5x; and its film grain — which is exactly what makes it read as a
+    # photograph rather than a render — compresses badly, so a 1024 export cost
+    # 435KB to serve detail nothing can show.
+    "about-portrait":  {"src": "originals/about-portrait.jpg",   "widths": [360, 540, 720]},
 }
 
 # These cut-outs are dominated by the cost of their alpha channel, not by RGB
@@ -78,7 +85,11 @@ for name, cfg in ART.items():
 
     src = Image.open(path).convert("RGBA")
     art, box = trim_alpha(src)
-    art = flatten_hidden(art)
+    opaque = art.getchannel("A").getextrema()[0] > 250
+    if opaque:
+        art = art.convert("RGB")           # an alpha channel of solid 255 is pure cost
+    else:
+        art = flatten_hidden(art)
 
     widths = sorted({min(w, art.width) for w in cfg["widths"]})
     files = []
@@ -86,7 +97,10 @@ for name, cfg in ART.items():
         h = round(art.height * w / art.width)
         out = art if w == art.width else art.resize((w, h), Image.LANCZOS)
         fname = f"{name}-{w}.webp"
-        out.save(os.path.join(OUT, fname), **ENCODE)
+        enc = dict(ENCODE)
+        if opaque:
+            enc.pop("alpha_quality", None)
+        out.save(os.path.join(OUT, fname), **enc)
         files.append({"file": fname, "w": w, "h": h,
                       "kb": round(os.path.getsize(os.path.join(OUT, fname)) / 1024, 1)})
 
@@ -96,6 +110,7 @@ for name, cfg in ART.items():
     manifest[name] = {
         "source": cfg["src"],
         "sourceSize": [src.width, src.height],
+        "opaque": opaque,
         "trimBox": box,                       # rebase normalised coords with this
         "natural": [art.width, art.height],
         "aspect": round(art.width / art.height, 5),

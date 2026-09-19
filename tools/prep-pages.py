@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """
-Assets for About, Process and Contact (references 06, 07, 08).
+Process discs (reference 06).
+
+The About portrait and the contact sky used to be built here. The portrait is
+now a real high-resolution photograph handled by prep-art.py, and the sky is
+recreated at 3200px by make-contact-sky.py — neither needs the inpainting this
+script was built around.
 
 Same principle as the other prep scripts: the mockups have their copy painted
 into the pixels, so anything the site needs to own — headings, contact details,
@@ -51,14 +56,6 @@ def inpaint(im, box, iters=500):
 
 meta = {}
 
-# --------------------------------------------------------------- about portrait
-a = Image.open(os.path.join(REF, "07-about-reference.jpg")).convert("RGB")
-por = a.crop((50, 62, 370, 376))
-por = por.resize((por.width * 2, por.height * 2), Image.LANCZOS)
-por.save(os.path.join(OUT, "about-portrait.webp"), quality=88, method=6)
-meta["aboutPortrait"] = {"w": por.width, "h": por.height,
-                         "aspect": round(por.width / por.height, 4)}
-
 # --------------------------------------------------------------- process discs
 p6 = Image.open(os.path.join(REF, "06-process-reference.jpg")).convert("RGB")
 CENTRES = [(481, 213), (633, 213), (786, 213), (940, 213), (1081, 213)]
@@ -71,25 +68,6 @@ for i, (cx, cy) in enumerate(CENTRES, start=1):
     t.resize((220, 220), Image.LANCZOS).save(
         os.path.join(OUT, f"process-{i}.webp"), quality=88, method=6)
 meta["processDiscs"] = len(CENTRES)
-
-# --------------------------------------------------------------- contact sky
-c = Image.open(os.path.join(REF, "08-contact-reference.jpg")).convert("RGB")
-for box in [
-    (26,    6, 1090,  30),   # mockup nav
-    (44,   74,  268, 172),   # "Let's create what's next."
-    (44,  178,  340, 228),   # body copy
-    (44,  246,  210, 294),   # "Get in touch" pill
-    (756, 106,  780, 364),   # vertical divider
-    (824, 106, 1040, 250),   # contact list
-    (40,  368,  280, 398),   # footer tags
-    (1052, 374, 1112, 398),  # date stamp
-    (996,  276, 1116, 396),  # scanner-app artefact
-]:
-    inpaint(c, box)
-sky = c.crop((0, 30, 1145, 402))
-sky.save(os.path.join(OUT, "contact-sky.webp"), quality=86, method=6)
-meta["contactSky"] = {"w": sky.width, "h": sky.height,
-                      "aspect": round(sky.width / sky.height, 4)}
 
 with open(os.path.join(OUT, "pages.meta.json"), "w") as f:
     json.dump(meta, f, indent=2)

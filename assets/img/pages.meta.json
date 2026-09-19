@@ -1,13 +1,3 @@
 {
-  "aboutPortrait": {
-    "w": 640,
-    "h": 628,
-    "aspect": 1.0191
-  },
-  "processDiscs": 5,
-  "contactSky": {
-    "w": 1145,
-    "h": 372,
-    "aspect": 3.078
-  }
+  "processDiscs": 5
 }

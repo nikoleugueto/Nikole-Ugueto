@@ -46,9 +46,13 @@ export function aboutView({ onBack, onContact }) {
 
       <header class="ab__hero">
         <figure class="ab__portrait">
-          <img src="/assets/img/about-portrait.webp" width="640" height="628"
-               decoding="async"
-               alt="Nikole Ugueto, turned three-quarters away, against a pale wall.">
+          <img src="/assets/img/about-portrait-360.webp"
+               srcset="/assets/img/about-portrait-360.webp 360w,
+                       /assets/img/about-portrait-540.webp 540w,
+                       /assets/img/about-portrait-720.webp 720w"
+               sizes="(min-width: 62rem) 18rem, 60vw"
+               width="1024" height="1536" decoding="async"
+               alt="Nikole Ugueto, seated on a terrace at sunset, turning to camera.">
         </figure>
         <div class="ab__lead">
           <p class="u-label ab__eyebrow">${about.eyebrow}</p>
