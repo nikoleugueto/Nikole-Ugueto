@@ -200,10 +200,12 @@
       rgba(242,239,234,.88) 100%),
     image-set(url("/assets/img/contact-sky-640.webp")  1x,
               url("/assets/img/contact-sky-960.webp")  1.5x,
-              url("/assets/img/contact-sky-1254.webp") 2x) center 62% / cover no-repeat;
-  /* The source is square and the section is a wide band, so `cover` crops the
-     sky and the foreground water and keeps the skyline. 62% places the towers
-     just below centre, where the copy clears them. */
+              url("/assets/img/contact-sky-1254.webp") 2x) center 42% / cover no-repeat;
+  /* The source is square and the section is a wide band, so `cover` crops it.
+     42% is the position where the whole skyline sits in the lower half with the
+     sun still in frame, and the copy above it lands on open sky. Swept every
+     position from 0 to 85%: all of them clear AA on this picture, so this was
+     chosen on composition rather than forced by contrast. */
 }
 .ct__grid {
   flex: 1; display: grid;
