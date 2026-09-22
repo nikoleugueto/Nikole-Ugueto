@@ -27,7 +27,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if '200' not in (args[1] if len(args) > 1 else ''):
             super().log_message(fmt, *args)
 
-socketserver.TCPServer.allow_reuse_address = True
-with socketserver.TCPServer(('', PORT), Handler) as httpd:
+# Threaded, because a single-threaded server is held for the whole of a large
+# response: one browser pulling the case-study video over a keep-alive
+# connection blocks every other request, and the site looks dead.
+class Server(socketserver.ThreadingTCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+with Server(('', PORT), Handler) as httpd:
     print(f"→ http://localhost:{PORT}")
     httpd.serve_forever()

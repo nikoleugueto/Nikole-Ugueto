@@ -66,20 +66,15 @@ export function worldView({ worldId, onBack, onUp, onOpenCase, onOpenArchive }) 
       <div class="world__grid">
         <div class="world__intro">
           <p class="u-label world__no">${w.no} — ${w.kicker}</p>
+          ${w.logo ? `<img class="world__logo" src="/assets/img/logo-${w.logo}.png" alt="${w.logo}">` : ''}
           <h2 class="world__title">${w.scene.tagline}</h2>
-          <p class="world__line">${w.line}</p>
+          <p class="world__line">${w.scene.description || w.line}</p>
 
-          <div class="world__case">
-            <p class="u-label world__case-label">${cta.label}</p>
-            <p class="world__case-title">${cta.title}</p>
-            <p class="world__case-sub">${cta.sub}</p>
-            ${cta.action ? `
-              <button class="btn" type="button" data-case="${cta.target}"
-                      data-cursor="${cta.action}">
-                ${cta.action} <span aria-hidden="true">&rarr;</span>
-              </button>` : `
-              <p class="world__case-note u-label">Not yet built</p>`}
-          </div>
+          ${cta.action ? `
+            <button class="btn world__intro-btn" type="button" data-case="${cta.target}"
+                    data-cursor="${cta.action}">
+              ${cta.action} <span aria-hidden="true">&rarr;</span>
+            </button>` : ''}
         </div>
 
         <div class="world__scene">
@@ -109,11 +104,6 @@ export function worldView({ worldId, onBack, onUp, onOpenCase, onOpenArchive }) 
           </div>
         </div>
       </div>
-
-      <section class="world__journey" aria-labelledby="beats-h">
-        <h3 class="u-label" id="beats-h">The journey</h3>
-        <ol class="beats">${beats}</ol>
-      </section>
     </div>`;
 
   function mount(root) {

@@ -6,6 +6,7 @@ import { createStage } from './stage.js';
 import { worldsView } from './views/worlds.js';
 import { worldView } from './views/world.js';
 import { caseStudyView } from './views/case-study.js';
+import { lifeworxCaseView } from './views/case-lifeworx.js';
 import { aboutView } from './views/about.js';
 import { archiveView } from './views/archive.js';
 import { contactView } from './views/contact.js';
@@ -101,15 +102,19 @@ const viewForWorld = (id) => worldView({
   onOpenArchive: () => go('/archive'),
 });
 
-const viewForCase = (id) => caseStudyView({
-  caseId: id,
-  onBack: () => go('/'),
-  onUp: () => go('/worlds'),
-  onWorld: () => {
-    const c = caseStudyById(id);
-    go(c ? `/worlds/${c.world}` : '/worlds');
-  },
-});
+const viewForCase = (id) => {
+  const nav = {
+    onBack: () => go('/'),
+    onUp: () => go('/worlds'),
+    onWorld: () => {
+      const c = caseStudyById(id);
+      go(c ? `/worlds/${c.world}` : '/worlds');
+    },
+  };
+  // LifeWorx is the one project with real work behind it, so it has its own
+  // view. The rest still run on the placeholder-driven chapter structure.
+  return id === 'lifeworx' ? lifeworxCaseView(nav) : caseStudyView({ caseId: id, ...nav });
+};
 
 let viewKey = null, viewCached = null;
 

@@ -72,9 +72,6 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
 
       <div class="worlds__grid">
         <div class="worlds__intro">
-          <p class="u-label worlds__eyebrow">${worldsCopy.eyebrow}</p>
-          <h2 class="worlds__title">${worldsCopy.title.join('<br>')}</h2>
-          <p class="worlds__body">${worldsCopy.body}</p>
           <ul class="wlist">${list}</ul>
         </div>
 
@@ -97,12 +94,6 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
         </div>
 
         <nav class="worlds__index" aria-label="The worlds">${index}</nav>
-
-        <div class="worlds__journey">
-          <p class="u-label worlds__eyebrow">${worldsCopy.journeyLabel}</p>
-          <ol class="journey">${journey}</ol>
-          <p class="worlds__quote">${worldsCopy.quote}</p>
-        </div>
       </div>
     </div>`;
 

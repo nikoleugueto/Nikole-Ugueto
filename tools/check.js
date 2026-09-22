@@ -65,7 +65,8 @@ for (const f of readdirSync(join(root, 'src/styles'))) {
 
 /* --- content modules must import cleanly ---------------------------------- */
 const loaded = {};
-for (const mod of ['content/worlds.js', 'content/case-studies.js', 'content/pages.js']) {
+for (const mod of ['content/worlds.js', 'content/case-studies.js', 'content/pages.js',
+                   'content/lifeworx.js']) {
   try {
     loaded[mod] = await import(pathToFileURL(join(root, mod)).href);
   } catch (e) {
@@ -103,6 +104,23 @@ if (pagesMod) {
     need(`/assets/img/process-${i + 1}.webp`, 'process step disc'));
 }
 
+/* The LifeWorx figures are `{ name, widths }` scattered through a nested
+   object, and the view builds their srcsets from a template. Walk the content
+   model for them rather than keeping a list here that would drift. */
+const lwFigures = (node, out = []) => {
+  if (Array.isArray(node)) node.forEach((n) => lwFigures(n, out));
+  else if (node && typeof node === 'object') {
+    if (typeof node.name === 'string' && Array.isArray(node.widths)) out.push(node);
+    else Object.values(node).forEach((n) => lwFigures(n, out));
+  }
+  return out;
+};
+const lwMod = loaded['content/lifeworx.js'];
+const lwShots = lwMod ? lwFigures(lwMod.lifeworx) : [];
+for (const f of lwShots) {
+  for (const w of f.widths) need(`/assets/img/${f.name}-${w}.webp`, `LifeWorx ${f.name} @${w}px`);
+}
+
 /* --- every case study must belong to a world that exists ------------------ */
 const csMod = loaded['content/case-studies.js'];
 if (csMod && worldsMod) {
@@ -122,6 +140,7 @@ for (const file of sources) {
 if (worldsMod) {
   worldsMod.journeyBeats.forEach((_, i) => collect(`journey-${i + 1}.webp`));
 }
+for (const f of lwShots) f.widths.forEach((w) => collect(`${f.name}-${w}.webp`));
 // Every width the art pipeline produced counts as referenced: the srcset that
 // uses them is built from a template, so the literal filenames never appear.
 try {

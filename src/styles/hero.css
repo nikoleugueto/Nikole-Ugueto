@@ -126,7 +126,7 @@
 /* --- copy ---------------------------------------------------------------- */
 .hero__copy {
   position: absolute; z-index: var(--z-copy);
-  max-width: 34rem;
+  max-width: 38rem;
   opacity: var(--copy-out, 1);
   transform: translate3d(0, var(--copy-y, 0px), 0);
   will-change: transform, opacity;

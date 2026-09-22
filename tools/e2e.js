@@ -128,7 +128,8 @@ async function run() {
 
   await evaluate(`document.querySelector('.btn[data-case="lifeworx"]').click(); return 1;`);
   await waitFor(`location.pathname === '/work/lifeworx'`, 'the case study', 9000);
-  await waitFor(`document.querySelector('.cs')`, 'the case study view');
+  // LifeWorx has its own view (.lw); the placeholder-driven ones are .cs.
+  await waitFor(`document.querySelector('.cs, .lw')`, 'the case study view');
   check('case study button → /work/lifeworx', true);
 
   // the artwork is the second entry point to the same place

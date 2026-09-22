@@ -67,7 +67,7 @@ const STRUCTURE = (known = {}) => [
 ];
 
 const lifeworxKnown = {
-  Role: 'UX/UI design',
+  Role: 'Marketing Intern · UX/UI Design',
   Scope: 'Website redesign · events experience',
   Year: null,          // to be filled in
   Team: null,          // to be filled in
@@ -77,10 +77,10 @@ export const caseStudies = {
   lifeworx: {
     id: 'lifeworx',
     world: 'healthcare',
-    title: 'LifeWorx',
+    title: 'Designing for LifeWorx',
     kicker: 'Healthcare · UX/UI',
     // The one line that is actually known, from Nikole's own brief.
-    subtitle: 'Redesigning the website and events experience.',
+    subtitle: 'A new Events destination where LifeWorx clients can discover special experiences and connect with their community.',
     known: lifeworxKnown,
     contentStatus: 'placeholder',
     chapters: STRUCTURE(lifeworxKnown),
