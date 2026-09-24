@@ -29,7 +29,7 @@ export function worldView({ worldId, onBack, onUp, onOpenCase, onOpenArchive }) 
         label: `Case study ${w.no}`,
         title: study.title,
         sub: study.subtitle,
-        action: undefinedProject ? 'See the structure' : 'Open the case study',
+        action: undefinedProject ? 'see the structure' : 'Open the case study',
         target: study.id,
       }
     : {

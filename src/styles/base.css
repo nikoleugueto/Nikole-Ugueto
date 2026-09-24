@@ -117,10 +117,16 @@ a { color: inherit; text-decoration: none; }
 
 .brand { display: flex; align-items: center; gap: .875rem; }
 .brand__mark {
-  font-size: 1.0625rem; font-weight: 500; letter-spacing: -.02em; line-height: 1;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.0625rem; font-weight: 400; letter-spacing: -.02em; line-height: 1;
 }
 .brand__rule { width: 2.25rem; height: 1px; background: var(--rule); }
-.brand__name { color: var(--ink-soft); }
+.brand__name {
+  font-family: 'Cinzel', serif;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
 
 .site-nav { display: flex; align-items: center; gap: clamp(1.25rem, 2.6vw, 2.75rem); }
 /* The nav inherits the label tracking from its parent, which at 0.16em makes
@@ -162,8 +168,8 @@ a { color: inherit; text-decoration: none; }
     padding: 1.15rem 0; text-align: left;
     border-bottom: 1px solid var(--rule-soft);
   }
-  .world-row__no    { color: var(--ink-muted); }
-  .world-row__name  { font-size: 1.125rem; font-weight: 400; letter-spacing: -.01em; }
+  .world-row__no    { color: var(--ink-muted); font-weight: 600; }
+  .world-row__name  { font-size: 1.125rem; font-weight: 600; letter-spacing: -.01em; }
   .world-row__sub   { display: block; color: var(--ink-muted); margin-top: .2rem; }
   .world-row__go {
     color: var(--ink-muted); letter-spacing: 0; text-transform: none;

@@ -66,7 +66,7 @@ for (const f of readdirSync(join(root, 'src/styles'))) {
 /* --- content modules must import cleanly ---------------------------------- */
 const loaded = {};
 for (const mod of ['content/worlds.js', 'content/case-studies.js', 'content/pages.js',
-                   'content/lifeworx.js']) {
+                   'content/lifeworx.js', 'content/castillo.js']) {
   try {
     loaded[mod] = await import(pathToFileURL(join(root, mod)).href);
   } catch (e) {
@@ -104,21 +104,23 @@ if (pagesMod) {
     need(`/assets/img/process-${i + 1}.webp`, 'process step disc'));
 }
 
-/* The LifeWorx figures are `{ name, widths }` scattered through a nested
-   object, and the view builds their srcsets from a template. Walk the content
+/* The case-study figures are `{ name, widths }` scattered through a nested
+   object, and the views build their srcsets from a template. Walk the content
    model for them rather than keeping a list here that would drift. */
-const lwFigures = (node, out = []) => {
-  if (Array.isArray(node)) node.forEach((n) => lwFigures(n, out));
+const figures = (node, out = []) => {
+  if (Array.isArray(node)) node.forEach((n) => figures(n, out));
   else if (node && typeof node === 'object') {
     if (typeof node.name === 'string' && Array.isArray(node.widths)) out.push(node);
-    else Object.values(node).forEach((n) => lwFigures(n, out));
+    else Object.values(node).forEach((n) => figures(n, out));
   }
   return out;
 };
 const lwMod = loaded['content/lifeworx.js'];
-const lwShots = lwMod ? lwFigures(lwMod.lifeworx) : [];
+const chgMod = loaded['content/castillo.js'];
+const lwShots = (lwMod ? figures(lwMod.lifeworx) : [])
+  .concat(chgMod ? figures(chgMod.castillo) : []);
 for (const f of lwShots) {
-  for (const w of f.widths) need(`/assets/img/${f.name}-${w}.webp`, `LifeWorx ${f.name} @${w}px`);
+  for (const w of f.widths) need(`/assets/img/${f.name}-${w}.webp`, `case-study figure ${f.name} @${w}px`);
 }
 
 /* --- every case study must belong to a world that exists ------------------ */

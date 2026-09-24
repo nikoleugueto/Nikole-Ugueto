@@ -80,21 +80,26 @@ export const caseStudies = {
     title: 'Designing for LifeWorx',
     kicker: 'Healthcare · UX/UI',
     // The one line that is actually known, from Nikole's own brief.
-    subtitle: 'A new Events destination where LifeWorx clients can discover special experiences and connect with their community.',
+    subtitle: 'A new Events destination designed to make it easier for LifeWorx clients and families to discover special experiences, explore upcoming activities, and connect with their community.',
     known: lifeworxKnown,
     contentStatus: 'placeholder',
     chapters: STRUCTURE(lifeworxKnown),
   },
 
-  'ai-product': {
-    id: 'ai-product',
+  castillo: {
+    id: 'castillo',
     world: 'ai',
-    title: 'To be defined',
-    kicker: 'AI & Data · Digital product',
-    subtitle: 'A concept still being shaped.',
-    known: {},
-    contentStatus: 'undefined-project',
-    chapters: STRUCTURE(),
+    title: 'AI Home Design',
+    kicker: 'Artificial Intelligence · Digital product',
+    // Real client, real catalogue, speculative product — said in the subtitle
+    // so the distinction survives anywhere this line is quoted.
+    subtitle: 'An AI-assisted home discovery concept built on Castillo Housing Group’s real published catalogue of fifty home designs.',
+    known: {
+      Role: 'Web & brand collateral · Home-design content',
+      Scope: 'Real client work · speculative product concept',
+    },
+    contentStatus: 'written',
+    chapters: [],
   },
 
   'saas-product': {

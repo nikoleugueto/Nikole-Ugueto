@@ -1,0 +1,484 @@
+/* ==========================================================================
+   LifeWorx Events.
+
+   Scoped `lw-` throughout, including the one rule that reaches up to the
+   stage, so this file cannot affect another screen.
+
+   Shape: a centred editorial opening on paper, the problem and the solution
+   stated plainly, then two full-screen scenes — the real Events page scrolling
+   inside a laptop, and the motion study — and it closes on one number.
+   ========================================================================== */
+
+@font-face {
+  font-family: "OrticaLinear-Light";
+  src: url("/assets/fonts/OrticaLinear-Light.otf") format("opentype");
+  font-weight: 300;
+}
+
+.stage:has(.lw) {
+  place-items: start stretch;
+  padding: 0;
+  background: #F2F0EC;
+}
+
+.lw {
+  /* One type scale, declared once. Only the metric is allowed off it. */
+  --t-hero:    clamp(1.75rem, 3.5vw, 2.85rem);
+  --t-stmt:    clamp(1.5rem, 2.7vw, 2.375rem);
+  --t-lede:    clamp(1.0625rem, 1.35vw, 1.25rem);
+  --t-copy:    1.0625rem;
+  --t-cap:     .8125rem;
+  --t-metric:  clamp(2.75rem, 11vw, 8.5rem);
+
+  --m: 46rem;                                   /* reading measure */
+  --col: min(96rem, 100% - 2 * var(--gutter));
+
+  position: relative;
+  width: 100%;
+  padding-bottom: clamp(3rem, 10vh, 6rem);
+  color: var(--ink);
+  opacity: 0;
+}
+.lw[data-ready="true"] { opacity: 1; transition: opacity var(--dur-l) var(--ease-out); }
+
+.lw .worlds__crumb { padding: calc(var(--header-h) + .5rem) var(--gutter) 0; }
+
+/* Applied by JS, not by the stylesheet, so a page whose observer never fires
+   shows its content rather than staying blank for good. */
+.lw [data-reveal][data-in="false"] { opacity: 0; transform: translate3d(0, 1.1rem, 0); }
+.lw [data-reveal][data-in="true"] {
+  opacity: 1; transform: none;
+  transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
+}
+
+/* The section label, centred wherever it appears. */
+.lw-label {
+  display: flex; align-items: baseline; justify-content: center; gap: .9rem;
+  color: #a25b57; margin: 0; font-weight: 600;
+}
+
+/* ==========================================================================
+   01 — the opening
+   ========================================================================== */
+.lw-open {
+  min-height: min(76svh, 40rem);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: clamp(1.5rem, 5vh, 3rem) var(--gutter) clamp(2rem, 6vh, 3.25rem);
+}
+.lw-open > * { max-width: var(--m); }
+
+.lw-open .lw-label { margin-bottom: clamp(1.5rem, 4.5vh, 2.5rem); }
+
+/* Present without dominating: read against the title, not over it. */
+.lw-open__logo {
+  display: block; width: auto;
+  height: clamp(32px, 3.5vw, 48px);
+  margin: 0 0 clamp(1.5rem, 4.5vh, 2.25rem);
+}
+
+.lw-open__title {
+  margin: 0; font-weight: 300 !important; font-family: OrticaLinear-Light;
+  font-size: var(--t-hero);
+  line-height: 1.2; letter-spacing: -.012em;
+}
+/* Wide enough that the last word never lands on a line of its own, and
+   balanced so the two lines carry roughly the same weight. */
+.lw-open__lede {
+  margin: clamp(1rem, 2.6vh, 1.5rem) 0 0; max-width: 52rem;
+  font-size: var(--t-copy); line-height: 1.72; color: var(--ink-soft);
+  text-wrap: balance;
+}
+.lw-open__about {
+  margin: clamp(.9rem, 2.2vh, 1.2rem) 0 0; max-width: 52rem;
+  font-size: var(--t-copy); line-height: 1.72; color: var(--ink-soft);
+  text-wrap: balance;
+}
+
+/* The link belongs beside the role itself, not beside the word "Role". */
+.lw-id {
+  margin: clamp(1.75rem, 5vh, 2.75rem) 0 0;
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+.lw-id dt { color: #a25b57; font-weight: 600; }
+.lw-id dd {
+  margin: .4rem 0 0;
+  display: flex; flex-wrap: nowrap; align-items: baseline;
+  gap: clamp(.8rem, 2vw, 1.5rem);
+  font-size: .9375rem;
+}
+
+.lw-live {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding-bottom: .15rem;
+  font-size: .9375rem;
+  color: var(--focus);
+  border-bottom: 1px solid currentColor;
+  transition: opacity var(--dur-s) var(--ease-out);
+}
+.lw-live:hover { opacity: .68; }
+
+/* ==========================================================================
+   02 / 03 — problem and solution, side by side
+   ========================================================================== */
+.lw-duals {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  width: 100%; max-width: var(--col); margin-inline: auto;
+  padding: clamp(2rem, 5vh, 3rem) var(--gutter) clamp(3rem, 8vh, 5rem);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.lw-dual {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+}
+.lw-dual--problem { border-right: 1px solid var(--rule-soft); }
+
+.lw-dual .lw-label { margin-bottom: clamp(.8rem, 2vh, 1.15rem); }
+.lw-dual__h {
+  margin: 0; max-width: 26em; font-weight: 300 !important; font-family: OrticaLinear-Light;
+  font-size: clamp(1.5rem, 2.4vw, 1.75rem);
+  line-height: 1.2; letter-spacing: -.012em;
+}
+.lw-dual__body {
+  margin: clamp(1rem, 2.6vh, 1.5rem) 0 0; max-width: 48rem;
+  font-size: var(--t-copy); line-height: 1.72; color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   The laptop — the real page, behind a real bezel
+   ========================================================================== */
+.lw-act,
+.lw-film {
+  position: relative;
+  --p: 0; --settle: 0; --page: 0;
+}
+.lw-act { height: 480svh; }
+.lw-film { height: 300svh; }
+
+.lw-pin {
+  position: sticky; top: 0;
+  height: 100svh; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* The scene is the section, so it is framed by geometry rather than by width.
+   Wide enough and it covers the viewport outright; portrait and it is scaled
+   past the frame until the screen is worth looking at, with the photograph
+   itself — 64px, blown up — standing in for the rest of the room. */
+.lw-act .lw-pin {
+  background:
+    linear-gradient(168deg, rgba(159,176,189,.30), rgba(166,145,138,.30)),
+    url("/assets/img/lw-scene-blur-64.webp") center / cover no-repeat;
+}
+
+.lw-machine {
+  position: absolute; left: 50%; top: 50%;
+  width: min(170%, calc(100svh * 1536 / 1024));
+  aspect-ratio: 1536 / 1024;
+  /* Settles as you arrive and then holds perfectly still: the page moves, the
+     machine does not. */
+  transform: translate(-50%, -50%) scale(calc(1.05 - 0.05 * var(--settle)));
+  will-change: transform;
+  /* Where the scene does not reach the top and bottom of the frame, its edges
+     dissolve into the blown-up photograph behind rather than ending on a hard
+     line. The stops clear the laptop itself at every size. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 95%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+
+/* Landscape enough for the photograph to fill the frame on its own terms:
+   it covers, so there is nothing to blend into. */
+@media (min-aspect-ratio: 7/5) {
+  .lw-machine {
+    width: max(100%, calc(100svh * 1536 / 1024));
+    -webkit-mask-image: none; mask-image: none;
+  }
+}
+
+/* The hole in the frame is the mask. This box only has to be big enough to
+   cover it — anything that spills is hidden by the bezel drawn on top. */
+.lw-machine__screen {
+  position: absolute;
+  left: 23.24%; top: 21.68%; width: 53.52%; height: 51.95%;
+  overflow: hidden;
+  background: #fff;
+}
+/* 90.581% is the scrollable part of the screenshot once the screen has covered
+   its first 1.545:1 — the image is 1400×9623, so 9.419% of it shows at a time. */
+.lw-machine__page {
+  position: absolute; left: 0; top: 0;
+  width: 100%; height: auto;
+  transform: translate3d(0, calc(var(--page) * -90.581%), 0);
+  will-change: transform;
+}
+/* A little glass, so the page reads as being behind something. */
+.lw-machine__glare {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(112deg,
+    rgba(255,255,255,.22) 0%, rgba(255,255,255,.05) 26%,
+    rgba(255,255,255,0) 52%, rgba(210,225,235,.10) 100%);
+}
+
+.lw-machine__frame {
+  position: relative; z-index: 1;
+  display: block; width: 100%; height: auto;
+  pointer-events: none;
+}
+
+.lw-hint {
+  position: absolute; left: 50%; bottom: clamp(1rem, 3vh, 2.25rem);
+  transform: translateX(-50%);
+  color: var(--ink-muted);
+  opacity: calc(1 - var(--settle));
+  transition: opacity var(--dur-m) var(--ease-out);
+}
+
+/* ==========================================================================
+   04 — exploration: design thinking
+   ========================================================================== */
+.lw-thinking {
+  width: 100%; max-width: var(--col); margin-inline: auto;
+  padding: clamp(4rem, 10vh, 6rem) var(--gutter) clamp(2rem, 6vh, 4rem);
+  border-top: 1px solid var(--rule-soft);
+}
+
+.lw-thinking .lw-label { margin-bottom: clamp(1.5rem, 4vh, 2.25rem); justify-content: center; }
+
+.lw-thinking__points {
+  display: grid; gap: clamp(2rem, 5vh, 3rem);
+  max-width: 52rem; margin: 0 auto;
+}
+
+.lw-thinking__point {
+  display: flex; flex-direction: column;
+}
+
+.lw-thinking__title {
+  margin: 0; font-weight: 300; font-family: OrticaLinear-Light;
+  font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+  line-height: 1.2; letter-spacing: -.012em;
+  color: var(--ink);
+}
+
+.lw-thinking__body {
+  margin: .6rem 0 0;
+  font-size: var(--t-copy); line-height: 1.65; color: var(--ink-soft);
+}
+
+/* ==========================================================================
+   Motion study video, full bleed
+   ========================================================================== */
+.lw-pin--film { background: #0E1317; }
+.lw-film__video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(calc(1.06 - 0.06 * var(--settle)));
+  will-change: transform;
+}
+/* The study is mostly white marble, so the caption needs something to sit on.
+   A scrim rather than a panel: the film still reaches the edges. */
+.lw-pin--film::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(10, 14, 18, .62) 0%, rgba(10, 14, 18, .22) 26%, rgba(10, 14, 18, 0) 54%);
+}
+.lw-film__cap {
+  position: absolute; left: var(--gutter); right: var(--gutter);
+  bottom: clamp(1.5rem, 6vh, 3.5rem);
+  z-index: 2;
+  color: var(--on-dark);
+  text-shadow: 0 1px 24px rgba(0, 0, 0, .55);
+}
+/* One line, and not shrunk to get there: the caption gets the room instead. */
+.lw-film__h {
+  margin: 0; font-weight: 300;
+  font-size: clamp(1.25rem, 2.1vw, 1.875rem);
+  line-height: 1.16; letter-spacing: -.024em;
+  text-wrap: balance;
+}
+@media (min-width: 52rem) {
+  .lw-film__h { white-space: nowrap; }
+}
+/* With motion reduced the video gets controls, which need to clear the caption. */
+.lw-film__video[controls] { object-fit: contain; background: #0E1317; }
+
+/* Neither scene pins when motion is reduced: they become one screen each. */
+.lw-act[data-motion="static"],
+.lw-film[data-motion="static"] { height: auto; }
+.lw-act[data-motion="static"] .lw-pin,
+.lw-film[data-motion="static"] .lw-pin {
+  position: static; height: auto; overflow: visible;
+  padding-block: clamp(2rem, 7vh, 4rem);
+}
+.lw-act[data-motion="static"] .lw-machine { transform: none; }
+.lw-act[data-motion="static"] .lw-hint { display: none; }
+.lw-film[data-motion="static"] .lw-pin--film { padding: 0; }
+.lw-film[data-motion="static"] .lw-pin--film::after { display: none; }
+.lw-film[data-motion="static"] .lw-film__video {
+  position: static; transform: none; height: auto; aspect-ratio: 16 / 9;
+}
+.lw-film[data-motion="static"] .lw-film__cap {
+  position: static; padding: 1.25rem var(--gutter) 1.75rem;
+  max-width: none; text-shadow: none;
+}
+
+/* ==========================================================================
+   05 — the impact
+   ========================================================================== */
+.lw-metric {
+  width: 100%; max-width: var(--col); margin-inline: auto;
+  padding: clamp(4rem, 16vh, 9rem) 0;
+  text-align: center;
+}
+.lw-metric .lw-label { margin-bottom: clamp(1.5rem, 5vh, 3rem); }
+.lw-metric__value {
+  margin: 0; font-weight: 300; font-family: OrticaLinear-Light;
+  font-size: var(--t-metric);
+  line-height: .82; letter-spacing: -.05em;
+}
+.lw-metric__label { margin: clamp(1.25rem, 4vh, 2.25rem) 0 0; color: var(--ink-soft); }
+.lw-metric__note {
+  margin: clamp(.7rem, 2vh, 1rem) auto 0; max-width: 30rem;
+  font-size: var(--t-cap); line-height: 1.6; color: var(--ink-muted);
+}
+
+/* Qualitative impact bullets. No label, just the points. */
+.lw-design {
+  max-width: 44rem; margin: clamp(2.5rem, 8vh, 4.5rem) auto 0;
+  padding: clamp(1.25rem, 4vh, 2rem) var(--gutter) 0;
+  border-top: 1px solid var(--rule-soft);
+  text-align: left;
+  color: var(--ink-soft);
+}
+.lw-design__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+.lw-design__list li {
+  position: relative; padding-left: 1.35rem;
+  font-size: var(--t-copy); line-height: 1.65; color: var(--ink-soft);
+}
+.lw-design__list li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #a25b57;
+}
+
+/* ==========================================================================
+   Testimonials — editorial closing band
+   ========================================================================== */
+.lw-testimonials {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background-color: #a25b57;
+  padding: clamp(2rem, 3.5vh, 3rem) var(--gutter);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+}
+
+.lw-testimonials__scroll {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.lw-testimonials__track {
+  position: relative;
+  display: flex;
+  gap: clamp(8rem, 15vw, 16rem);
+  will-change: transform;
+  width: max-content;
+}
+
+.lw-testimonial {
+  flex: 0 0 auto;
+  width: clamp(42rem, 78vw, 62rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 clamp(1.5rem, 2.5vw, 2.5rem);
+  text-align: center;
+}
+
+.lw-testimonial__quote {
+  margin: 0;
+  font-family: OrticaLinear-Light;
+  font-weight: 300;
+  font-size: clamp(1.0625rem, 1.2vw, 1.375rem);
+  line-height: 1.55;
+  letter-spacing: -.01em;
+  color: #ffffff;
+  text-wrap: pretty;
+  max-width: 100%;
+}
+
+.lw-testimonial__attribution {
+  margin: clamp(1rem, 2vh, 1.5rem) 0 0;
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: .8rem;
+  line-height: 1.3;
+  color: #ffffff;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.lw-testimonial__name {
+  display: inline;
+  font-weight: 700;
+}
+
+.lw-testimonial__name::after {
+  content: " · ";
+  margin: 0 .3em;
+}
+
+.lw-testimonial__title {
+  display: inline;
+  opacity: .9;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  font-weight: 400;
+}
+
+.lw-foot {
+  width: 100%; max-width: var(--m); margin-inline: auto;
+  padding: clamp(1.5rem, 4vh, 2rem) var(--gutter) 0;
+  border-top: none;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Narrower screens
+   ========================================================================== */
+/* Phones: the same idea, asked for less. */
+@media (max-width: 46rem) {
+  .lw-open { min-height: auto; padding-block: clamp(1rem, 4vh, 2rem) clamp(2rem, 7vh, 3rem); }
+  .lw-open__logo { height: clamp(34px, 10vw, 48px); }
+  
+  /* Problem + Solution stack vertically on mobile. */
+  .lw-duals {
+    grid-template-columns: 1fr;
+    padding: clamp(1.5rem, 3vh, 2.25rem) var(--gutter);
+  }
+  .lw-dual { padding: clamp(1.25rem, 3vh, 1.75rem) 0; }
+  .lw-dual--problem { border-right: none; border-bottom: 1px solid var(--rule-soft); }
+
+  .lw-act { height: 240svh; }
+  .lw-hint { display: none; }
+
+  .lw-film { height: 200svh; }
+  .lw-film__video { transform: none; }
+  .lw-metric { padding-block: clamp(3rem, 11vh, 5rem); }
+  .lw-metric__value { font-size: clamp(3.75rem, 27vw, 7.5rem); }
+  .lw-design { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lw[data-ready="true"],
+  .lw [data-reveal][data-in="true"] { transition-duration: 1ms; }
+}

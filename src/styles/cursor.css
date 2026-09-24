@@ -36,13 +36,23 @@ body[data-cursor-scope="feature"] { --cursor-size: 96px; }
 }
 
 /* The caption only exists when the pointer is over something that acts. */
+@font-face {
+  font-family: "OrticaLinear-Light";
+  src: url("/assets/fonts/OrticaLinear-Light.otf") format("opentype");
+  font-weight: 300;
+}
+
 .cursor__caption {
   position: absolute; left: 50%; top: calc(100% + .55rem);
   transform: translateX(-50%) translateY(.35rem);
   white-space: nowrap;
-  color: var(--ink);
+  color: #ffffff;
   opacity: 0;
   transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out);
+  font-family: OrticaLinear-Light;
+  font-weight: 300;
+  font-size: .8125rem;
+  letter-spacing: -.01em;
 }
 .cursor[data-caption="true"] .cursor__caption { opacity: 1; transform: translateX(-50%); }
 

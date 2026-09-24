@@ -52,7 +52,7 @@
   display: flex; flex-wrap: wrap; gap: clamp(1.25rem, 4vw, 3.5rem);
   margin: clamp(1.75rem, 5vh, 3rem) 0 0;
 }
-.cs__meta dt { color: var(--ink-muted); }
+.cs__meta dt { color: #000000; font-weight: 600; }
 .cs__meta dd { margin: .35rem 0 0; font-size: 1rem; }
 
 .cs__banner {
@@ -96,9 +96,10 @@
 .cs__chead { margin-bottom: clamp(1.5rem, 4vh, 2.5rem); }
 .cs__ckicker {
   display: flex; align-items: baseline; gap: .9rem;
-  color: var(--ink-muted); margin: 0 0 .9rem;
+  color: #000000; margin: 0 0 .9rem;
+  font-weight: 600;
 }
-.cs__cno { color: var(--ink-quiet); }
+.cs__cno { color: #000000; font-weight: 600; }
 .cs__h {
   margin: 0; font-weight: 300;
   font-size: clamp(1.75rem, 4.2vw, 3rem);

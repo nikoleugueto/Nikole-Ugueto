@@ -7,6 +7,7 @@ import { worldsView } from './views/worlds.js';
 import { worldView } from './views/world.js';
 import { caseStudyView } from './views/case-study.js';
 import { lifeworxCaseView } from './views/case-lifeworx.js';
+import { castilloCaseView } from './views/case-castillo.js';
 import { aboutView } from './views/about.js';
 import { archiveView } from './views/archive.js';
 import { contactView } from './views/contact.js';
@@ -111,9 +112,10 @@ const viewForCase = (id) => {
       go(c ? `/worlds/${c.world}` : '/worlds');
     },
   };
-  // LifeWorx is the one project with real work behind it, so it has its own
-  // view. The rest still run on the placeholder-driven chapter structure.
-  return id === 'lifeworx' ? lifeworxCaseView(nav) : caseStudyView({ caseId: id, ...nav });
+  // The two written case studies have their own views; the rest fall back to
+  // the generic chapter structure.
+  const bespoke = { lifeworx: lifeworxCaseView, castillo: castilloCaseView };
+  return bespoke[id] ? bespoke[id](nav) : caseStudyView({ caseId: id, ...nav });
 };
 
 let viewKey = null, viewCached = null;

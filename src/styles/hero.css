@@ -5,6 +5,12 @@
    file — and body[data-layout] carries the current one for scripts.
    ========================================================================== */
 
+@font-face {
+  font-family: "OrticaLinear-Light";
+  src: url("/assets/fonts/OrticaLinear-Light.otf") format("opentype");
+  font-weight: 300;
+}
+
 .hero {
   position: fixed; inset: 0; z-index: var(--z-plate);
   overflow: hidden;
@@ -144,6 +150,7 @@
   margin: 0;
   font-size: var(--t-display);
   font-weight: 300;
+  font-family: OrticaLinear-Light;
   line-height: 1.045;
   letter-spacing: var(--track-tight);
   color: var(--ink);
