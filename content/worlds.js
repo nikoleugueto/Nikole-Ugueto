@@ -45,7 +45,7 @@ export const worlds = [
     hotspot:  { x: 0.630, y: 0.205, side: 'right', line: 20 },
     district: { x: 0.700, y: 0.220 },
     card:     { x: 0.775, y: 0.015, side: 'right' },
-    scene:    { tagline: 'AI Home Design', sky: ['#C7D8E8', '#E7E2DA'], description: 'An AI-assisted home discovery concept built on Castillo Housing Group’s real published catalogue of fifty home designs.' },
+    scene:    { tagline: 'AI Home Design', sky: ['#C7D8E8', '#E7E2DA'], description: 'An AI-assisted home discovery concept built on Castillo Housing Group’s published catalogue of home designs.' },
     logo: 'castillo',
     journey:  { line: 'From data to understanding.', kicker: 'AI & Product' },
     caseStudy: { id: 'castillo', title: 'Castillo Housing Group', status: 'real' },

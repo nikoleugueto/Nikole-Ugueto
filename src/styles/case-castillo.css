@@ -52,7 +52,8 @@
 
 .chg-label {
   display: flex; align-items: baseline; justify-content: center; gap: .9rem;
-  color: var(--ink-muted); margin: 0;
+  color: #a25b57; margin: 0;
+  font-weight: 600;
 }
 
 /* ==========================================================================
@@ -95,10 +96,10 @@
 
 /* --- role and link to live site -------------------------------------------- */
 .chg-id {
-  margin: clamp(1.75rem, 5vh, 2.75rem) 0 0;
+  margin: clamp(1.5rem, 3.5vh, 2rem) 0 0;
   display: flex; flex-direction: column; align-items: flex-start;
 }
-.chg-id dt { color: var(--ink-muted); font-weight: 600; }
+.chg-id dt { color: #a25b57; font-weight: 600; }
 .chg-id dd {
   margin: .4rem 0 0;
   display: flex; flex-wrap: nowrap; align-items: baseline;
@@ -142,7 +143,6 @@
 
 .chg-live {
   display: inline-flex; align-items: center; gap: .45rem;
-  margin-top: clamp(1.5rem, 4vh, 2.25rem);
   padding-bottom: .15rem;
   font-size: .9375rem;
   color: var(--focus);
@@ -155,6 +155,7 @@
    02 — the real work
    ========================================================================== */
 .chg-work {
+  container-type: inline-size;
   width: 100%; max-width: var(--col); margin-inline: auto;
   padding: clamp(2.5rem, 7vh, 4rem) var(--gutter);
   border-top: 1px solid var(--rule-soft);
@@ -162,9 +163,17 @@
 }
 .chg-work .chg-label { margin-bottom: clamp(1.25rem, 3.5vh, 2rem); }
 .chg-work__h {
-  margin: 0 auto; max-width: 24em;
+  margin: 0 auto;
   font-weight: 300 !important; font-family: OrticaLinear-Light;
   font-size: var(--t-stmt); line-height: 1.2; letter-spacing: -.012em;
+  /* One line from tablet width up, easing down only as far as the line
+     needs (the sentence is ~28.8em wide). On phones one line would be too
+     small to read, so there it wraps into balanced lines at full size. */
+  font-size: min(var(--t-stmt), 100cqi / 29.5);
+  white-space: nowrap;
+}
+@media (max-width: 46rem) {
+  .chg-work__h { font-size: var(--t-stmt); white-space: normal; text-wrap: balance; }
 }
 .chg-work__body {
   margin: clamp(1rem, 2.6vh, 1.4rem) auto 0; max-width: 46rem;
@@ -184,6 +193,16 @@
 .chg-work__cap {
   margin: .7rem 0 0;
   font-size: var(--t-cap); line-height: 1.55; color: var(--ink-muted);
+}
+
+.chg-office {
+  width: 100%; max-width: 64rem;
+  margin: 0 auto; padding: 0 var(--gutter) clamp(2.5rem, 7vh, 4rem);
+  text-align: left;
+}
+.chg-office__video {
+  display: block; width: 100%; height: auto;
+  border: 1px solid var(--rule-soft);
 }
 
 /* ==========================================================================
@@ -280,6 +299,7 @@
 .chg-stage { display: flex; justify-content: center; }
 
 .chg-phone { width: 100%; max-width: 22rem; }
+.chg-phone, .chg-desk { transition: transform var(--dur-l) var(--ease-mid); }
 .chg-phone__frame {
   position: relative;
   aspect-ratio: 390 / 812;
@@ -307,6 +327,75 @@
 }
 
 .chg-app { display: flex; flex-direction: column; height: 100%; }
+
+/* The product speaks in Castillo's own type (Karla body, Lato headings, as on
+   castillohousing.com), on the homeowner's phone and the builder's desk alike.
+   The portfolio around it keeps its own. */
+.chg-app, .chg-desk { font-family: 'Karla', 'Helvetica Neue', Arial, sans-serif; }
+.chg-app__title, .chg-app .chg-scr__h,
+.chg-desk .chg-desk__proj, .chg-desk .chg-desk__emptyh, .chg-desk .chg-drawer__h { font-family: 'Lato', 'Helvetica Neue', Arial, sans-serif; }
+.chg-app input, .chg-app textarea, .chg-desk input, .chg-desk textarea { font-family: inherit; }
+
+/* Readability inside the product: every size ~8% up (rounded to half-pixels,
+   so the hierarchy holds), and primary labels a step stronger than the
+   secondary text beneath them. Scoped to .chg-app — nothing outside moves. */
+.chg-app .chg-app__title { font-size: 0.9375rem; }
+.chg-app .chg-app__chip { font-size: 0.5938rem; }
+.chg-app .chg-scr__h { font-size: 1.4063rem; }
+.chg-app .chg-scr__lede { font-size: 0.875rem; }
+.chg-app .chg-scr__eyebrow { font-size: 0.6875rem; }
+.chg-app .chg-scr__note { font-size: 0.75rem; }
+.chg-app .chg-step__label { font-size: 0.875rem; }
+.chg-app .chg-step__ctrl button { font-size: 0.9375rem; }
+.chg-app .chg-step__ctrl b { font-size: 1rem; }
+.chg-app .chg-chip__label { font-size: 0.875rem; }
+.chg-app .chg-chip__rule { font-size: 0.6875rem; }
+.chg-app .chg-cta { font-size: 0.875rem; }
+.chg-app .chg-row__name { font-size: 0.9375rem; }
+.chg-app .chg-row__score { font-size: 1rem; }
+.chg-app .chg-row__score i { font-size: 0.6875rem; }
+.chg-app .chg-row__meta { font-size: 0.75rem; }
+.chg-app .chg-row__why { font-size: 0.75rem; }
+.chg-app .chg-stats b { font-size: 1.0938rem; }
+.chg-app .chg-stats span { font-size: 0.5938rem; }
+.chg-app .chg-why__label { font-size: 0.8125rem; }
+.chg-app .chg-why__v { font-size: 0.8125rem; }
+.chg-app .chg-why__rule { font-size: 0.6875rem; }
+.chg-app .chg-why__read { font-size: 0.75rem; }
+.chg-app .chg-cmp__name { font-size: 0.875rem; }
+.chg-app .chg-cmp__score { font-size: 1.2188rem; }
+.chg-app .chg-cmp__col dt { font-size: 0.5938rem; }
+.chg-app .chg-cmp__col dd { font-size: 0.8125rem; }
+.chg-app .chg-cmp__d { font-size: 0.6875rem; }
+.chg-app .chg-cmp__same { font-size: 0.6875rem; }
+.chg-app .chg-pick__b { font-size: 0.75rem; }
+.chg-app .chg-flag, .chg-app .chg-state { font-size: 0.5938rem; }
+.chg-app .chg-cat__name { font-size: 0.875rem; }
+.chg-app .chg-cat__n { font-size: 0.8125rem; }
+.chg-app .chg-cat__n i { font-size: 0.6875rem; }
+.chg-app .chg-item__title { font-size: 0.875rem; }
+.chg-app .chg-item__sub { font-size: 0.6875rem; }
+.chg-app .chg-add { font-size: 0.8125rem; }
+.chg-app .chg-link, .chg-app .chg-shots { font-size: 0.75rem; }
+.chg-app .chg-fields span { font-size: 0.5938rem; }
+.chg-app .chg-fields input, .chg-app .chg-fields textarea { font-size: 0.8125rem; }
+.chg-app .chg-shot button { font-size: 0.8125rem; }
+.chg-app .chg-upload { font-size: 0.75rem; }
+.chg-app .chg-prio { font-size: 0.75rem; }
+.chg-app .chg-track__s span { font-size: 0.5313rem; }
+.chg-app .chg-thread__who { font-size: 0.6875rem; }
+.chg-app .chg-thread__when { font-size: 0.5938rem; }
+.chg-app .chg-thread__t { font-size: 0.75rem; }
+.chg-app .chg-thread__empty { font-size: 0.75rem; }
+.chg-app .chg-say input { font-size: 0.75rem; }
+.chg-app .chg-say button { font-size: 0.75rem; }
+.chg-app .chg-step__label,
+.chg-app .chg-chip__label,
+.chg-app .chg-row__name,
+.chg-app .chg-why__label,
+.chg-app .chg-cmp__name,
+.chg-app .chg-cat__name,
+.chg-app .chg-item__title { color: var(--ink); font-weight: 500; }
 .chg-app__bar {
   display: grid; grid-template-columns: 1.75rem 1fr auto;
   align-items: center; gap: .5rem;
@@ -573,21 +662,30 @@
   --ordered:   #A6761D;
   --purchased: #3E6B8A;
 }
-.chg-build__head { max-width: var(--m); margin-inline: auto; text-align: center; }
+.chg-build__head { max-width: 52rem; margin-inline: auto; text-align: center; container-type: inline-size; }
 .chg-build .chg-label { margin-bottom: clamp(1rem, 3vh, 1.5rem); }
 .chg-build__h {
   margin: 0; font-weight: 300 !important; font-family: OrticaLinear-Light;
   font-size: var(--t-hero); line-height: 1.2; letter-spacing: -.012em;
+  /* One line at every width: full size wherever it fits, and on narrow
+     screens only as small as the line needs (the sentence is ~17.6em wide). */
+  font-size: min(var(--t-hero), 100cqi / 18);
+  white-space: nowrap;
 }
 .chg-build__sub {
-  margin: .9rem auto 0; max-width: 40rem;
+  /* Exactly as wide as the one-line heading above it: the heading's width
+     is 17.64em at its own font size, which is computed the same way here. */
+  margin: .9rem auto 0; max-width: calc(17.64 * min(var(--t-hero), 100cqi / 18));
   font-size: var(--t-copy); line-height: 1.68; color: var(--ink-soft);
+  text-wrap: pretty;
 }
 .chg-build__honesty {
-  max-width: 40rem; margin: clamp(2rem, 5vh, 3rem) auto 0;
+  /* As wide as its one sentence, so it sits on a single line with the rule
+     above spanning exactly the same width; wraps only where it cannot fit. */
+  width: fit-content; max-width: 100%; margin: clamp(2rem, 5vh, 3rem) auto 0;
   padding-top: 1.25rem; border-top: 1px solid var(--rule-soft);
   font-size: var(--t-cap); line-height: 1.66; color: var(--ink-muted);
-  text-align: center;
+  text-align: center; text-wrap: balance;
 }
 
 /* --- the arc: a spine that reports, not decorates ------------------------- */
@@ -631,6 +729,7 @@
 
 .chg-surfaces { margin-top: clamp(1.75rem, 4vh, 2.5rem); }
 .chg-surface { display: flex; justify-content: center; }
+.chg-surface[data-surface="builder"] { position: relative; }
 .chg-surface[hidden] { display: none; }
 .chg-phone--owner { max-width: 22rem; }
 
@@ -1010,6 +1109,20 @@
   margin: clamp(1rem, 2.6vh, 1.4rem) auto 0; max-width: 40rem;
   font-size: var(--t-copy); line-height: 1.72; color: var(--ink-soft);
 }
+/* The impact figure, set exactly as the LifeWorx metric is. */
+.chg-metric__value {
+  margin: 0; font-weight: 300; font-family: OrticaLinear-Light;
+  font-size: clamp(2.75rem, 11vw, 8.5rem);
+  line-height: .82; letter-spacing: -.05em;
+}
+.chg-metric__label { margin: clamp(1.25rem, 4vh, 2.25rem) 0 0; color: var(--ink-soft); }
+.chg-metric__note {
+  margin: clamp(.7rem, 2vh, 1rem) auto 0; max-width: 30rem;
+  font-size: var(--t-cap); line-height: 1.6; color: var(--ink-muted);
+}
+@media (max-width: 46rem) {
+  .chg-metric__value { font-size: clamp(3.75rem, 27vw, 7.5rem); }
+}
 .chg-close__list {
   list-style: none; margin: clamp(1.75rem, 5vh, 2.5rem) 0 0; padding: 0;
   display: grid; gap: .7rem; text-align: left;
@@ -1021,8 +1134,58 @@
 .chg-close__list li::before {
   content: ""; position: absolute; left: 0; top: .62em;
   width: 5px; height: 5px; border-radius: 50%;
-  background: var(--green);
+  background: #a25b57;
 }
+
+/* ==========================================================================
+   Testimonials — the LifeWorx closing band, in cream and chestnut.
+   #F8F3EB against #a25b57 is 4.6:1, so the chestnut clears AA at every size
+   used here; the title keeps full opacity for the same reason.
+   ========================================================================== */
+.chg-testimonials {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-top: clamp(3rem, 8vh, 5rem);
+  background-color: #F8F3EB;
+  padding: clamp(2rem, 3.5vh, 3rem) var(--gutter);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: auto;
+}
+.chg-testimonials__scroll { position: relative; width: 100%; overflow: hidden; }
+.chg-testimonials__track {
+  position: relative;
+  display: flex;
+  gap: clamp(8rem, 15vw, 16rem);
+  will-change: transform;
+  width: max-content;
+}
+.chg-testimonial {
+  flex: 0 0 auto;
+  width: clamp(42rem, 78vw, 62rem);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 0 clamp(1.5rem, 2.5vw, 2.5rem);
+  text-align: center;
+}
+.chg-testimonial__quote {
+  margin: 0;
+  font-family: OrticaLinear-Light; font-weight: 300;
+  font-size: clamp(1.0625rem, 1.2vw, 1.375rem);
+  line-height: 1.55; letter-spacing: -.01em;
+  color: #a25b57;
+  text-wrap: pretty; max-width: 100%;
+}
+.chg-testimonial__attribution {
+  margin: clamp(1rem, 2vh, 1.5rem) 0 0;
+  font-family: var(--font); font-weight: 500; font-size: .8rem; line-height: 1.3;
+  color: #a25b57;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.chg-testimonial__name { display: inline; font-weight: 700; }
+.chg-testimonial__name::after { content: " · "; margin: 0 .3em; }
+.chg-testimonial__title { display: inline; font-size: .75rem; letter-spacing: .04em; font-weight: 400; }
 
 .chg-foot {
   width: 100%; max-width: var(--m); margin-inline: auto;
@@ -1082,6 +1245,57 @@
   .chg-dot { height: calc(1rem + var(--s) * 4.5rem); }
   .chg-dot span { display: none; }
   .chg-plot__scale { margin-top: 1rem; }
+}
+
+/* --- optional focus view ---------------------------------------------------
+   A small circular control beside each product surface. It enlarges the live
+   surface in place over a dimmed backdrop; nothing about the surface itself
+   changes. Hidden where the product already fills a small screen. */
+.chg-expand {
+  display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; padding: 0;
+  border-radius: 50%; border: 1px solid var(--rule);
+  background: #FBFBFA; color: var(--ink-soft);
+  cursor: pointer;
+  transition: color var(--dur-s) var(--ease-out), border-color var(--dur-s) var(--ease-out),
+              background var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out),
+              opacity var(--dur-m) var(--ease-out);
+}
+.chg-expand svg {
+  width: 1.05rem; height: 1.05rem;
+  fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+}
+.chg-expand:hover { color: var(--ink); border-color: var(--ink-quiet); transform: scale(1.06); }
+.chg-lab .chg-expand { background: transparent; border-color: rgba(255, 255, 255, .28); color: rgba(255, 255, 255, .78); }
+.chg-lab .chg-expand:hover { color: #fff; border-color: rgba(255, 255, 255, .6); }
+
+.chg-phone { position: relative; }
+.chg-phone > .chg-expand { position: absolute; top: 1.25rem; left: calc(100% + 1.25rem); }
+.chg-surface > .chg-expand { position: absolute; top: -3.5rem; right: max(0px, calc(50% - 36rem)); }
+
+.chg [data-expanded] { position: relative; z-index: 60; }
+.chg-phone[data-expanded] > .chg-expand { opacity: 0; pointer-events: none; }
+
+.chg-focus {
+  position: fixed; left: 0; right: 0; top: var(--focus-top, 0px); height: 100vh; z-index: 55;
+  background: rgba(18, 23, 28, .74);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-l) var(--ease-mid);
+}
+.chg-focus[data-on="true"] { opacity: 1; pointer-events: auto; }
+
+.chg-expand--close {
+  position: fixed; top: calc(var(--focus-top, 0px) + var(--header-h) + .75rem); right: var(--gutter); z-index: 70;
+  background: rgba(18, 23, 28, .88); border-color: rgba(255, 255, 255, .3); color: rgba(255, 255, 255, .9);
+  opacity: 0;
+}
+.chg-expand--close:hover { color: #fff; border-color: rgba(255, 255, 255, .65); background: rgba(18, 23, 28, .96); }
+.chg-expand--close[data-on="true"] { opacity: 1; }
+.chg-expand--close[hidden] { display: none; }
+
+@media (max-width: 46rem) {
+  .chg-expand { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -93,7 +93,7 @@ export const caseStudies = {
     kicker: 'Artificial Intelligence · Digital product',
     // Real client, real catalogue, speculative product — said in the subtitle
     // so the distinction survives anywhere this line is quoted.
-    subtitle: 'An AI-assisted home discovery concept built on Castillo Housing Group’s real published catalogue of fifty home designs.',
+    subtitle: 'An AI-assisted home discovery concept built on Castillo Housing Group’s published catalogue of home designs.',
     known: {
       Role: 'Web & brand collateral · Home-design content',
       Scope: 'Real client work · speculative product concept',

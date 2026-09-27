@@ -37,35 +37,35 @@ export const castillo = {
      collateral, and they are the reason the concept has a catalogue to stand
      on at all. */
   work: {
-    no: '02',
-    kicker: 'The real work',
-    title: 'Brand, brochure and the plan catalogue.',
-    body: 'Before any of the product thinking, there was the ordinary work of making a builder legible: a brand people could trust, a brochure that carried the range, and fifty home designs written up so a family could actually compare them.',
+    no: '04',
+    kicker: 'Exploration',
+    title: 'It started by helping people imagine the home they could build.',
+    body: 'The brand, brochures, and home design catalogue gave homeowners their first look at Castillo and a glimpse of what their future home could become.',
     shots: [
       { name: 'chg-brand', w: 1152, h: 632, widths: [760, 1152],
         alt: 'The Castillo Housing Group brochure, opened to the design-build services spread.',
-        caption: 'Tampa Bay’s premier custom home builder — the brochure cover and services spread.' },
+        caption: 'The brochure cover.' },
       { name: 'chg-collateral', w: 1152, h: 632, widths: [760, 1152],
         alt: 'Castillo Housing Group brochure pages arranged in a tiled composition.',
-        caption: 'Interior design solutions, custom kitchens, staircases — the range, laid out.' },
+        caption: 'A look inside the brochure.' },
       { name: 'chg-residence', w: 1152, h: 632, widths: [760, 1152],
         alt: 'The Caban Residence booklet, showing a front elevation drawing.',
-        caption: 'Caban Residence — a single home, given its own book.' },
+        caption: 'A dedicated book for one home.' },
     ],
   },
 
   problem: {
-    no: '03',
+    no: '02',
     kicker: 'Problem',
-    title: 'How might homebuyers move from browsing homes to imagining how one could fit their life?',
-    body: 'A plan catalogue answers a question nobody asks first. People do not open with “four bedrooms, 4,138 square feet” — they open with a parent moving in, a job that is now permanently at home, a wish to stop maintaining so much. Fifty plans, sorted by size, leave that translation entirely to the reader.',
+    title: 'Homebuilding needed a clearer system.',
+    body: 'Homeowners had many decisions to make, but those choices quickly became difficult to track. Lost links, changing products, and incorrect selections created confusion for the team, affecting orders, invoices, and day-to-day operations, while making the process more frustrating for homeowners.',
   },
 
   solution: {
-    no: '04',
+    no: '03',
     kicker: 'Solution',
-    title: 'An AI-assisted discovery experience that starts with lifestyle.',
-    body: 'State how you live. The product reads Castillo’s published catalogue against that, ranks what fits, and shows its reasoning in the same breath — every score traced back to a real published field, every gap named rather than filled.',
+    title: 'One shared place to build the dream home.',
+    body: 'The concept connects home discovery with every decision that follows, helping homeowners find, personalize, and organize their choices while giving builders one clear place to manage the process. From discovering the right home to selecting finishes and products, every decision stays connected, visible, and easier to manage.',
   },
 
   /* --- the prototype ------------------------------------------------------
@@ -76,7 +76,7 @@ export const castillo = {
     no: '05',
     kicker: 'The product',
     title: 'Try it.',
-    body: 'A working prototype, not a screenshot. Tell it how you live and it will reason over Castillo’s real catalogue in front of you.',
+    body: 'Tell it how you live and discover your next dream home.',
 
     steps: [
       { id: 'life',    label: 'Lifestyle' },
@@ -89,22 +89,22 @@ export const castillo = {
        shows `rule` verbatim, so the ranking is never a black box. */
     signals: [
       { id: 'work',     label: 'I work from home',
-        rule: 'Looks for a room beyond the bedrooms you need.',
+        rule: 'Extra room for a home office',
         field: 'bedrooms' },
       { id: 'guests',   label: 'People stay with us',
-        rule: 'Looks for a bathroom for every bedroom.',
+        rule: 'Bathroom for every bedroom',
         field: 'bathrooms' },
       { id: 'grow',     label: 'Our household may change',
-        rule: 'Favours plans Castillo publishes with a flexible bedroom count.',
+        rule: 'Flexible number of bedrooms',
         field: 'published range' },
       { id: 'gather',   label: 'We host often',
-        rule: 'Favours more square footage per bedroom — space that is shared, not slept in.',
+        rule: 'Open space for guests',
         field: 'sq ft ÷ bedrooms' },
       { id: 'upkeep',   label: 'I want less to maintain',
-        rule: 'Favours a smaller footprint to heat, cool and clean.',
+        rule: 'Smaller home and easier to care for',
         field: 'square footage' },
       { id: 'wellness', label: 'Room for a gym or spa',
-        rule: 'Favours a footprint with space left over after the living areas.',
+        rule: 'Extra space for a wellness area',
         field: 'square footage' },
     ],
 
@@ -134,7 +134,7 @@ export const castillo = {
     /* Shown inside the prototype at the point the visitor would expect a
        confident answer. Saying it there, rather than in a footnote, is the
        design position. */
-    honesty: 'Castillo publishes square footage, bedrooms and bathrooms. It does not publish orientation, lot fit, ceiling heights or cost — so this prototype does not rank on them.',
+    honesty: 'Castillo publishes square footage, bedrooms and bathrooms. It does not publish orientation, lot fit, ceiling heights or cost, so this prototype does not rank on them.',
   },
 
   /* --- the second surface -------------------------------------------------
@@ -154,8 +154,8 @@ export const castillo = {
   build: {
     no: '06',
     kicker: 'The workspace',
-    title: 'Then the eighteen months after.',
-    body: 'A plan is chosen once. The faucet, the floor, the lighting control and four hundred other decisions are chosen slowly, by two people who are rarely in the same room. Same record, two faces.',
+    title: 'Then comes building the dream home.',
+    body: 'Choosing the home is only the beginning. From faucets and flooring to lighting and finishes, every little choice helps turn a house into a home. The homeowner and builder need to stay connected through each decision, even when they are made at different moments, working toward the same dream.',
 
     arc: [
       { id: 'discover',    label: 'Discover' },
@@ -270,43 +270,63 @@ export const castillo = {
 
     /* Said on the handoff screen, where a product would normally promise
        more than it can keep. */
-    honesty: 'Nothing here is a document you have to keep current by hand. The builder sees the same record you do, at the same moment — the handoff is a permission, not an export.',
+    honesty: 'The homeowner and builder always see the same information, so every decision stays connected from one side to the other.',
   },
 
-  thinking: {
-    no: '07',
-    kicker: 'Design notes',
-    points: [
-      { title: 'Lifestyle first',
-        body: 'The first screen asks nothing a listing would ask. Bedrooms come second, as a consequence of what you said, not as the opening question.' },
-      { title: 'Legible ranking',
-        body: 'Every score carries the rule that produced it and the published number it read. An assistant that cannot explain itself is asking to be trusted on nothing.' },
-      { title: 'Abstention as a feature',
-        body: 'Where Castillo has not published a figure, the product says so and drops that signal for that plan. Silence is more useful than a confident guess.' },
-      { title: 'Comparison over persuasion',
-        body: 'The compare view reports differences flatly — no recommended badge, no nudge. The catalogue is the client’s; the judgement stays the visitor’s.' },
-      { title: 'Built on real ground',
-        body: 'Sixteen of Castillo’s fifty published designs drive the prototype, unaltered. A concept that invents its own data proves only that the designer can invent data.' },
-      { title: 'One record, two faces',
-        body: 'The buyer’s phone and the builder’s workspace are not two products that sync. They are two views of the same array, which is why a status changed on one side is already changed on the other.' },
-      { title: 'Priority is the buyer’s word',
-        body: 'Must have, prefer, open to options. Not a five-star rating — three words a builder can act on when the budget moves and something has to give.' },
-      { title: 'The thread is the record',
-        body: 'Decisions are not a field, they are an argument that happened over weeks. Keeping the comments attached to the item is what stops the reasoning from evaporating into an inbox.' },
+  /* Nikole's own phone footage of the printed plan boards on the office wall.
+     Transcoded from HEVC with avconvert so every browser can play it. */
+  office: {
+    alt: 'Castillo home-design boards framed on an office wall: Doral, Canterbury, Villa de Flor, Althea, Bella Vista, Angeles, Seville and Cordoba.',
+    caption: 'Andrew, owner of CHG, displayed the home designs in his office :)',
+    w: 1280, h: 720,
+    poster: '/assets/img/chg-office-poster-1280.webp',
+    sources: [
+      { src: '/assets/video/chg-office-540.mp4', media: '(max-width: 46rem)' },
+      { src: '/assets/video/chg-office-720.mp4' },
     ],
   },
 
+  thinking: {
+    no: '05',
+    kicker: 'Impact',
+    points: [
+      { title: 'Lifestyle first',
+        body: 'Started with how homeowners want to live, turning personal priorities into a more meaningful and personal way to discover a home.' },
+      { title: 'Explainable AI',
+        body: 'Made each match traceable to the preferences and published information behind it, so homeowners can understand why a home fits their needs.' },
+      { title: 'Shared decisions',
+        body: 'Designed one connected experience for homeowners and builders, keeping the same decisions visible and accessible from discovery through construction.' },
+      { title: 'Organized selections',
+        body: 'Brought products, links, quantities, notes, and priorities into one place, reducing confusion and keeping important decisions from getting lost.' },
+      { title: 'Human control',
+        body: 'Kept comparisons neutral and the final choice with the homeowner, using AI to guide the process without making the decision for them.' },
+    ],
+  },
+
+  testimonials: [
+    {
+      quote: 'Working with Nikole made a real difference in our invoicing and audit work. She was always helpful, kept things organized, and made it easier to find what we needed.',
+      name: 'Jean Miller',
+      title: 'Chief Accounting Officer, Castillo Housing Group',
+    },
+    {
+      quote: 'Nikole was great to work with and brought a fresh perspective to the project. She understood what we were trying to accomplish and helped make the experience clearer.',
+      name: 'Andrew Castillo',
+      title: 'Owner & CEO, Castillo Housing Group',
+    },
+  ],
+
+  /* 05 Impact. A projection, and labelled as one on the page. */
   close: {
-    no: '08',
-    kicker: 'Where it stands',
-    title: 'A concept, and what it would take.',
-    body: 'This is an argument, not a result. It has not been tested with buyers, priced, or put in front of Castillo’s sales team — and none of those are formalities.',
-    next: [
-      'Test the lifestyle vocabulary with real buyers; the six signals here are a designer’s guesses at what people lead with.',
-      'Bring in the fields the catalogue omits — lot fit, orientation, cost envelope — since those decide more purchases than bedroom count.',
-      'Sit with the sales team, who already do this translation by hand and know where it breaks.',
-      'Watch a real selections process end to end before trusting the five statuses; a schedule slip or a discontinued product is the case that breaks this model.',
-      'Decide what the assistant refuses to answer, before deciding what it answers well.',
+    value: '40%',
+    label: 'Fewer ordering errors',
+    note: 'Projected impact based on workflow comparison.',
+    results: [
+      { lead: 'Less time tracking decisions', rest: 'as homeowners and builders could find the information they needed in one place.' },
+      { lead: 'Fewer disconnected decisions', rest: 'as selections and product information stayed connected throughout the process.' },
+      { lead: 'Smoother collaboration', rest: 'as both sides stayed aligned when selections changed or new decisions were made.' },
+      { lead: 'Clearer financial operations', rest: 'as organized selections made orders and invoices easier to track.' },
+      { lead: 'More confident homeowners', rest: 'as a clearer process made each decision easier to understand and follow.' },
     ],
   },
 };

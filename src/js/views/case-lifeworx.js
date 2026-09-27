@@ -1,5 +1,6 @@
 import { lifeworx as c } from '../../../content/lifeworx.js';
 import { prefs } from '../prefs.js';
+import { slotRoll, draggableMarquee } from '../case-motion.js';
 
 /**
  * The LifeWorx Events case study.
@@ -168,36 +169,11 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
     root.addEventListener('click', onClick);
     cleanup.push(() => root.removeEventListener('click', onClick));
 
-    /* --- testimonials horizontal marquee --------------------------------- */
-    const testimonialTrack = root.querySelector('.lw-testimonials__track');
-    const testimonialScroll = root.querySelector('.lw-testimonials__scroll');
-    if (testimonialTrack && testimonialScroll && !prefs.reducedMotion) {
-      let offset = 0;
-      let animationId = 0;
-      let lastTime = Date.now();
+    /* --- testimonials: drifting band the visitor can hold and drag -------- */
+    cleanup.push(draggableMarquee(root.querySelector('.lw-testimonials__track'), root.querySelector('.lw-testimonials__scroll')));
 
-      const animate = () => {
-        const now = Date.now();
-        const elapsed = now - lastTime;
-        lastTime = now;
-
-        offset += elapsed * 0.06;
-        const trackWidth = testimonialTrack.offsetWidth;
-        const containerWidth = testimonialScroll.offsetWidth;
-        const oneItemWidth = trackWidth / (c.testimonials.length * 2);
-        const maxOffset = oneItemWidth * c.testimonials.length;
-
-        if (offset >= maxOffset) {
-          offset = 0;
-        }
-
-        testimonialTrack.style.transform = `translateX(-${offset}px)`;
-        animationId = requestAnimationFrame(animate);
-      };
-
-      animationId = requestAnimationFrame(animate);
-      cleanup.push(() => cancelAnimationFrame(animationId));
-    }
+    /* --- the impact figure rolls in like a slot machine ------------------- */
+    cleanup.push(slotRoll(root.querySelector('.lw-metric__value'), { root }));
 
     /* --- reveals ---------------------------------------------------------
        Applied here rather than in the stylesheet, so a page whose observer

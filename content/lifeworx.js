@@ -113,12 +113,12 @@ export const lifeworx = {
 
   testimonials: [
     {
-      quote: 'Nikole brings a thoughtful and creative approach to every project. She has a strong eye for visual design and knows how to turn ideas into work that feels clear, engaging, and intentional.',
+      quote: 'Nikole was always thoughtful about the work and brought a lot of creativity to every project.<br>She has a great eye for design and turned ideas into something clear and engaging.',
       name: 'Paola Castillo',
       title: 'Marketing Specialist, LifeWorx',
     },
     {
-      quote: 'Nikole brings a strong product mindset to her work, connecting visual design with thoughtful decisions. She approaches problems with curiosity and creates purposeful, intuitive experiences.',
+      quote: 'She was curious, thoughtful, and easy to work with. Her approach started with understanding the problem before jumping into a solution, and that always came through in the work.',
       name: 'Christin Gabriel',
       title: 'Senior Director of Marketing & Product Design, LifeWorx',
     },

@@ -1,5 +1,6 @@
 import { castillo as c } from '../../../content/castillo.js';
 import { prefs } from '../prefs.js';
+import { slotRoll, draggableMarquee } from '../case-motion.js';
 
 /**
  * Castillo Housing Group — AI Home Design.
@@ -39,6 +40,9 @@ const bedsOf = (p) => (p.beds[0] === p.beds[1] ? `${p.beds[0]}` : `${p.beds[0]}�
 
 const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
+const ICON_EXPAND = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 3.5h4v4M7.5 16.5h-4v-4M16.5 3.5l-5 5M3.5 16.5l5-5"/></svg>';
+const ICON_COLLAPSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 8.5H12V4M3.5 11.5H8V16M12 8l4.5-4.5M8 12l-4.5 4.5"/></svg>';
+
 /* --------------------------------------------------------------- the model
    One function per signal. Each returns a 0–1 score and the published number
    it read, or null to abstain because Castillo has not published the field.
@@ -47,33 +51,33 @@ const RULES = {
   work: (p, need) => {
     const spare = p.beds[1] - need;
     return { v: clamp01(spare / 2),
-             why: spare > 0 ? `${p.beds[1]} bedrooms — ${spare} beyond the ${need} you need`
-                            : `${p.beds[1]} bedrooms, none spare` };
+             why: spare > 0 ? `${spare} extra room${spare === 1 ? '' : 's'} for a home office`
+                            : 'No extra room for an office' };
   },
   guests: (p) => {
     if (!p.baths) return null;
     const ratio = p.baths[1] / p.beds[1];
     return { v: clamp01((ratio - 0.6) / 0.6),
-             why: `${baths(p)} baths to ${bedsOf(p)} bedrooms` };
+             why: `${baths(p)} bathrooms for ${bedsOf(p)} bedrooms` };
   },
   grow: (p) => {
     const flex = p.beds[0] !== p.beds[1];
     return { v: flex ? 1 : 0.12,
-             why: flex ? `published as ${bedsOf(p)} bedrooms`
-                       : `published at a fixed ${p.beds[1]} bedrooms` };
+             why: flex ? `Can be built with ${bedsOf(p)} bedrooms`
+                       : `Built with ${p.beds[1]} bedrooms` };
   },
   gather: (p) => {
     const per = p.sqft / p.beds[1];
     return { v: clamp01((per - 650) / 1350),
-             why: `${num(Math.round(per))} sq ft per bedroom` };
+             why: `About ${num(Math.round(per))} sq ft of living space per bedroom` };
   },
   upkeep: (p) => ({
     v: clamp01((6800 - p.sqft) / 4300),
-    why: `${num(p.sqft)} sq ft to run`,
+    why: `${num(p.sqft)} sq ft to look after`,
   }),
   wellness: (p) => ({
     v: clamp01((p.sqft - 3400) / 4200),
-    why: `${num(p.sqft)} sq ft to work with`,
+    why: `${num(p.sqft)} sq ft to make your own`,
   }),
 };
 
@@ -81,7 +85,7 @@ const RULES = {
 function fit(plan, active, need) {
   const parts = active.map((id) => {
     const r = RULES[id](plan, need);
-    return { id, ...(r || { v: null, why: 'bathroom count not published' }), abstained: !r };
+    return { id, ...(r || { v: null, why: 'Castillo hasn’t shared the bathroom count' }), abstained: !r };
   });
   const scored = parts.filter((p) => p.v !== null);
   const avg = scored.length ? scored.reduce((s, p) => s + p.v, 0) / scored.length : 0.5;
@@ -128,19 +132,6 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         </dl>
       </header>
 
-      <section class="chg-work" data-reveal>
-        ${label(c.work.no, c.work.kicker)}
-        <h3 class="chg-work__h">${c.work.title}</h3>
-        <p class="chg-work__body">${c.work.body}</p>
-        <div class="chg-work__grid">
-          ${c.work.shots.map((s) => `
-            <figure class="chg-work__fig">
-              ${img(s, { cls: 'chg-work__img', sizes: '(min-width: 62rem) 32vw, 90vw' })}
-              <figcaption class="chg-work__cap">${s.caption}</figcaption>
-            </figure>`).join('')}
-        </div>
-      </section>
-
       <section class="chg-duals" data-reveal>
         <div class="chg-dual">
           ${label(c.problem.no, c.problem.kicker)}
@@ -156,7 +147,6 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
 
       <section class="chg-lab" aria-labelledby="chg-lab-h">
         <div class="chg-lab__head" data-reveal>
-          ${label(P.no, P.kicker)}
           <h3 class="chg-lab__h" id="chg-lab-h">${P.title}</h3>
           <p class="chg-lab__sub">${P.body}</p>
         </div>
@@ -176,6 +166,8 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
 
           <div class="chg-stage" data-reveal>
             <div class="chg-phone">
+              <button class="chg-expand" type="button" data-expand aria-expanded="false"
+                    aria-label="Enlarge the prototype" title="Enlarge the prototype" data-cursor="Enlarge">${ICON_EXPAND}</button>
               <div class="chg-phone__frame">
                 <span class="chg-phone__island" aria-hidden="true"></span>
                 <div class="chg-phone__screen">
@@ -195,7 +187,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         </div>
 
         <div class="chg-plot" data-reveal>
-          <p class="u-label chg-plot__label">The catalogue it reasons over — sixteen of Castillo’s fifty published designs</p>
+          <p class="u-label chg-plot__label">Explore 16 of Castillo’s published home designs</p>
           <div class="chg-plot__rail" data-plot></div>
           <p class="chg-plot__scale"><span>2,330 sq ft</span><span>10,425 sq ft</span></p>
         </div>
@@ -203,7 +195,6 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
 
       <section class="chg-build" aria-labelledby="chg-build-h">
         <div class="chg-build__head" data-reveal>
-          ${label(c.build.no, c.build.kicker)}
           <h3 class="chg-build__h" id="chg-build-h">${c.build.title}</h3>
           <p class="chg-build__sub">${c.build.body}</p>
         </div>
@@ -224,6 +215,8 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         <div class="chg-surfaces" data-reveal>
           <div class="chg-surface" data-surface="owner">
             <div class="chg-phone chg-phone--owner">
+              <button class="chg-expand" type="button" data-expand aria-expanded="false"
+                    aria-label="Enlarge the homeowner view" title="Enlarge the homeowner view" data-cursor="Enlarge">${ICON_EXPAND}</button>
               <div class="chg-phone__frame">
                 <span class="chg-phone__island" aria-hidden="true"></span>
                 <div class="chg-phone__screen">
@@ -242,6 +235,8 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           </div>
 
           <div class="chg-surface" data-surface="builder" hidden>
+            <button class="chg-expand" type="button" data-expand aria-expanded="false"
+                    aria-label="Enlarge the builder view" title="Enlarge the builder view" data-cursor="Enlarge">${ICON_EXPAND}</button>
             <div class="chg-desk">
               <div class="chg-desk__chrome" aria-hidden="true">
                 <span></span><span></span><span></span>
@@ -255,8 +250,30 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         <p class="chg-build__honesty" data-reveal>${c.build.honesty}</p>
       </section>
 
+      <section class="chg-work" data-reveal>
+        ${label(c.work.no, c.work.kicker)}
+        <h3 class="chg-work__h">${c.work.title}</h3>
+        <p class="chg-work__body">${c.work.body}</p>
+        <div class="chg-work__grid">
+          ${c.work.shots.map((s) => `
+            <figure class="chg-work__fig">
+              ${img(s, { cls: 'chg-work__img', sizes: '(min-width: 62rem) 32vw, 90vw' })}
+              <figcaption class="chg-work__cap">${s.caption}</figcaption>
+            </figure>`).join('')}
+        </div>
+      </section>
+
+      <figure class="chg-office" data-reveal>
+        <video class="chg-office__video" muted loop playsinline preload="none"
+               width="${c.office.w}" height="${c.office.h}" poster="${c.office.poster}"
+               aria-label="${c.office.alt}"${prefs.reducedMotion ? ' controls' : ''}>
+          ${c.office.sources.map((s) =>
+            `<source src="${s.src}" type="video/mp4"${s.media ? ` media="${s.media}"` : ''}>`).join('')}
+        </video>
+        <figcaption class="chg-work__cap">${c.office.caption}</figcaption>
+      </figure>
+
       <section class="chg-thinking" data-reveal>
-        ${label(c.thinking.no, c.thinking.kicker)}
         <div class="chg-thinking__points">
           ${c.thinking.points.map((p) => `
             <div class="chg-thinking__point">
@@ -266,13 +283,39 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         </div>
       </section>
 
-      <section class="chg-close" data-reveal>
-        ${label(c.close.no, c.close.kicker)}
-        <h3 class="chg-close__h">${c.close.title}</h3>
-        <p class="chg-close__body">${c.close.body}</p>
+      <section class="chg-close" data-reveal aria-labelledby="chg-impact-h">
+        ${label(c.thinking.no, c.thinking.kicker)}
+        <p class="chg-metric__value" id="chg-impact-h">${c.close.value}</p>
+        <p class="u-label chg-metric__label">${c.close.label}</p>
+        <p class="chg-metric__note">${c.close.note}</p>
         <ul class="chg-close__list">
-          ${c.close.next.map((n) => `<li>${n}</li>`).join('')}
+          ${c.close.results.map((r) => `<li>${r.lead} ${r.rest}</li>`).join('')}
         </ul>
+      </section>
+
+      <section class="chg-testimonials">
+        <div class="chg-testimonials__scroll">
+          <div class="chg-testimonials__track">
+            ${c.testimonials.map((t, i) => `
+              <div class="chg-testimonial" data-index="${i}">
+                <blockquote class="chg-testimonial__quote">${t.quote}</blockquote>
+                <p class="chg-testimonial__attribution">
+                  <span class="chg-testimonial__name">${t.name}</span>
+                  <span class="chg-testimonial__title">${t.title}</span>
+                </p>
+              </div>
+            `).join('')}
+            ${c.testimonials.map((t, i) => `
+              <div class="chg-testimonial" data-index="${i}" aria-hidden="true">
+                <blockquote class="chg-testimonial__quote">${t.quote}</blockquote>
+                <p class="chg-testimonial__attribution">
+                  <span class="chg-testimonial__name">${t.name}</span>
+                  <span class="chg-testimonial__title">${t.title}</span>
+                </p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </section>
 
       <footer class="chg-foot">
@@ -293,6 +336,12 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
     root.addEventListener('click', onClick);
     cleanup.push(() => root.removeEventListener('click', onClick));
 
+    /* --- testimonials: drifting band the visitor can hold and drag -------- */
+    cleanup.push(draggableMarquee(root.querySelector('.chg-testimonials__track'), root.querySelector('.chg-testimonials__scroll')));
+
+    /* --- the impact figure rolls in like a slot machine ------------------- */
+    cleanup.push(slotRoll(root.querySelector('.chg-metric__value'), { root }));
+
     /* --- reveals (same contract as the other case study) ------------------ */
     const targets = [...root.querySelectorAll('[data-reveal]')];
     if (prefs.reducedMotion || !('IntersectionObserver' in window)) {
@@ -308,6 +357,33 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       }, { root, rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
       targets.forEach((el) => io.observe(el));
       cleanup.push(() => io.disconnect());
+    }
+
+    /* The office footage only downloads and plays while it is on screen. It
+       runs a little slower than recorded and fades out into the page before
+       each loop, so the restart reads as a cut rather than a jump. */
+    const office = root.querySelector('.chg-office__video');
+    if (office && !prefs.reducedMotion && 'IntersectionObserver' in window) {
+      const RATE = 0.85, FADE_IN = 0.35, FADE_OUT = 0.8;
+      const slow = () => { office.defaultPlaybackRate = RATE; office.playbackRate = RATE; };
+      slow();
+      office.addEventListener('loadedmetadata', slow);
+
+      let raf = 0;
+      const fade = () => {
+        const d = office.duration, t = office.currentTime;
+        if (d) office.style.opacity = String(Math.max(0, Math.min(1, t / FADE_IN, (d - t) / FADE_OUT)));
+        raf = requestAnimationFrame(fade);
+      };
+      office.addEventListener('play', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(fade); });
+      office.addEventListener('pause', () => cancelAnimationFrame(raf));
+
+      const vio = new IntersectionObserver(([en]) => {
+        if (en.isIntersecting) office.play().catch(() => {});
+        else office.pause();
+      }, { root, threshold: 0.25 });
+      vio.observe(office);
+      cleanup.push(() => { vio.disconnect(); cancelAnimationFrame(raf); });
     }
 
     /* --- the prototype ---------------------------------------------------- */
@@ -334,10 +410,9 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       life: () => `
         <div class="chg-scr chg-scr--life">
           <h4 class="chg-scr__h">How do you live?</h4>
-          <p class="chg-scr__lede">Not how many bedrooms. We will get there.</p>
 
           <div class="chg-step">
-            <span class="chg-step__label">Bedrooms you need</span>
+            <span class="chg-step__label">How many bedrooms?</span>
             <span class="chg-step__ctrl">
               <button type="button" data-need="-1" aria-label="One fewer bedroom">−</button>
               <b data-need-val>${state.need}</b>
@@ -356,7 +431,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           </div>
 
           <button class="chg-cta" type="button" data-go="matches" ${state.signals.size ? '' : 'disabled'}>
-            ${state.signals.size ? 'Read the catalogue' : 'Pick at least one'}
+            ${state.signals.size ? 'Show me homes' : 'Choose at least one'}
           </button>
         </div>`,
 
@@ -364,8 +439,8 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         const rows = ranked();
         return `
         <div class="chg-scr chg-scr--matches">
-          <h4 class="chg-scr__h">${rows.length} designs, ranked</h4>
-          <p class="chg-scr__lede">Against ${state.signals.size} thing${state.signals.size === 1 ? '' : 's'} you said, and ${state.need} bedrooms.</p>
+          <h4 class="chg-scr__h">${rows.length} designs to explore</h4>
+          <p class="chg-scr__lede">Matching your lifestyle and ${plural(state.need, 'bedroom')}.</p>
           <ul class="chg-rows">
             ${rows.map(({ plan, score, top }) => `
               <li>
@@ -390,21 +465,21 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         return `
         <div class="chg-scr chg-scr--plan">
           <h4 class="chg-scr__h">${p.name}</h4>
-          <p class="chg-scr__lede">${r.score}% against what you said</p>
+          <p class="chg-scr__lede">A ${r.score}% match for how you live</p>
 
           <div class="chg-stats">
             <div><b>${num(p.sqft)}</b><span>sq ft</span></div>
             <div><b>${bedsOf(p)}</b><span>bedrooms</span></div>
-            <div><b>${baths(p) || '—'}</b><span>${baths(p) ? 'bathrooms' : 'not published'}</span></div>
+            <div><b>${baths(p) || '—'}</b><span>${baths(p) ? 'bathrooms' : 'not shared'}</span></div>
           </div>
 
-          <p class="u-label chg-scr__eyebrow">How it scored</p>
+          <p class="u-label chg-scr__eyebrow">Why it fits</p>
           <ul class="chg-why">
             ${r.parts.map((part) => `
               <li class="chg-why__item${part.abstained ? ' is-abstained' : ''}">
                 <span class="chg-why__head">
                   <span class="chg-why__label">${sig(part.id).label}</span>
-                  <span class="chg-why__v">${part.abstained ? 'abstained' : `${Math.round(part.v * 100)}%`}</span>
+                  <span class="chg-why__v">${part.abstained ? 'not shared' : `${Math.round(part.v * 100)}%`}</span>
                 </span>
                 ${part.abstained ? '' : bar(part.v, 'chg-bar--thin')}
                 <span class="chg-why__rule">${sig(part.id).rule}</span>
@@ -412,8 +487,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
               </li>`).join('')}
           </ul>
 
-          <p class="chg-scr__note">${P.honesty}</p>
-          <button class="chg-cta" type="button" data-go="compare">Compare with another</button>
+          <button class="chg-cta" type="button" data-go="compare">Compare with another home</button>
         </div>`;
       },
 
@@ -429,7 +503,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         return `
         <div class="chg-scr chg-scr--compare">
           <h4 class="chg-scr__h">Side by side</h4>
-          <p class="chg-scr__lede">Differences, reported flat. No recommendation.</p>
+          <p class="chg-scr__lede">See how they differ. The choice is yours.</p>
 
           <div class="chg-cmp">
             <div class="chg-cmp__col">
@@ -438,7 +512,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
               <dl>
                 <dt>sq ft</dt><dd>${num(a.plan.sqft)} ${d(a.plan.sqft, b.plan.sqft)}</dd>
                 <dt>bedrooms</dt><dd>${bedsOf(a.plan)}</dd>
-                <dt>bathrooms</dt><dd>${baths(a.plan) || 'not published'}</dd>
+                <dt>bathrooms</dt><dd>${baths(a.plan) || 'not shared'}</dd>
               </dl>
             </div>
             <div class="chg-cmp__col">
@@ -447,12 +521,12 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
               <dl>
                 <dt>sq ft</dt><dd>${num(b.plan.sqft)} ${d(b.plan.sqft, a.plan.sqft)}</dd>
                 <dt>bedrooms</dt><dd>${bedsOf(b.plan)}</dd>
-                <dt>bathrooms</dt><dd>${baths(b.plan) || 'not published'}</dd>
+                <dt>bathrooms</dt><dd>${baths(b.plan) || 'not shared'}</dd>
               </dl>
             </div>
           </div>
 
-          <p class="u-label chg-scr__eyebrow">Compare against</p>
+          <p class="u-label chg-scr__eyebrow">Compare with</p>
           <div class="chg-pick">
             ${rows.filter((x) => x.plan.id !== a.plan.id).slice(0, 6).map((x) => `
               <button class="chg-pick__b" type="button" data-against="${x.plan.id}"
@@ -662,8 +736,8 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
             ${ws.shared ? 'Shared with Castillo · manage access' : 'Share with Castillo'}
           </button>
           <p class="chg-scr__note">${ws.shared
-            ? 'Castillo sees this record as you change it. Nothing is exported and nothing goes stale.'
-            : 'They will see your selections, priorities, links and notes — and can reply on any item.'}</p>
+            ? 'Castillo sees your updates as you make them, so nothing gets lost.'
+            : 'Castillo will see your choices, priorities, links and notes, and can reply to any of them.'}</p>
         </div>`;
       },
 
@@ -733,7 +807,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           <p class="u-label chg-scr__eyebrow">Status</p>
           ${statusRow(it, 'own')}
 
-          <p class="u-label chg-scr__eyebrow">Thread</p>
+          <p class="u-label chg-scr__eyebrow">Conversation</p>
           ${thread(it)}
           <form class="chg-say" data-say="own">
             <input type="text" name="t" placeholder="Reply to Castillo…" aria-label="Add a comment" autocomplete="off">
@@ -953,6 +1027,102 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       });
       input.value = '';
       renderWs();
+    });
+
+    /* ---- optional focus view ---------------------------------------------
+       Lifts a product surface out of the page and scales it to fit the
+       screen, over a dimmed backdrop. The live element itself moves (not a
+       copy), so everything inside keeps working while it is enlarged. */
+    const article = root.querySelector('.chg');
+    const focusBg = Object.assign(document.createElement('div'), { className: 'chg-focus' });
+    focusBg.setAttribute('aria-hidden', 'true');
+    const closeBtn = Object.assign(document.createElement('button'), {
+      type: 'button', className: 'chg-expand chg-expand--close', innerHTML: ICON_COLLAPSE, hidden: true,
+    });
+    closeBtn.setAttribute('aria-label', 'Return to the page');
+    closeBtn.title = 'Return to the page';
+    article.append(focusBg, closeBtn);
+
+    let open = null;
+    let settle = 0;
+    const EDGE = 24, MAX_SCALE = 1.8;
+
+    function expand(trigger, target) {
+      // Halt any smooth scroll still in flight, so nothing moves after measuring.
+      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      const r = target.getBoundingClientRect();
+      clearTimeout(settle);
+      root.style.overflow = 'hidden';
+      root.style.scrollbarGutter = 'stable';
+      // The stage is transformed, which makes "fixed" relative to its scrolled
+      // content rather than the screen — so measure where the backdrop lands
+      // and pull it onto the screen exactly, whichever way the browser resolves it.
+      article.style.setProperty('--focus-top', '0px');
+      article.style.setProperty('--focus-top', `${-focusBg.getBoundingClientRect().top}px`);
+      closeBtn.hidden = false;
+
+      // Two ways to fit without covering the close button (top right): full
+      // height with its column kept clear, or below its row. Larger one wins.
+      const c = closeBtn.getBoundingClientRect();
+      const side = innerWidth - c.left + 16;
+      const band = c.bottom + 16;
+      const sSide = Math.min((innerWidth - 2 * side) / r.width, (innerHeight - 2 * EDGE) / r.height);
+      const sBelow = Math.min((innerWidth - 2 * EDGE) / r.width, (innerHeight - band - EDGE) / r.height);
+      const below = sBelow > sSide;
+      const s = Math.max(1, Math.min(Math.max(sSide, sBelow), MAX_SCALE));
+      const cy = below ? band + (innerHeight - band - EDGE) / 2 : innerHeight / 2;
+
+      target.dataset.expanded = 'true';
+      target.style.transform = `translate(${innerWidth / 2 - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(${s})`;
+      focusBg.dataset.on = 'true';
+      requestAnimationFrame(() => { closeBtn.dataset.on = 'true'; });
+      trigger.setAttribute('aria-expanded', 'true');
+      open = { target, trigger };
+      closeBtn.focus({ preventScroll: true });
+    }
+
+    function collapse() {
+      if (!open) return;
+      const { target, trigger } = open;
+      open = null;
+      target.style.transform = '';
+      focusBg.dataset.on = 'false';
+      closeBtn.dataset.on = 'false';
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus({ preventScroll: true });
+      // Stay above the backdrop until the glide home has finished.
+      const ms = parseFloat(getComputedStyle(target).transitionDuration) * 1000 || 0;
+      settle = setTimeout(() => {
+        delete target.dataset.expanded;
+        root.style.overflow = '';
+        root.style.scrollbarGutter = '';
+        closeBtn.hidden = true;
+      }, ms + 60);
+    }
+
+    root.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-expand]');
+      if (!b) return;
+      const target = b.closest('.chg-phone') || b.closest('.chg-surface')?.querySelector('.chg-desk');
+      if (target) expand(b, target);
+    });
+    closeBtn.addEventListener('click', collapse);
+    focusBg.addEventListener('click', collapse);
+
+    // Escape closes the enlarged view first, before the site's own Escape
+    // (which leaves the case study) gets to see it.
+    const onKey = (e) => {
+      if (open && e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); collapse(); }
+    };
+    document.addEventListener('keydown', onKey, true);
+    const onResize = () => collapse();
+    addEventListener('resize', onResize);
+    cleanup.push(() => {
+      document.removeEventListener('keydown', onKey, true);
+      removeEventListener('resize', onResize);
+      clearTimeout(settle);
+      root.style.overflow = '';
+      root.style.scrollbarGutter = '';
     });
 
     renderWs();
