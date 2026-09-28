@@ -111,7 +111,7 @@
   display: inline-flex; align-items: center; gap: .45rem;
   padding-bottom: .15rem;
   font-size: .9375rem;
-  color: var(--focus);
+  color: #73765F;
   border-bottom: 1px solid currentColor;
   transition: opacity var(--dur-s) var(--ease-out);
 }
@@ -145,7 +145,7 @@
   display: inline-flex; align-items: center; gap: .45rem;
   padding-bottom: .15rem;
   font-size: .9375rem;
-  color: var(--focus);
+  color: #73765F;
   border-bottom: 1px solid currentColor;
   transition: opacity var(--dur-s) var(--ease-out);
 }
@@ -1122,6 +1122,8 @@
 }
 @media (max-width: 46rem) {
   .chg-metric__value { font-size: clamp(3.75rem, 27vw, 7.5rem); }
+  /* The longer role line wraps under the link rather than running off a phone. */
+  .chg-id dd { flex-wrap: wrap; row-gap: .45rem; }
 }
 .chg-close__list {
   list-style: none; margin: clamp(1.75rem, 5vh, 2.5rem) 0 0; padding: 0;

@@ -66,7 +66,7 @@ for (const f of readdirSync(join(root, 'src/styles'))) {
 /* --- content modules must import cleanly ---------------------------------- */
 const loaded = {};
 for (const mod of ['content/worlds.js', 'content/case-studies.js', 'content/pages.js',
-                   'content/lifeworx.js', 'content/castillo.js']) {
+                   'content/lifeworx.js', 'content/castillo.js', 'content/ceramic.js']) {
   try {
     loaded[mod] = await import(pathToFileURL(join(root, mod)).href);
   } catch (e) {
@@ -117,8 +117,10 @@ const figures = (node, out = []) => {
 };
 const lwMod = loaded['content/lifeworx.js'];
 const chgMod = loaded['content/castillo.js'];
+const cpsMod = loaded['content/ceramic.js'];
 const lwShots = (lwMod ? figures(lwMod.lifeworx) : [])
-  .concat(chgMod ? figures(chgMod.castillo) : []);
+  .concat(chgMod ? figures(chgMod.castillo) : [])
+  .concat(cpsMod ? figures(cpsMod.ceramic) : []);
 for (const f of lwShots) {
   for (const w of f.widths) need(`/assets/img/${f.name}-${w}.webp`, `case-study figure ${f.name} @${w}px`);
 }

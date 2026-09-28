@@ -60,9 +60,10 @@ export const worlds = [
     hotspot:  { x: 0.780, y: 0.350, side: 'right', line: 22 },
     district: { x: 0.660, y: 0.600 },
     card:     { x: 0.760, y: 0.790, side: 'right' },
-    scene:    { tagline: 'Tools for what’s next.', sky: ['#DCD8D0', '#F0EBE2'] },
+    scene:    { tagline: 'Connected Operations', sky: ['#DCD8D0', '#F0EBE2'], description: 'A connected operations concept for automotive service teams, inspired by the everyday workflow at Ceramic Pro Sarasota.' },
+    logo: 'ceramicpro',
     journey:  { line: 'From ideas to products.', kicker: 'SaaS / Product' },
-    caseStudy: { id: 'saas-product', title: 'To be defined', status: 'placeholder' },
+    caseStudy: { id: 'saas-product', title: 'Ceramic Pro Sarasota', status: 'real' },
   },
   {
     id: 'creative',

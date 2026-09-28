@@ -105,12 +105,15 @@ export const caseStudies = {
   'saas-product': {
     id: 'saas-product',
     world: 'product',
-    title: 'To be defined',
-    kicker: 'Product & Tech · SaaS',
-    subtitle: 'A concept still being shaped.',
-    known: {},
-    contentStatus: 'undefined-project',
-    chapters: STRUCTURE(),
+    title: 'Connected Operations',
+    kicker: 'Technology · SaaS',
+    subtitle: 'A connected operations concept for automotive service teams, inspired by the everyday workflow at Ceramic Pro Sarasota.',
+    known: {
+      Role: 'Marketing Specialist · SaaS',
+      Scope: 'Real client context · speculative product concept',
+    },
+    contentStatus: 'written',
+    chapters: [],
   },
 };
 

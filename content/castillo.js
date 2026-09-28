@@ -29,7 +29,7 @@ export const castillo = {
 
   about: "Castillo Housing Group is a Tampa Bay design-build firm with more than 30 years of experience, creating custom homes across Florida, member of the Florida Green Building Coalition and an Energy Star partner.",
 
-  role: { label: "Role", value: "Marketing Specialist" },
+  role: { label: "Role", value: "Marketing Specialist · Digital Product" },
   live: { href: "https://castillohousing.com/floor-plans/home-designs/", label: "castillohousing.com/floor-plans" },
 
   /* --- the real work ------------------------------------------------------

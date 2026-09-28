@@ -112,7 +112,7 @@
   display: inline-flex; align-items: center; gap: .45rem;
   padding-bottom: .15rem;
   font-size: .9375rem;
-  color: var(--focus);
+  color: #73765F;
   border-bottom: 1px solid currentColor;
   transition: opacity var(--dur-s) var(--ease-out);
 }

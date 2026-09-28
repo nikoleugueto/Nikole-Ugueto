@@ -8,6 +8,7 @@ import { worldView } from './views/world.js';
 import { caseStudyView } from './views/case-study.js';
 import { lifeworxCaseView } from './views/case-lifeworx.js';
 import { castilloCaseView } from './views/case-castillo.js';
+import { ceramicCaseView } from './views/case-ceramic.js';
 import { aboutView } from './views/about.js';
 import { archiveView } from './views/archive.js';
 import { contactView } from './views/contact.js';
@@ -114,7 +115,7 @@ const viewForCase = (id) => {
   };
   // The two written case studies have their own views; the rest fall back to
   // the generic chapter structure.
-  const bespoke = { lifeworx: lifeworxCaseView, castillo: castilloCaseView };
+  const bespoke = { lifeworx: lifeworxCaseView, castillo: castilloCaseView, 'saas-product': ceramicCaseView };
   return bespoke[id] ? bespoke[id](nav) : caseStudyView({ caseId: id, ...nav });
 };
 
