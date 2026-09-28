@@ -237,7 +237,7 @@
    nobody finishes.
    ========================================================================== */
 .chg-lab {
-  background: var(--ink-dark);
+  background: #30352D;
   color: var(--on-dark);
   padding: clamp(3rem, 9vh, 5.5rem) 0 clamp(2.5rem, 7vh, 4rem);
 }
