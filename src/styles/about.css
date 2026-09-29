@@ -1,0 +1,527 @@
+/* ==========================================================================
+   About — an editorial page on warm paper.
+
+   Scoped `abt-` throughout, so this file cannot reach another screen.
+
+   The material is cream paper: a fine grain and a few long fibers, both drawn
+   by SVG noise in CSS, so the texture costs no download and stays sharp at any
+   size. The portfolio palette carries the accents: Gray Olive, Chestnut,
+   Cream, White. Small text uses the deeper olive and chestnut below, which
+   clear WCAG AA on every surface here (checked: 4.9–6.3 : 1).
+
+   Every glow on this page is olive, diffuse and brief: a sign that something
+   noticed the pointer, never a light show.
+   ========================================================================== */
+
+.stage:has(.abt) {
+  place-items: start stretch;
+  padding: 0;
+  overflow-x: hidden;   /* the full-width bands reach the edges; never scroll sideways */
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .34  0 0 0 0 .29  0 0 0 0 .21  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='720'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.003 .07' numOctaves='2' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .52  0 0 0 0 .46  0 0 0 0 .36  0 0 0 .08 -.02'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"),
+    radial-gradient(ellipse 70% 50% at 18% 0%, rgba(255, 252, 245, .7), rgba(255, 252, 245, 0) 70%),
+    radial-gradient(ellipse 90% 70% at 100% 100%, rgba(120, 104, 78, .07), rgba(120, 104, 78, 0) 70%),
+    #F4EEE4;
+}
+
+.abt {
+  min-width: 0;
+  --olive:     #73765F;
+  --olive-ink: #5C5F4B;
+  --olive-l:   #B9BBA3;
+  --olive-rgb: 115, 118, 95;
+  --chest:     #A25B57;
+  --chest-ink: #924E4A;
+  --cream:     #F8F3EB;
+  --card:      #FCFAF5;
+  --line:      rgba(92, 95, 75, .2);
+  --graphite:  #6B675E;   /* pencil: 5.3 : 1 on the book's page */
+  --serif:     OrticaLinear-Light, Georgia, serif;
+  --shadow-rgb: 64, 52, 36;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .22  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+}
+
+.abt-eyebrow { margin: 0 0 1rem; color: var(--chest-ink); font-weight: 600; }
+.abt-h {
+  margin: 0; font-family: var(--serif); font-weight: 300;
+  font-size: clamp(1.65rem, 2.7vw, 2.4rem); line-height: 1.12; letter-spacing: -.01em;
+  color: var(--ink); text-wrap: balance;
+}
+.abt-dot { color: var(--olive-l); padding: 0 .1rem; }
+.abt-sr {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.abt-btn { color: var(--ink); border-color: rgba(92, 95, 75, .5); background: rgba(255, 255, 255, .3); }
+.abt-btn:hover { background: rgba(var(--olive-rgb), .1); border-color: var(--olive); }
+
+/* ------------------------------------------------------------------ hero --- */
+/* The portrait and the words carry the same weight: two equal columns. */
+.abt-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5.5vw, 5.5rem);
+  align-items: center;
+  padding: clamp(1.25rem, 4vh, 2.5rem) 0 clamp(3rem, 8vh, 4.75rem);
+}
+.abt-portrait { margin: 0; }
+.abt-portrait img {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 4 / 5; object-fit: cover; object-position: 52% 16%;
+  border-radius: 2px;
+  box-shadow: 0 30px 60px -40px rgba(var(--shadow-rgb), .55);
+}
+.abt-hello {
+  margin: 0 0 .8rem;
+  font-family: var(--serif); font-size: clamp(1.35rem, 2vw, 1.75rem);
+  color: var(--olive-ink);
+}
+.abt-title {
+  margin: 0 0 1.4rem; max-width: 32rem;
+  font-family: var(--serif); font-weight: 300;
+  font-size: clamp(1.9rem, 2.9vw, 2.75rem); line-height: 1.14; letter-spacing: -.012em;
+  color: var(--ink); text-wrap: balance;
+}
+.abt-intro {
+  margin: 0; max-width: 32rem;
+  font-size: clamp(1rem, 1.1vw, 1.0625rem); line-height: 1.78; color: var(--ink-soft);
+}
+.abt-facts {
+  display: flex; flex-wrap: wrap; gap: .5rem .6rem;
+  margin: 1.8rem 0 2rem; color: var(--olive-ink);
+}
+
+/* ------------------------------------------------------------- tools --- */
+/* Secondary to the hero: a label, one line, and the marks drifting past on the
+   page itself. No band, no tiles; the edges fade so marks arrive and leave.
+   The row is steered by hand (about.js): drag or swipe it either way. */
+.abt-tools { padding: 0 0 clamp(3rem, 8vh, 4.5rem); }
+.abt-tools__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1.1rem; margin-bottom: .6rem; }
+.abt-tools__head .abt-eyebrow { margin: 0; }
+.abt-tools__note { margin: 0; font-size: .85rem; font-weight: 400; line-height: 1.5; color: var(--ink-muted); }
+.abt-tools__view {
+  /* the track is thousands of pixels wide; without this its width leaks up
+     through the page (a grid item sizes to its content) and the whole page
+     scrolls sideways on phones */
+  contain: inline-size;
+  overflow: hidden;
+  padding: .9rem 0 2.2rem;
+  cursor: grab;
+  touch-action: pan-y;                 /* vertical swipes still scroll the page */
+  user-select: none; -webkit-user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.abt-tools__view.is-held { cursor: grabbing; }
+.abt-tools__track {
+  display: flex; align-items: center; width: max-content; list-style: none; margin: 0; padding: 0;
+  will-change: transform;
+}
+
+/* padding, not gap: both halves must be exactly equal for a seamless loop */
+.abt-tool { position: relative; flex: none; display: grid; place-items: center; padding: 0 1.55rem; }
+.abt-tool__logo {
+  display: block; width: 1.65rem; height: 1.65rem; object-fit: contain;
+  opacity: .9; pointer-events: none;
+  transition: transform .4s var(--ease-out), opacity .4s var(--ease-out);
+}
+.abt-tool__name {
+  position: absolute; left: 50%; top: calc(100% + .55rem);
+  white-space: nowrap; pointer-events: none;
+  font-size: .68rem; font-weight: 600; color: var(--olive-ink);
+  opacity: 0; transform: translate(-50%, -3px);
+  transition: opacity .3s var(--ease-out), transform .3s var(--ease-out);
+}
+.abt-tool:hover .abt-tool__logo { transform: scale(1.15); opacity: 1; }
+.abt-tool:hover .abt-tool__name { opacity: 1; transform: translate(-50%, 0); }
+.abt-tools__view.is-held .abt-tool__name { opacity: 0; }   /* no labels flickering past mid-drag */
+/* no hover on touch screens: names sit quietly under every mark instead */
+@media (hover: none) {
+  .abt-tool__name { opacity: .9; transform: translate(-50%, 0); font-weight: 500; font-size: .62rem; }
+  .abt-tool { padding: 0 2.75rem; }   /* room for the longest name, Adobe Premiere Pro */
+}
+
+/* -------------------------------------------------------------- sections --- */
+.abt-sec { padding: clamp(3.25rem, 9vh, 5.5rem) 0; border-top: 1px solid var(--line); }
+
+/* Background rhythm. The larger sections sit on full-width bands that
+   alternate quietly between warm white and the page's cream; the book gets a
+   slightly warmer tone, like a desk under it; the close is deep olive. Each
+   band carries the same paper grain, so the page stays one material. The band
+   is drawn behind the section and reaches the viewport edges while the words
+   keep the page's measure. With bands doing the separating, the hairlines
+   between sections go. */
+.abt-sec, .abt-close { border-top: 0; }
+.abt-band { position: relative; isolation: isolate; }
+.abt-band::before {
+  content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%;
+  width: 100vw; transform: translateX(-50%);
+  background: var(--grain), var(--band);
+}
+.abt-band--white { --band: #FBF8F2; }
+.abt-band--warm  { --band: #EEE6D8; }
+.abt-band--olive {
+  --band: radial-gradient(ellipse 70% 90% at 50% 0%, rgba(255, 250, 238, .1), rgba(255, 250, 238, 0) 70%),
+          linear-gradient(#63664F, #5A5D48);
+}
+
+/* where I come from */
+.abt-origin {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  gap: clamp(2rem, 5.5vw, 5.5rem); align-items: start;
+}
+.abt-prose p { margin: 0 0 1.25rem; max-width: 38rem; font-size: 1rem; line-height: 1.8; color: var(--ink-soft); }
+.abt-prose p:first-child { font-size: clamp(1.05rem, 1.25vw, 1.15rem); line-height: 1.7; color: var(--ink); }
+.abt-prose p:last-child { margin-bottom: 0; }
+
+/* education & experience */
+.abt-edu__grid {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2.5rem, 6vw, 6rem); align-items: start; margin-top: .5rem;
+}
+.abt-school { position: relative; padding-right: 7rem; }
+
+/* the Cum Laude seal: understated at rest; its star warms on hover and
+   glows briefly when pressed */
+.abt-seal {
+  position: absolute; top: -.5rem; right: 0; width: 6.25rem; height: 6.25rem;
+  padding: 0; border: 0; border-radius: 50%; background: none;
+  color: var(--olive); letter-spacing: 0; cursor: pointer;
+  transform: rotate(-8deg);
+  -webkit-tap-highlight-color: transparent;
+}
+.abt-seal svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.abt-seal text { font-family: var(--font); font-size: 9.4px; font-weight: 600; letter-spacing: .21em; fill: var(--olive-ink); }
+.abt-seal__star {
+  fill: var(--olive); opacity: .82;
+  transform-box: fill-box; transform-origin: center;
+  transition: fill .45s var(--ease-out), opacity .45s var(--ease-out), filter .45s var(--ease-out), transform .45s var(--ease-out);
+}
+.abt-seal:hover .abt-seal__star,
+.abt-seal:focus-visible .abt-seal__star {
+  fill: #8C9070; opacity: 1; transform: scale(1.06);
+  filter: drop-shadow(0 0 3px rgba(var(--olive-rgb), .55)) drop-shadow(0 0 9px rgba(var(--olive-rgb), .3));
+}
+.abt-seal.is-lit .abt-seal__star { animation: abt-star 1.1s var(--ease-out); }
+@keyframes abt-star {
+  0%   { transform: scale(1); filter: drop-shadow(0 0 0 rgba(var(--olive-rgb), 0)); }
+  30%  { transform: scale(1.18); fill: #9A9E7C; filter: drop-shadow(0 0 5px rgba(var(--olive-rgb), .75)) drop-shadow(0 0 16px rgba(var(--olive-rgb), .45)); }
+  100% { transform: scale(1.06); filter: drop-shadow(0 0 3px rgba(var(--olive-rgb), .55)) drop-shadow(0 0 9px rgba(var(--olive-rgb), .3)); }
+}
+.abt-seal:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+.abt-school__label { margin: 0 0 .9rem; color: var(--ink-muted); }
+.abt-school__name {
+  margin: 0; font-family: var(--serif); font-weight: 300;
+  font-size: clamp(2.1rem, 3.5vw, 3.2rem); line-height: 1.04; letter-spacing: -.015em;
+  color: var(--ink); text-wrap: balance;
+}
+.abt-school__degree { margin: 1.1rem 0 0; font-size: 1.05rem; color: var(--ink-soft); }
+.abt-school__degree strong { font-weight: 600; color: var(--olive-ink); }
+.abt-school__degree .abt-dot { padding: 0 .5rem; color: var(--olive); }
+.abt-school2 { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.abt-school2__name { margin: 0; font-family: var(--serif); font-weight: 300; font-size: 1.3rem; line-height: 1.2; color: var(--ink); }
+.abt-school2__degree { margin: .35rem 0 0; font-size: .9rem; color: var(--ink-muted); }
+
+.abt-path__h { margin: .15rem 0 1.4rem; font-family: var(--serif); font-weight: 300; font-size: 1.4rem; color: var(--olive-ink); }
+.abt-path__list { position: relative; list-style: none; margin: 0; padding: 0; }
+/* the thread that runs through the stages */
+.abt-path__list::before {
+  content: ""; position: absolute; left: .95rem; top: 1rem; bottom: 1.4rem; width: 1px;
+  background: linear-gradient(var(--olive-l), rgba(185, 187, 163, .25));
+}
+.abt-step { position: relative; isolation: isolate; display: grid; grid-template-columns: 1.9rem minmax(0, 1fr); gap: 1.1rem; padding-bottom: 1.35rem; }
+.abt-step:last-child { padding-bottom: 0; }
+/* a soft olive light behind the entry the pointer is on */
+.abt-step::before {
+  content: ""; position: absolute; z-index: -1; inset: -.55rem -.9rem .8rem -.55rem; border-radius: .9rem;
+  background: radial-gradient(ellipse 80% 90% at 12% 35%, rgba(var(--olive-rgb), .1), rgba(var(--olive-rgb), .03) 70%);
+  box-shadow: 0 0 26px -6px rgba(var(--olive-rgb), .22);
+  opacity: 0; transition: opacity .5s var(--ease-out);
+}
+.abt-step:last-child::before { bottom: -.55rem; }
+.abt-step:hover::before { opacity: 1; }
+.abt-step__no {
+  position: relative;
+  display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%;
+  background: #F4EEE4; box-shadow: inset 0 0 0 1px var(--olive-l);
+  font-size: .64rem; font-weight: 600; letter-spacing: .04em; color: var(--olive-ink);
+  transition: box-shadow .5s var(--ease-out), background-color .5s var(--ease-out), color .5s var(--ease-out);
+}
+/* the pointer on an entry lights its circle from within: soft, olive, diffuse */
+.abt-step:hover .abt-step__no {
+  background: #FAF7EE; color: var(--olive-ink);
+  box-shadow:
+    inset 0 0 0 1px var(--olive),
+    inset 0 0 6px rgba(var(--olive-rgb), .25),
+    0 0 0 3px rgba(var(--olive-rgb), .1),
+    0 0 14px 2px rgba(var(--olive-rgb), .32),
+    0 0 30px 6px rgba(var(--olive-rgb), .14);
+}
+/* 05, the endpoint: still the one that's filled, in a softer, muted olive */
+.abt-step:last-child .abt-step__no { background: #8E917A; box-shadow: none; color: #FBF8F1; }
+.abt-step:last-child:hover .abt-step__no {
+  background: #858870;
+  box-shadow: 0 0 0 3px rgba(var(--olive-rgb), .16), 0 0 14px 2px rgba(var(--olive-rgb), .4), 0 0 30px 6px rgba(var(--olive-rgb), .16);
+}
+.abt-step__stage { margin: .1rem 0 .2rem; font-family: var(--serif); font-weight: 300; font-size: 1.2rem; line-height: 1.25; color: var(--ink); transition: color .5s var(--ease-out); }
+.abt-step__where { margin: 0 0 .35rem; font-size: .625rem; line-height: 1.6; color: var(--olive-ink); }
+.abt-step__proof { margin: 0; max-width: 30rem; font-size: .9rem; line-height: 1.65; color: var(--ink-soft); transition: color .5s var(--ease-out); }
+.abt-step:hover .abt-step__stage { color: #0E1014; }
+.abt-step:hover .abt-step__proof { color: var(--ink); }
+.abt-step__proof strong { font-weight: 600; color: var(--ink); }
+
+/* what keeps me curious: light, a row of five. Pointing at an interest wakes
+   its symbol: a deeper olive, a soft glow, a small lift. */
+.abt-notes {
+  list-style: none; margin: .5rem 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.abt-note { padding: .25rem clamp(1rem, 2vw, 1.75rem); border-left: 1px solid var(--line); }
+.abt-note:first-child { padding-left: 0; border-left: 0; }
+.abt-note__icon {
+  display: block; color: var(--olive); opacity: .85;
+  transform-origin: 30% 70%;
+  transition: color .45s var(--ease-out), opacity .45s var(--ease-out), filter .45s var(--ease-out), transform .45s var(--ease-out);
+}
+.abt-note:hover .abt-note__icon {
+  color: var(--olive-ink); opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(var(--olive-rgb), .45));
+  transform: translateY(-2px) scale(1.1);
+}
+.abt-note__title { margin: .75rem 0 .35rem; font-family: var(--serif); font-weight: 300; font-size: 1.15rem; line-height: 1.2; color: var(--ink); }
+.abt-note__line { margin: 0; font-size: .875rem; line-height: 1.6; color: var(--ink-soft); }
+
+/* how I think about design */
+.abt-points {
+  list-style: none; margin: clamp(2rem, 5vh, 2.75rem) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 4.5vh, 2.75rem) clamp(2rem, 5vw, 4.5rem);
+}
+.abt-point { position: relative; padding-top: 1.15rem; border-top: 1px solid rgba(var(--olive-rgb), .45); }
+.abt-point::before {
+  content: ""; position: absolute; top: -.3rem; left: 0;
+  width: .6rem; height: .6rem; background: var(--olive); border-radius: 0 60% 0 60%;
+}
+.abt-point__title { margin: 0 0 .6rem; font-family: var(--serif); font-weight: 300; font-size: clamp(1.25rem, 1.7vw, 1.45rem); line-height: 1.2; color: var(--ink); }
+.abt-point__body { margin: 0; max-width: 31rem; font-size: .95rem; line-height: 1.75; color: var(--ink-soft); }
+
+/* ----------------------------------------------------- capabilities --- */
+.abt-caps__head { max-width: 40rem; margin: 0 auto clamp(1.75rem, 4vh, 2.5rem); text-align: center; }
+.abt-caps__hint { margin: .75rem 0 0; font-size: .95rem; line-height: 1.6; color: var(--ink-muted); }
+
+/* Each skill has its own colour identity, muted and warm so the six sit with
+   the olive and cream: sage, dusty rose, muted gold, soft blue, terracotta,
+   plum. `--tint` is the sticker's face, `--accent` its mark and ink stroke. */
+.abt-skill--uxui        { --tint: #E4E9DB; --accent: #5F7456; }
+.abt-skill--product     { --tint: #F3E2DD; --accent: #9E5E57; }
+.abt-skill--ai          { --tint: #F2E8CD; --accent: #957731; }
+.abt-skill--interaction { --tint: #DFE6EC; --accent: #506C86; }
+.abt-skill--prototype   { --tint: #F3E0D3; --accent: #A45F3F; }
+.abt-skill--visual      { --tint: #EADFE8; --accent: #7A5D7B; }
+
+/* the book with its cards either side: a supporting moment, kept small */
+.abt-studio {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 34rem) 8rem;
+  justify-content: center; align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+}
+/* both columns share one rhythm (equal rows, equal gaps) and centre on the
+   book, so the left and right groups sit level with each other */
+.abt-homes { display: grid; grid-auto-rows: 5.8rem; gap: .55rem; align-self: center; justify-items: center; }
+.abt-home { display: grid; place-items: center; min-height: 5.8rem; translate: var(--nx, 0) 0; }
+
+/* --- the stickers --------------------------------------------------------
+   Die-cut stickers of small real objects, in the Creative Archive's language:
+   the object is the sticker. Its white border, hand-cut edge and shadow are
+   drawn in the SVG (about.js), so the button itself is just a clear hit area.
+   No text: the book prints the names. */
+.abt-card {
+  --rot: var(--r);
+  position: relative;
+  display: block;
+  width: 5.6rem; height: 5.6rem; margin: 0; padding: 0;
+  border: 0; border-radius: 1rem;
+  background: none;
+  font: inherit; color: var(--accent); letter-spacing: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+  transform: translateY(var(--lift, 0px)) rotate(var(--rot));
+  transition: transform .5s var(--ease-out), filter .35s var(--ease-out);
+}
+.abt-card__face { display: block; width: 100%; height: 100%; }
+.abt-card__glyph { display: block; width: 100%; height: 100%; overflow: visible; }
+
+.abt[data-drag="on"] .abt-card { cursor: grab; touch-action: none; }
+.abt-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .abt-card:hover { --lift: -3px; --rot: calc(var(--r) * .35); }
+  .abt-card:hover:not(.is-held) { filter: drop-shadow(0 6px 6px rgba(var(--shadow-rgb), .12)); }
+}
+
+/* A card can only rise as high as the layer it sits in, so its spot and the
+   book come up while it is carried or gliding. */
+.abt-home:has(.is-held, .is-flying),
+.abt-book:has(.is-held, .is-flying) { position: relative; z-index: 30; }
+
+/* placed: the sticker is pressed into its entry, a little larger than the
+   dashed spot so it reads as stuck on the page */
+.abt-card.is-placed { --rot: -4deg; width: 3rem; height: 3rem; }
+.abt-card.is-flying { z-index: 25; transition: transform .55s cubic-bezier(.22, 1.1, .42, 1), box-shadow .3s, background-color .35s; }
+.abt-card.is-held { z-index: 30; cursor: grabbing; }
+.abt-card.is-moving {
+  transition: filter .2s var(--ease-out);
+  filter: drop-shadow(0 12px 12px rgba(var(--shadow-rgb), .18));
+}
+
+/* --- the book ------------------------------------------------------------- */
+.abt-book {
+  position: relative;
+  display: grid; grid-template-columns: 1fr 1fr;
+  padding: .45rem;
+  border-radius: 4px 4px 6px 6px;
+  /* the cover: smooth olive cloth showing round the pages. No woven pattern:
+     its fine lines shimmered into a rough, torn-looking edge at normal size.
+     A soft bevel keeps the edge crisp and the board feeling solid. */
+  background: linear-gradient(#777A63, #686B55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    inset 0 -1px 0 rgba(0, 0, 0, .14),
+    0 2px 3px rgba(var(--shadow-rgb), .15), 0 24px 38px -26px rgba(var(--shadow-rgb), .55);
+  transition: box-shadow .35s var(--ease-out);
+}
+.abt-book[data-over="true"] {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    inset 0 -1px 0 rgba(0, 0, 0, .14),
+    0 0 0 3px rgba(var(--olive-rgb), .25), 0 2px 3px rgba(var(--shadow-rgb), .15), 0 28px 44px -26px rgba(var(--shadow-rgb), .6);
+}
+.abt-book__ribbon {
+  position: absolute; z-index: 2; top: -.2rem; left: calc(50% - .25rem);   /* in the spine */
+  width: .5rem; height: calc(100% + 1.2rem);
+  background: linear-gradient(90deg, #8E4B47, var(--chest) 45%, #8E4B47);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - .4rem), 0 100%);
+  pointer-events: none;
+}
+.abt-page {
+  position: relative;
+  padding: 1.35rem 1.25rem 1.4rem;
+  background: var(--grain), #FBF8F1;
+}
+/* the gutter: pages curve down into the spine */
+.abt-page--l { border-radius: 3px 0 0 3px; box-shadow: inset -18px 0 22px -18px rgba(var(--shadow-rgb), .32); }
+.abt-page--r { border-radius: 0 3px 3px 0; box-shadow: inset 18px 0 22px -18px rgba(var(--shadow-rgb), .32); }
+
+.abt-entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.05rem; }
+.abt-entry { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: .85rem; align-items: start; }
+.abt-entry__slot {
+  display: grid; place-items: center; width: 2.4rem; height: 2.4rem; margin-top: .1rem;
+  border-radius: 50%; border: 1px dashed rgba(92, 95, 75, .38);
+  transition: border-color .4s var(--ease-out);
+}
+.abt-entry__slot > * { grid-area: 1 / 1; }
+.abt-entry__mark {
+  width: .65rem; height: .65rem; opacity: .4;
+  background:
+    linear-gradient(var(--olive), var(--olive)) center / 1px 100% no-repeat,
+    linear-gradient(var(--olive), var(--olive)) center / 100% 1px no-repeat;
+}
+.abt-entry__slot:has(.abt-card) { border-color: transparent; }
+.abt-entry__slot { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.abt-entry__slot:has(.abt-card) .abt-entry__mark { opacity: 0; }
+.abt-entry__name {
+  position: relative; display: inline-block;
+  font-family: var(--serif); font-size: 1.05rem; line-height: 1.2; color: var(--graphite);
+  transition: color .5s var(--ease-out);
+}
+/* inked: the name darkens and a fine olive stroke draws in beneath it */
+.abt-entry__name::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -.25rem; height: .3rem;
+  /* the stroke is a mask, so it takes the skill's own accent colour */
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 6' preserveAspectRatio='none'><path d='M1 4C22 2.6 44 2 64 2.8s27 1 35 .3' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round'/></svg>") left center / 100% 100% no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 6' preserveAspectRatio='none'><path d='M1 4C22 2.6 44 2 64 2.8s27 1 35 .3' fill='none' stroke='black' stroke-width='1.3' stroke-linecap='round'/></svg>") left center / 100% 100% no-repeat;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path .6s var(--ease-out) .15s;
+}
+.abt-entry__line { display: block; margin-top: .35rem; font-size: .8rem; line-height: 1.5; color: var(--ink-muted); }
+.abt-entry[data-on="true"] .abt-entry__name { color: var(--ink); }
+.abt-entry[data-on="true"] .abt-entry__name::after { clip-path: inset(0 0 0 0); }
+
+.abt-caps__tools { min-height: 2.5rem; margin: 1.4rem 0 0; text-align: center; }
+.abt-reset {
+  padding: .5rem .25rem; border: 0; background: none;
+  font: inherit; font-size: .85rem; letter-spacing: 0; color: var(--ink-muted);
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--olive-l);
+  cursor: pointer;
+}
+.abt-reset:hover { color: var(--ink); }
+
+/* ----------------------------------------------------------------- close --- */
+.abt-close {
+  padding: clamp(4.5rem, 13vh, 7.5rem) 0;
+  text-align: center;
+}
+/* the page's own bottom padding would leave a strip of cream under the band */
+.abt:has(.abt-close) { padding-bottom: 0; }
+.abt-close__title {
+  margin: 0 auto 1.8rem;
+  font-family: var(--serif); font-weight: 300; font-size: clamp(1.8rem, 3.2vw, 2.7rem); line-height: 1.2;
+  color: #F8F3EB;                       /* cream on deep olive: 5.4–6.1 : 1 */
+}
+.abt-close .abt-btn { color: #F8F3EB; border-color: rgba(248, 243, 235, .55); background: transparent; }
+.abt-close .abt-btn:hover { background: rgba(248, 243, 235, .1); border-color: #F8F3EB; }
+.abt-close .abt-btn:focus-visible { outline-color: #F8F3EB; }
+
+/* ---------------------------------------------------------------- arrive --- */
+.abt[data-reveal="on"] .abt-rv {
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .9s var(--ease-out), transform 1s var(--ease-out);
+}
+.abt[data-reveal="on"] .abt-rv[data-in="true"] { opacity: 1; transform: none; }
+
+/* ============================================================== smaller === */
+@media (max-width: 62rem) {
+  .abt-hero { grid-template-columns: 1fr; gap: 2rem; }
+  .abt-portrait { max-width: 34rem; }
+  .abt-origin, .abt-edu__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .abt-notes { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1.75rem; }
+  .abt-note:nth-child(4) { padding-left: 0; border-left: 0; }
+  .abt-studio { grid-template-columns: 7rem minmax(0, 30rem) 7rem; gap: 1rem; }
+}
+
+/* The cards line up above the book and are tapped rather than dragged, so
+   the page always scrolls. */
+@media (max-width: 52rem) {
+  .abt-studio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem .75rem; max-width: 30rem; margin: 0 auto; }
+  .abt-homes { display: contents; }
+  .abt-home { translate: none; }
+  .abt-book { grid-column: 1 / -1; order: 1; margin-top: 1rem; }   /* after all six cards */
+  .abt-points { grid-template-columns: 1fr; }
+}
+@media (max-width: 40rem) {
+  .abt-book { grid-template-columns: 1fr; }
+  .abt-book__ribbon { left: auto; right: 1.4rem; height: 4rem; }
+  .abt-page--l { border-radius: 3px 3px 0 0; box-shadow: inset 0 -18px 22px -18px rgba(var(--shadow-rgb), .28); padding-bottom: 1.1rem; }
+  .abt-page--r { border-radius: 0 0 3px 3px; box-shadow: inset 0 18px 22px -18px rgba(var(--shadow-rgb), .28); padding-top: 1.1rem; }
+  .abt-school { padding-right: 0; }
+  .abt-seal { position: static; display: block; width: 5rem; height: 5rem; margin-bottom: 1rem; }
+  .abt-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .abt-note, .abt-note:nth-child(4) { padding: 0 1rem; border-left: 1px solid var(--line); }
+  .abt-note:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .abt-note:last-child { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abt-card, .abt-entry__name, .abt-entry__name::after, .abt-tool__logo,
+  .abt-seal__star, .abt-step__no, .abt-step::before, .abt-note__icon { transition: none; }
+  .abt-seal.is-lit .abt-seal__star { animation: none; }
+  /* still: the marks wrap into a quiet grid instead of drifting */
+  .abt-tools__view { -webkit-mask-image: none; mask-image: none; padding-bottom: 1rem; }
+  .abt-tools__view { cursor: default; }
+  .abt-tools__track { width: auto; flex-wrap: wrap; justify-content: center; row-gap: 2.4rem; }
+  .abt-tool[aria-hidden="true"] { display: none; }
+}

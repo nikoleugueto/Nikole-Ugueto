@@ -11,60 +11,149 @@
  * marked "to add" row rather than as a link that goes nowhere.
  */
 
+/* About: the deeper, more personal version of the resume and LinkedIn.
+   The positioning lines are her own, from the resume. Every fact here is one
+   she supplied or that her resume and case studies establish; nothing names a
+   result, client, role or detail they don't. No GPA, by her request. */
 export const about = {
   eyebrow: 'About',
-  title: 'Designing for people, not just products.',        // verbatim, ref 07
-  intro:                                                     // verbatim, board
-    'I’m Nikole, a UX/UI designer with a background in healthcare, AI and ' +
-    'technology. I bring together empathy, strategy and design to build digital ' +
-    'experiences that are intuitive, accessible and centered on people.',
+  hello: 'Hi, I’m Nikole.',
+  title:                                                     // resume positioning
+    'I design digital experiences that make complex information and everyday ' +
+    'processes easier to understand and use.',
+  // resume positioning, word for word; `lead` and `rest` are two visual lines
+  // so "I connect…" always begins its own
+  intro: {
+    lead: 'With a background in marketing, visual design, UX and AI,',
+    rest: 'I connect user needs, business goals and emerging technology to create ' +
+          'products that are clear, useful and meaningful.',
+  },
+  facts: ['UX/UI & Product Designer', 'Tampa, FL', 'English · Español'],
 
-  // verbatim, ref 07 — names only. No proficiency levels: the reference shows
-  // plain rules, and inventing a self-assessment would be making something up.
-  capabilities: [
-    'UX/UI Design', 'Product Design', 'Healthcare',
-    'AI & Data', 'Visual Design', 'Collaboration',
-  ],
-
-  sections: [
-    {
-      id: 'story', no: '01', title: 'My story',
-      placeholder: true, body: null,
-      prompt: 'How you got here — what pulled you from your starting point into healthcare, then into design. A few hundred words in your own voice. This is the section people actually read.',
-    },
-    {
-      id: 'philosophy', no: '02', title: 'Design philosophy',
-      placeholder: true, body: null,
-      prompt: 'What you believe about the work, stated so it could be disagreed with. Avoid anything that every designer would also sign — the useful version is the opinion that costs you something.',
-    },
-    {
-      id: 'experience', no: '03', title: 'Experience',
-      placeholder: true, body: null,
-      prompt: 'Roles, organisations and dates. Kept factual; the case studies carry the depth.',
-    },
-    {
-      id: 'tools', no: '04', title: 'Tools & technologies',
-      placeholder: true, body: null,
-      prompt: 'What you work in — design, prototyping, research, handoff, anything you build with. Worth noting anywhere the tool choice actually changed the outcome.',
-    },
-  ],
-
-  process: {
-    title: 'From insight to impact.',                        // verbatim, ref 06
-    body:                                                     // verbatim, ref 06
-      'My process is a balance of research, creativity and strategy. I turn ' +
-      'complex problems into simple, intuitive experiences that make a real ' +
-      'difference.',
-    steps: [                                                  // verbatim, ref 06
-      { no: '01', title: 'Understand', line: 'The people & their needs' },
-      { no: '02', title: 'Define',     line: 'The real problem' },
-      { no: '03', title: 'Design',     line: 'Ideas into experiences' },
-      { no: '04', title: 'Build',      line: 'Interfaces & products' },
-      { no: '05', title: 'Improve',    line: 'Measure & iterate' },
+  origin: {
+    eyebrow: 'Where I come from',
+    title: 'Born in the U.S. raised in Venezuela.',          // no comma, by her request
+    body: [                                                   // verbatim, given 2026-09-29
+      'My family has Venezuelan and Colombian roots, and they always taught me to ' +
+      'believe in myself, pursue what matters to me, and have the confidence to work ' +
+      'toward my dreams.',
+      'Growing up, I loved playing video games and painting, often with my family or ' +
+      'friends. Both made me curious about how they were created and what happened ' +
+      'behind the screen, from the games I played to the apps I used. That curiosity ' +
+      'eventually led me from marketing and visual design into UX and product design.',
     ],
   },
 
-  resume: { label: 'View resume', link: null },
+  /* Education first: FIU is the credibility point she wants noticed. */
+  education: {
+    eyebrow: 'Education & experience',
+    primary: { school: 'Florida International University', degree: 'BBA, Marketing', honor: 'Cum Laude', year: '2026' },
+    secondary: { school: 'Central Piedmont Community College', degree: 'AA, Business', year: '2024' },
+  },
+
+  /* The path her work took. Stages, not a chronology: the resume has the dates.
+     Each proof line is a real result from the resume or a real project. */
+  path: [                                                   // her copy, given 2026-09-29
+    { stage: 'Marketing',
+      where: 'Dolfin Home Loans · Castillo Housing Group · Ceramic Pro Sarasota',
+      proof: 'Created campaigns that increased brand awareness by <strong>25%</strong> and engagement by <strong>20%</strong>.' },
+    { stage: 'Visual Design',
+      where: 'Ugueto AI Marketing · Castillo Housing Group',
+      proof: 'Created digital and print brand materials, including campaign assets, Castillo’s main brochure, and a dedicated residence book.' },
+    { stage: 'UX/UI Design',
+      where: 'Ceramic Pro Sarasota · LifeWorx',
+      proof: 'Redesigned a website experience that increased conversion by <strong>20%</strong>, and designed LifeWorx’s dedicated Events destination.' },
+    { stage: 'Product Design',
+      where: 'Connected Operations',
+      proof: 'A SaaS concept inspired by seeing job details get lost between printed handoffs and disconnected systems.' },
+    { stage: 'AI-assisted Design',
+      where: 'AI Home Discovery Concept',
+      proof: 'Explored an AI-assisted product concept designed to help people discover and compare homes with less effort.' },
+  ],
+
+  curious: {
+    eyebrow: 'What keeps me curious',
+    notes: [
+      { id: 'paint',  title: 'Painting',            line: 'Keeps my creativity active outside the screen.' },
+      { id: 'ai',     title: 'AI & technology',     line: 'I like understanding how new tools and systems work, from AI to investing.' },
+      { id: 'read',   title: 'Reading & learning',  line: 'Naturally curious, and always learning something new.' },
+      { id: 'travel', title: 'Travel & food',       line: 'New places and new restaurants give me new perspectives.' },
+      { id: 'home',   title: 'Tampa',               line: 'The beach, the city I chose to call home, and my Pomeranian :)' },
+    ],
+  },
+
+  thinking: {
+    eyebrow: 'How I think about design',
+    title: 'What my projects keep teaching me.',
+    points: [                                                 // her copy, given 2026-09-29
+      { title: 'Start where things get lost.',
+        body: 'Many of my projects begin with something slipping through the cracks. ' +
+              'Finding that moment tells me what needs to be designed first.' },
+      { title: 'Make complex things easier to use.',
+        body: 'Whether I’m designing a website, a product, or an AI concept, I look for ' +
+              'ways to make information and interactions feel more intuitive.' },
+      { title: 'Design for people and the business.',
+        body: 'Good design should make sense for the person using it and support the goals ' +
+              'behind the experience. My marketing background taught me to think about both.' },
+      { title: 'AI should make things easier.',
+        body: 'I’m interested in AI when it removes steps, clarifies decisions, or makes ' +
+              'complex information easier to navigate, while keeping people in control of ' +
+              'the experience.' },
+    ],
+  },
+
+  /* Capabilities: what she brings. The book lists all six with their lines
+     from the start; placing a card in only inks its entry. Her copy, 2026-09-29,
+     four lines tightened slightly (her permission) so the entries sit evenly. */
+  capabilities: {
+    eyebrow: 'Capabilities',
+    title: 'What I bring',
+    hint: 'Explore the skills behind my work.',
+    skills: [
+      { id: 'uxui',        name: 'UX/UI Design',       line: 'Clear interfaces and flows built around real user needs.' },
+      { id: 'product',     name: 'Product Design',     line: 'Turning complex problems into useful digital products.' },
+      { id: 'ai',          name: 'AI-assisted Design', line: 'Using AI to explore, build, and iterate faster.' },
+      { id: 'interaction', name: 'Interaction Design', line: 'How people move through and interact with products.' },
+      { id: 'prototype',   name: 'Prototyping',        line: 'Turning ideas into experiences people can test.' },
+      { id: 'visual',      name: 'Visual Design',      line: 'Type, color, layout, and storytelling with intention.' },
+    ],
+  },
+
+  /* Tools: what she uses. Every entry is an official mark: Simple Icons SVGs in
+     each brand's own color, or `file` for the PNGs she supplied (2026-09-29).
+     No stand-ins. */
+  tools: {
+    eyebrow: 'Tools',
+    note: 'Always learning and exploring new ones.',
+    list: [
+      { name: 'Figma',              logo: 'figma' },
+      { name: 'Canva',              logo: 'canva' },
+      { name: 'Adobe Photoshop',    logo: 'adobephotoshop' },
+      { name: 'Adobe Illustrator',  logo: 'adobeillustrator' },
+      { name: 'Adobe Premiere Pro', logo: 'adobepremierepro' },
+      { name: 'Adobe InDesign',     logo: 'adobeindesign' },
+      { name: 'Adobe Audition',     logo: 'adobeaudition' },
+      { name: 'CapCut',             file: 'capcut.png' },
+      { name: 'Framer',             logo: 'framer' },
+      { name: 'WordPress',          logo: 'wordpress' },
+      { name: 'Wix',                logo: 'wix' },
+      { name: 'Kajabi',             file: 'kajabi.png' },
+      { name: 'GitHub',             logo: 'github' },
+      { name: 'Claude Code',        logo: 'claude' },
+      { name: 'Codex',              logo: 'openai' },
+      { name: 'Notion',             logo: 'notion' },
+      { name: 'Asana',              logo: 'asana' },
+      { name: 'Monday.com',         file: 'monday.png' },
+      { name: 'SocialPilot',        file: 'socialpilot.png' },
+      { name: 'HubSpot',            logo: 'hubspot' },
+      { name: 'Constant Contact',   file: 'constantcontact.png' },
+      { name: 'Birdeye',            file: 'birdeye.png' },
+      { name: 'Google Analytics',   logo: 'googleanalytics' },
+      { name: 'ElevenLabs',         logo: 'elevenlabs' },
+    ],
+  },
+
+  close: { title: 'Let’s create something meaningful.' },
 };
 
 /* The creative archive: a marble workboard of printed pieces.

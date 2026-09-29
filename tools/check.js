@@ -99,10 +99,6 @@ if (worldsMod) {
     need(`/assets/img/journey-${i + 1}.webp`, 'journey beat portrait'));
 }
 const pagesMod = loaded['content/pages.js'];
-if (pagesMod) {
-  pagesMod.about.process.steps.forEach((_, i) =>
-    need(`/assets/img/process-${i + 1}.webp`, 'process step disc'));
-}
 
 /* The case-study figures are `{ name, widths }` scattered through a nested
    object, and the views build their srcsets from a template. Walk the content
@@ -153,7 +149,6 @@ try {
     for (const w of piece.widths) collect(w.file);
   }
 } catch { /* manifest is optional */ }
-if (pagesMod) pagesMod.about.process.steps.forEach((_, i) => collect(`process-${i + 1}.webp`));
 
 /* The creative archive's prints live in their own folder: each image lists
    the widths it was exported at, and every one of them must exist. */
@@ -169,10 +164,26 @@ if (pagesMod?.archive?.pieces) {
   }
 }
 
+/* The About page's tool logos: every one the content names must exist, and
+   the folder holds nothing else. */
+const toolFiles = new Set();
+for (const t of pagesMod?.about?.tools?.list || []) {
+  const file = t.file || (t.logo && `${t.logo}.svg`);
+  if (!file) continue;
+  need(`/assets/img/tools/${file}`, `tool logo ${t.name}`);
+  toolFiles.add(file);
+}
+
 let orphanBytes = 0;
 for (const f of readdirSync(join(root, 'assets/img'))) {
   // Build notes and the art manifest describe the pipeline; they are not art.
   if (f.endsWith('.meta.json') || f.endsWith('.manifest.json')) continue;
+  if (f === 'tools') {
+    for (const g of readdirSync(join(root, 'assets/img/tools'))) {
+      if (!toolFiles.has(g)) note(`orphaned asset  assets/img/tools/${g}  (nothing references it)`);
+    }
+    continue;
+  }
   if (f === 'archive') {
     for (const g of readdirSync(join(root, 'assets/img/archive'))) {
       if (!archiveFiles.has(g) && !referenced.has(g)) note(`orphaned asset  assets/img/archive/${g}  (nothing references it)`);
