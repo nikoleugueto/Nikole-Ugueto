@@ -3,10 +3,8 @@ import { contact } from '../../../content/pages.js';
 /**
  * Contact.
  *
- * Kept plain, as the brief asked. The email is real and comes from Nikole's own
- * reference; the LinkedIn URL and the CV file do not exist yet, so those render
- * as marked "to add" rows instead of links that go nowhere. A dead link on a
- * contact page is worse than an honest gap.
+ * Kept plain, as the brief asked. Email, LinkedIn and the resume PDF are real
+ * links; the resume row downloads the file rather than opening a mail client.
  */
 const ICON = {
   mail: '<path d="M2 4h12v8H2z"/><path d="m2 5 6 4 6-4"/>',
@@ -24,7 +22,8 @@ export function contactView({ onBack }) {
   const channels = contact.channels.map((c) => {
     const inner = `${icon(c.icon)}<span class="ch__label">${c.label}</span>`;
     if (c.link) {
-      return `<li class="ch"><a class="ch__row" href="${c.link}" data-cursor="Write to me">${inner}</a></li>`;
+      const dl = c.download ? ` download="${c.download}"` : '';
+      return `<li class="ch"><a class="ch__row" href="${c.link}"${dl} data-cursor="${c.cursor || 'Write to me'}">${inner}</a></li>`;
     }
     return `<li class="ch"><span class="ch__row ch__row--static">${inner}${
       c.note ? `<span class="ch__note u-label">${c.note}</span>` : ''
@@ -51,11 +50,8 @@ export function contactView({ onBack }) {
         </div>
         <div class="ct__channels">
           <ul class="chs">${channels}</ul>
-          <p class="ct__quote">&mdash; ${contact.quote}</p>
         </div>
       </div>
-
-      <p class="ct__tags u-label">${contact.tags.join(' <span aria-hidden="true">/</span> ')}</p>
     </div>`;
 
   function mount(root) {

@@ -75,7 +75,7 @@ export const worlds = [
     hotspot:  { x: 0.705, y: 0.615, side: 'right', line: 24 },
     district: { x: 0.220, y: 0.550 },
     card:     { x: 0.000, y: 0.755, side: 'left' },
-    scene:    { tagline: 'Ideas that inspire change.', sky: ['#DDC9BD', '#F4F3EF'] },
+    scene:    { tagline: 'Projects that inspire change.', sky: ['#DDC9BD', '#F4F3EF'], description: 'Visual direction, campaigns, and the details that bring ideas to life.' },
     journey:  { line: 'From visuals to connection.', kicker: 'Creative work' },
     caseStudy: { id: 'archive', title: 'Creative Archive', status: 'index' },
   },

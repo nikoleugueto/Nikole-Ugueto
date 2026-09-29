@@ -34,7 +34,13 @@ os.makedirs(OUT, exist_ok=True)
 # --------------------------------------------------------------- the manifest
 ART = {
     "hero-plate":      {"src": "originals/hero.png",             "widths": [760, 1140, 1520]},
-    "worlds-island":   {"src": "originals/island.png",           "widths": [760, 1140, 1520]},
+    # The Worlds map is shown large (up to 56vw) and is the one piece of art
+    # where the shared quality below read as soft on close inspection —
+    # compression noise on window mullions and road markings, not a
+    # resolution shortfall (the source itself tops out at 1303px wide, and
+    # every width here is already clamped to that). A quality override fixes
+    # the softness without spending the extra bytes on every other cut-out.
+    "worlds-island":   {"src": "originals/island.png",           "widths": [760, 1140, 1520], "quality": 93},
     "world-healthcare":{"src": "originals/world-healthcare.png", "widths": [640, 960, 1280]},
     "world-ai":        {"src": "originals/world-ai.png",         "widths": [640, 960, 1280]},
     "world-product":   {"src": "originals/world-product.png",    "widths": [640, 960, 1280]},
@@ -98,6 +104,8 @@ for name, cfg in ART.items():
         out = art if w == art.width else art.resize((w, h), Image.LANCZOS)
         fname = f"{name}-{w}.webp"
         enc = dict(ENCODE)
+        if "quality" in cfg:
+            enc["quality"] = cfg["quality"]
         if opaque:
             enc.pop("alpha_quality", None)
         out.save(os.path.join(OUT, fname), **enc)

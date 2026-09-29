@@ -36,7 +36,6 @@ export function worldsView({ onChoose, onBack, arrivedFrom }) {
         <span class="dcard__name">${w.kicker}</span>
         <span class="dcard__go" aria-hidden="true">&rarr;</span>
       </span>
-      <span class="dcard__line">${w.line}</span>
     </span>`).join('');
 
   const journey = worlds.map((w) => `

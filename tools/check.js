@@ -155,10 +155,30 @@ try {
 } catch { /* manifest is optional */ }
 if (pagesMod) pagesMod.about.process.steps.forEach((_, i) => collect(`process-${i + 1}.webp`));
 
+/* The creative archive's prints live in their own folder: each image lists
+   the widths it was exported at, and every one of them must exist. */
+const archiveFiles = new Set();
+if (pagesMod?.archive?.pieces) {
+  for (const p of pagesMod.archive.pieces) {
+    for (const im of [p.img, ...p.extras]) {
+      for (const w of im.widths) {
+        need(`/assets/img/archive/${im.base}-${w}.jpg`, `archive print ${im.base} @${w}px`);
+        archiveFiles.add(`${im.base}-${w}.jpg`);
+      }
+    }
+  }
+}
+
 let orphanBytes = 0;
 for (const f of readdirSync(join(root, 'assets/img'))) {
   // Build notes and the art manifest describe the pipeline; they are not art.
   if (f.endsWith('.meta.json') || f.endsWith('.manifest.json')) continue;
+  if (f === 'archive') {
+    for (const g of readdirSync(join(root, 'assets/img/archive'))) {
+      if (!archiveFiles.has(g) && !referenced.has(g)) note(`orphaned asset  assets/img/archive/${g}  (nothing references it)`);
+    }
+    continue;
+  }
   if (!referenced.has(f)) {
     const bytes = statSync(join(root, 'assets/img', f)).size;
     orphanBytes += bytes;

@@ -128,7 +128,7 @@
 }
 .ar__body { margin: 1.1rem 0 1.5rem; font-size: var(--t-lede); line-height: 1.68; color: var(--ink-soft); }
 .ar__tags { color: var(--ink-muted); margin: 0; }
-.ar__tags span, .ct__tags span { color: var(--ink-quiet); padding: 0 .3rem; }
+.ar__tags span { color: var(--ink-quiet); padding: 0 .3rem; }
 
 .ar__note {
   max-width: 44rem; margin: 0 0 clamp(1.5rem, 4vh, 2.25rem);
@@ -213,16 +213,21 @@
   gap: clamp(2rem, 6vw, 5rem);
   align-content: center; align-items: center;
   padding: clamp(2rem, 8vh, 5rem) 0;
+  /* A slight lift off dead centre, without touching the gap/padding above
+     that keep every element's spacing relative to the others. */
+  transform: translateY(clamp(-3rem, -6vh, -1rem));
 }
 .ct__title {
-  margin: 0; font-weight: 300;
+  margin: 0; font-weight: 300; font-family: OrticaLinear-Light, var(--font);
   font-size: clamp(2rem, 4.4vw, 3.4rem);
   line-height: 1.06; letter-spacing: var(--track-tight);
   max-width: 11em;
+  color: #000;
 }
 .ct__body {
   margin: 1.1rem 0 2rem; max-width: 26rem;
-  font-size: var(--t-lede); line-height: 1.66; color: var(--ink-soft);
+  font-size: var(--t-lede); line-height: 1.66;
+  color: #000;
 }
 
 .chs { list-style: none; margin: 0; padding: 0; }
@@ -230,8 +235,9 @@
 .ch__row {
   display: flex; align-items: center; gap: .8rem;
   padding: .85rem 0; font-size: .9375rem;
+  color: #000;
 }
-.ch__row--static { color: var(--ink-soft); }
+.ch__row--static { color: #000; }
 .ch__icon { flex: none; color: var(--ink-muted); }
 .ch__label { flex: 1; }
 .ch__note {
@@ -242,14 +248,10 @@
      to clear AA without turning a placeholder into a component. */
   background: rgba(246, 244, 241, .74);
 }
-a.ch__row:hover { color: var(--focus); }
-a.ch__row:hover .ch__icon { color: var(--focus); }
+a.ch__row:hover { color: #73765F; }
+a.ch__row:hover .ch__icon { color: #73765F; }
 
-.ct__quote {
-  margin: clamp(1.5rem, 4vh, 2.25rem) 0 0;
-  font-style: italic; font-size: .875rem; line-height: 1.6; color: var(--ink-soft);
-}
-.ct__tags { color: var(--ink-muted); margin: 0; padding-top: 1.25rem; border-top: 1px solid var(--rule-soft); }
+.ct__lead .btn { color: #000; }
 
 /* ==========================================================================
    Stacked

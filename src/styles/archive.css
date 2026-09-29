@@ -1,0 +1,308 @@
+/* ==========================================================================
+   Creative archive — a marble workboard.
+
+   Scoped `cab-` throughout, so this file cannot affect another screen.
+
+   Printed work on white marble. The palette is the portfolio's own: Gray
+   Olive, Chestnut, Cream and White. Brass appears only as objects on the desk
+   (a pen, two binder clips) and never as a colour of the page itself.
+   ========================================================================== */
+
+.stage:has(.cab) {
+  place-items: start stretch;
+  padding: 0;
+  background: #F7F6F2;
+}
+
+.cab,
+.cab-focus {
+  --olive:       #73765F;
+  --olive-ink:   #5C5F4B;   /* Gray Olive, a shade deeper so small text clears AA */
+  --chestnut:    #A25B57;
+  --cream:       #F8F3EB;
+  --paper-shade: 40, 38, 30;
+}
+
+.cab {
+  position: relative;
+  width: 100%; min-height: 100%;
+  overflow-x: clip;   /* objects may run past the edges, like the edge of a photograph */
+  padding: calc(var(--header-h) + .5rem) 0 clamp(3.5rem, 10vh, 6rem);
+  /* daylight from a window at the upper left: brighter there, softly falling
+     off toward the far corner, as in an overhead photograph */
+  --wash: radial-gradient(ellipse 70% 60% at 12% 0%, rgba(255, 253, 248, .38), rgba(255, 253, 248, 0) 70%),
+          radial-gradient(ellipse 80% 70% at 100% 100%, rgba(60, 54, 44, .07), rgba(60, 54, 44, 0) 70%);
+  background: var(--wash), url("/assets/img/archive/marble-2800.jpg") center top / cover no-repeat #F4F2EE;
+  opacity: 0;
+}
+@media (max-width: 64rem) {
+  .cab { background-image: var(--wash), url("/assets/img/archive/marble-1600.jpg"); }
+}
+.cab[data-ready="true"] { opacity: 1; transition: opacity var(--dur-l) var(--ease-out); }
+.cab .worlds__crumb { padding: 0 var(--gutter); }
+
+/* --- the words ------------------------------------------------------------ */
+.cab-head {
+  max-width: 64rem; margin: clamp(1rem, 3vh, 1.75rem) auto 0;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+.cab-eyebrow { margin: 0 0 .7rem; color: var(--chestnut); font-weight: 600; }
+.cab-title {
+  margin: 0; font-weight: 300; font-family: OrticaLinear-Light, var(--font);
+  font-size: clamp(1.6rem, 2.5vw, 2.25rem); line-height: 1.15; letter-spacing: -.014em;
+  color: var(--ink); text-wrap: balance;
+}
+.cab-sub {
+  margin: .6rem auto 0;
+  font-size: var(--t-lede); line-height: 1.6;
+  color: var(--olive-ink); text-wrap: balance;
+}
+
+/* --- the desk --------------------------------------------------------------- */
+.cab-board {
+  position: relative;
+  /* as wide as the page allows, but short enough that the whole worktable,
+     hint included, fits on screen under the heading */
+  width: min(84rem, 100% - 2 * var(--gutter), max(56rem, (100svh - 17rem) * 2.1));
+  aspect-ratio: 2.1;
+  margin: clamp(.75rem, 2.5vh, 1.5rem) auto 0;
+  container-type: inline-size;
+}
+
+.cab-piece,
+.cab-obj {
+  position: absolute;
+  left: calc(var(--x) * 1%); top: calc(var(--y) * 1%);
+  width: calc(var(--w) * 1%);
+  padding: 0; border: 0; background: none;
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: rotate(calc(var(--rot) * 1deg)) scale(var(--s, 1));
+  transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+}
+.cab-piece.is-held, .cab-obj.is-held { --s: 1.045; cursor: grabbing; }
+.cab-piece.is-moving, .cab-obj.is-moving { transition: transform .18s ease-out; }
+.cab-piece:focus-visible { outline: none; }
+.cab-piece:focus-visible .cab-print { outline: 2px solid var(--chestnut); outline-offset: 4px; }
+
+/* the print: white paper, a tight contact shadow and a soft one beneath */
+.cab-print {
+  position: relative; display: block;
+  background: #fff;
+  padding: .55cqw .55cqw 0;
+  box-shadow:
+    0 .5px 1px rgba(var(--paper-shade), .14),
+    0 2px 4px rgba(var(--paper-shade), .07),
+    0 14px 24px -12px rgba(var(--paper-shade), .22);
+  transition: box-shadow .5s cubic-bezier(.2, .8, .2, 1);
+}
+.is-held .cab-print {
+  box-shadow:
+    0 1px 2px rgba(var(--paper-shade), .08),
+    0 22px 34px -14px rgba(var(--paper-shade), .30),
+    0 44px 70px -28px rgba(var(--paper-shade), .30);
+}
+.cab-print img {
+  display: block; width: 100%; height: auto; aspect-ratio: var(--ar);
+  object-fit: cover; pointer-events: none;
+}
+.cab-tag {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .15em .7em;
+  padding: .6cqw .1cqw .65cqw;
+  font-size: clamp(7px, .7cqw, 10.5px); line-height: 1.25;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.cab-tag b { font-weight: 600; color: var(--chestnut); }
+.cab-tag span { color: #55584A; }
+
+/* more of the same project, peeking from underneath the top print */
+.cab-sheet {
+  position: absolute; inset: 0; z-index: -1;
+  padding: .55cqw; background: #fff;
+  box-shadow: 0 .5px 1px rgba(var(--paper-shade), .12), 0 8px 16px -10px rgba(var(--paper-shade), .22);
+  transition: transform .55s cubic-bezier(.2, .8, .2, 1);
+}
+.cab-sheet img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.cab-sheet--1 { transform: translate(3.5%, 3%) rotate(3.5deg); }
+.cab-sheet--2 { transform: translate(-3%, 4.5%) rotate(-3deg); }
+
+@media (hover: hover) {
+  /* resting a hand on a print: it rises a touch, and the sheets beneath fan out */
+  .cab-piece:hover:not(.is-held) { --s: 1.012; }
+  .cab-piece:hover .cab-sheet--1 { transform: translate(7%, 5%) rotate(6.5deg); }
+  .cab-piece:hover .cab-sheet--2 { transform: translate(-6.5%, 7.5%) rotate(-6deg); }
+  .cab-piece:hover:not(.is-held) .cab-print {
+    box-shadow: 0 .5px 1px rgba(var(--paper-shade), .12), 0 4px 8px rgba(var(--paper-shade), .08), 0 20px 30px -14px rgba(var(--paper-shade), .26);
+  }
+}
+
+/* a card rather than a print: no white margin around the artwork */
+.cab-piece--bare .cab-print { padding: 0; border-radius: .3cqw; overflow: hidden; }
+.cab-piece--bare .cab-tag { padding-inline: .5cqw; }
+
+
+/* objects on the desk: a brass pen and a loose paper clip */
+.cab-obj svg { display: block; width: 100%; height: auto; }
+.cab-obj { filter: drop-shadow(0 4px 4px rgba(var(--paper-shade), .2)); transition: transform .5s cubic-bezier(.2, .8, .2, 1), filter .5s; }
+.cab-obj--clip { filter: drop-shadow(0 1.5px 1px rgba(var(--paper-shade), .4)) drop-shadow(0 3px 4px rgba(var(--paper-shade), .12)); }
+/* the cup sits heavy on the stone: a tight dark contact shadow and a wide soft one */
+.cab-obj--matcha { filter: drop-shadow(1px 2px 1.5px rgba(var(--paper-shade), .28)) drop-shadow(6px 12px 14px rgba(var(--paper-shade), .2)); }
+/* the flowers barely lift off the desk */
+.cab-obj--flowers { filter: drop-shadow(.5px 1.5px 1px rgba(var(--paper-shade), .22)) drop-shadow(2px 5px 5px rgba(var(--paper-shade), .1)); }
+/* one light, from the upper left: every shadow falls down and to the right */
+.cab-obj--book { filter: drop-shadow(1px 2px 1.5px rgba(var(--paper-shade), .3)) drop-shadow(8px 14px 16px rgba(var(--paper-shade), .2)); }
+.cab-obj--markers { filter: drop-shadow(1px 1.5px 1px rgba(var(--paper-shade), .35)) drop-shadow(3px 6px 6px rgba(var(--paper-shade), .14)); }
+.cab-obj--glasses { filter: drop-shadow(2px 5px 3px rgba(var(--paper-shade), .16)) drop-shadow(4px 10px 10px rgba(var(--paper-shade), .08)); }
+.cab-obj--sketch { filter: drop-shadow(1px 2px 2px rgba(var(--paper-shade), .08)); }
+.cab-obj--pencil, .cab-obj--ruler { filter: drop-shadow(0 2px 1.5px rgba(var(--paper-shade), .3)) drop-shadow(0 7px 8px rgba(var(--paper-shade), .14)); }
+.cab-obj.is-held { filter: drop-shadow(0 16px 14px rgba(var(--paper-shade), .26)); }
+
+.cab-piece.is-away { visibility: hidden; }
+
+/* dealt onto the desk, one print after another */
+.cab-obj { --i: 9; }
+.cab-board[data-deal="waiting"] :is(.cab-piece, .cab-obj) {
+  opacity: 0;
+  transform: translateY(-2.4cqw) rotate(calc((var(--rot) + 5) * 1deg)) scale(1.03);
+}
+.cab-board[data-deal="go"] :is(.cab-piece, .cab-obj) {
+  transition: opacity .55s ease calc(var(--i) * 70ms),
+              transform .8s cubic-bezier(.2, .8, .2, 1) calc(var(--i) * 70ms);
+}
+.cab-board.is-tidying :is(.cab-piece, .cab-obj) {
+  transition: left .75s cubic-bezier(.4, 0, .2, 1), top .75s cubic-bezier(.4, 0, .2, 1),
+              transform .75s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* --- under the desk ------------------------------------------------------------ */
+/* the hint sits on the marble at the foot of the board, where it's always in view */
+.cab-controls {
+  position: absolute; left: 50%; bottom: 1.2%; z-index: 1;
+  transform: translateX(-50%);
+  display: flex; align-items: baseline; gap: 1.25rem;
+  white-space: nowrap;
+}
+.cab-foot {
+  display: flex; justify-content: center;
+  margin: clamp(1rem, 3vh, 1.75rem) auto 0;
+  padding: 0 var(--gutter);
+}
+.cab-hint { margin: 0; color: var(--olive-ink); }
+.cab-hint--touch { display: none; }
+@media (hover: none) {
+  .cab-hint--pointer { display: none; }
+  .cab-hint--touch { display: inline; }
+}
+.cab-reset {
+  font-size: .8125rem; color: var(--chestnut);
+  border-bottom: 1px solid currentColor; padding-bottom: .1rem;
+  transition: opacity var(--dur-s) var(--ease-out);
+}
+.cab-reset:hover { opacity: .7; }
+.cab-reset[hidden] { display: none; }
+.cab-cta { color: var(--ink); background: rgba(255, 255, 255, .7); }
+
+/* --- the close-up (lives on <body>, above the stage) ------------------------ */
+.cab-focus {
+  position: fixed; inset: 0; z-index: 40;
+  display: grid; place-items: center;
+}
+.cab-focus[hidden] { display: none; }
+.cab-focus__veil {
+  position: absolute; inset: 0;
+  background: rgba(248, 243, 235, .9);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity .35s var(--ease-out);
+}
+.cab-focus[data-on="true"] .cab-focus__veil { opacity: 1; }
+
+.cab-focus__stage {
+  position: relative;
+  display: grid; justify-items: center; gap: 1.1rem;
+  max-width: 92vw;
+}
+.cab-focus__fig { margin: 0; }
+.cab-focus__print {
+  background: #fff;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(40, 38, 30, .08), 0 30px 60px -20px rgba(40, 38, 30, .35);
+  transform-origin: 50% 50%;
+}
+.cab-focus__print img {
+  display: block;
+  width: auto; height: auto;
+  max-width: min(1100px, 88vw); max-height: min(68vh, 760px);
+  aspect-ratio: var(--ar);
+}
+.cab-focus__cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1rem;
+  padding: 12px 4px 14px;
+}
+.cab-focus__note { flex-basis: 100%; font-size: .8125rem; color: var(--olive-ink); }
+.cab-focus__note:empty { display: none; }
+.cab-focus__label {
+  font-size: var(--t-label); font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--chestnut);
+}
+.cab-focus__name {
+  font-family: OrticaLinear-Light, var(--font); font-weight: 300;
+  font-size: 1.2rem; letter-spacing: -.01em; color: var(--ink);
+}
+.cab-focus__count { margin-left: auto; font-size: .75rem; color: #55584A; letter-spacing: .08em; }
+
+.cab-focus__thumbs { display: flex; gap: .6rem; max-width: 92vw; overflow-x: auto; padding: 4px; opacity: 0; transition: opacity .3s var(--ease-out) .18s; }
+.cab-focus[data-on="true"] .cab-focus__thumbs { opacity: 1; }
+.cab-focus__thumbs button {
+  flex: none; width: 4.5rem; padding: 3px; background: #fff;
+  box-shadow: 0 1px 3px rgba(40, 38, 30, .16);
+  opacity: .6; transition: opacity var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out);
+}
+.cab-focus__thumbs button:hover { opacity: 1; transform: translateY(-2px); }
+.cab-focus__thumbs button[aria-current="true"] { opacity: 1; outline: 1.5px solid var(--chestnut); outline-offset: 2px; }
+.cab-focus__thumbs img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+
+.cab-focus__close,
+.cab-focus__nav {
+  position: absolute; z-index: 1;
+  display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  border: 1px solid rgba(92, 95, 75, .35);
+  background: rgba(255, 255, 255, .75);
+  color: var(--olive-ink); font-size: 1.1rem;
+  transition: border-color var(--dur-s) var(--ease-out), color var(--dur-s) var(--ease-out), opacity .3s;
+  opacity: 0;
+}
+.cab-focus[data-on="true"] :is(.cab-focus__close, .cab-focus__nav) { opacity: 1; }
+.cab-focus__close:hover, .cab-focus__nav:hover { border-color: var(--chestnut); color: var(--chestnut); }
+.cab-focus__close { top: calc(var(--header-h) + .5rem); right: var(--gutter); }
+.cab-focus__close svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.cab-focus__nav { top: 50%; transform: translateY(-50%); }
+.cab-focus__nav--prev { left: var(--gutter); }
+.cab-focus__nav--next { right: var(--gutter); }
+.cab-focus[data-many="false"] .cab-focus__nav { display: none; }
+
+/* --- phones: the prints stack, and a tap opens them ------------------------- */
+@media (max-width: 46rem) {
+  .cab-board {
+    aspect-ratio: auto; container-type: normal;
+    display: grid; gap: 1.75rem;
+    width: min(26rem, 100% - 2 * var(--gutter));
+  }
+  .cab-piece { position: relative; left: auto; top: auto; width: 100%; touch-action: manipulation; cursor: pointer; }
+  .cab-piece:nth-child(odd)  { --rot: -1.2 !important; }
+  .cab-piece:nth-child(even) { --rot: 1.4 !important; }
+  .cab-print { padding: 6px 6px 0; }
+  .cab-tag { padding: 7px 2px 8px; font-size: 10px; }
+  .cab-piece--bare .cab-tag { padding-inline: 8px; }
+  .cab-clip { top: -14px; width: 36px; }
+  .cab-obj, .cab-sheet { display: none; }
+  .cab-controls { position: static; transform: none; flex-direction: column; align-items: center; gap: .75rem; white-space: normal; text-align: center; }
+  .cab-focus__print { padding: 6px; }
+  .cab-focus__print img { max-width: 92vw; max-height: 60vh; }
+  .cab-focus__nav { top: auto; bottom: 1.25rem; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cab-piece, .cab-obj, .cab-print, .cab-focus__veil, .cab-focus__thumbs { transition: none; }
+}

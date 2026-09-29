@@ -170,6 +170,10 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
      */
     if (committed) return;
 
+    // A page shown without the camera can claim the wheel for its own scroll.
+    // Opt-in: only a view that sets this flag while mounted is affected.
+    if (root.dataset.ownScroll === 'true') return;
+
     // At rest, scrolling up is not the beginning of a journey.
     if (p === 0 && e.deltaY <= 0) return;
 
