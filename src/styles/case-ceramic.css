@@ -273,6 +273,13 @@
 }
 .cps-rail__label { font-size: .8125rem; font-weight: 500; line-height: 1.25; }
 .cps-rail__team { font-size: .625rem; letter-spacing: .1em; text-transform: uppercase; color: var(--tc); font-weight: 600; }
+.cps-rail__short { display: none; }
+/* Portrait iPads: the nine stages keep their single line, and the
+   departments take their short names so none runs into the next. */
+@media (min-width: 46.01rem) and (max-width: 63.99rem) {
+  .cps-rail__full { display: none; }
+  .cps-rail__short { display: inline; }
+}
 /* hover: a soft glow in the stage's own team colour */
 .cps-rail__dot { transition: box-shadow var(--dur-s) var(--ease-out), transform var(--dur-s) var(--ease-out); }
 .cps-rail__go:hover .cps-rail__dot,
@@ -628,6 +635,10 @@
 @media (max-width: 46rem) {
   .cps-ev { grid-template-columns: 1fr; max-width: 22rem; }
   .cps-ev__item:nth-child(even) { margin-top: 0; }
+  /* Supporting photographs, not the story: smaller prints, each centred
+     over its caption, so the writing stays in front. */
+  .cps-ev__img { width: min(100%, 13.5rem); margin-inline: auto; }
+  .cps-ev__cap { text-align: center; }
 }
 
 /* ==========================================================================
@@ -731,9 +742,16 @@
 @media (max-width: 64rem) {
   .cps-problem { grid-template-columns: 1fr; }
   .cps-board { height: 32rem; max-width: 40rem; width: 100%; margin-inline: auto; }
-  .cps-ripple__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .cps-points { grid-template-columns: 1fr 1fr; }
-  .cps-point, .cps-point:nth-child(4) { grid-column: auto; }
+  /* Three to a row, on a grid of half-cards, so the last row (Manager and
+     Dana) sits centred under the three above at the very same card size. */
+  .cps-ripple__list { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .cps-ripple__item { grid-column: span 2; }
+  .cps-ripple__item:nth-child(4) { grid-column: 2 / span 2; }
+  /* Two to a row, on a grid of half-columns, so the fifth ("Document the
+     work") sits centred beneath the four rather than hard left. */
+  .cps-points { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cps-point, .cps-point:nth-child(4) { grid-column: span 2; }
+  .cps-point:nth-child(5) { grid-column: 2 / span 2; }
 }
 
 @media (max-width: 46rem) {
@@ -764,8 +782,12 @@
   .cps-rail__go { min-height: 44px; }
   .cps-rail__team { font-size: .6875rem; }
 
-  .cps-ripple__list { grid-template-columns: 1fr 1fr; }
+  /* Two to a row; Dana, on her own in the last row, is centred. */
+  .cps-ripple__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .cps-ripple__item:nth-child(4) { grid-column: span 2; }
+  .cps-ripple__item:last-child { grid-column: 2 / span 2; }
   .cps-points { grid-template-columns: 1fr; }
+  .cps-point, .cps-point:nth-child(4), .cps-point:nth-child(5) { grid-column: auto; }
 }
 
 /* --- optional focus view: the same control as the Castillo case ---------- */

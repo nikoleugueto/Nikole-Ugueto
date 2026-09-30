@@ -131,11 +131,14 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
   }
 
   function setCueLabel() {
+    // Phones and tablets: the head can be pinched open, or the cue tapped.
     const label = committed ? 'Back to the portrait'
                 : p > 0.02  ? 'Keep going'
+                : flowMQ.matches ? 'Zoom in to explore the worlds'
                 : prefs.cinematic ? 'Scroll to explore' : 'Enter the worlds';
     if (cueLabel.textContent !== label) cueLabel.textContent = label;
   }
+  flowMQ.addEventListener('change', setCueLabel);
 
   /* ------------------------------------------------------------- input */
   function to(value, { duration = 1150 } = {}) {

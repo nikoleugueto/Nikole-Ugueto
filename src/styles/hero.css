@@ -317,6 +317,9 @@
      sit exactly where the desktop puts them. */
   @media (min-width: 46.01rem) and (max-width: 1179px),
          (min-width: 46.01rem) and (hover: none) and (pointer: coarse) {
+    /* the whole composition sits in the middle of a tall screen rather than
+       at the top of it; a screen it already fills is left as it is */
+    .hero { display: flex; flex-direction: column; justify-content: safe center; }
     .plate {
       margin-left: 5vw; right: auto;
       margin-top: calc(var(--header-h) * .7);
@@ -372,6 +375,12 @@
 }
 @media (hover: none) and (pointer: coarse) {
   .enter-cue { min-height: 44px; }
+}
+/* Phones: the cue's words stop short of the small portrait in the corner,
+   and where they need two lines, the two are even. */
+@media (max-width: 46rem) {
+  .enter-cue { padding-right: calc(46px + .5rem); }
+  .enter-cue .u-label { text-wrap: balance; text-align: left; }
 }
 
 @media (max-width: 640px) {

@@ -330,22 +330,6 @@ new MutationObserver(tieSoon).observe(stageEl, { childList: true });
 tieMQ.addEventListener('change', () => (tieMQ.matches ? tieSoon() : untieAll()));
 tieSoon();
 
-/* Below the desktop composition the header gets a frosted backdrop once the
-   page has scrolled (see base.css). Only the flag lives here; the desktop
-   stylesheet never reads it. Pages scroll inside the stage, or on phones and
-   tablets the document itself (see stage.js). */
-const markScrolled = () => {
-  // Home keeps its navigation fully transparent, scrolled or not: only the
-  // inner pages (shown in the stage) get the backdrop.
-  const y = stageEl.dataset.mounted !== 'true' ? 0
-          : document.documentElement.dataset.flow === 'true' ? scrollY : stageEl.scrollTop;
-  const on = y > 8 ? 'true' : 'false';
-  if (header.dataset.scrolled !== on) header.dataset.scrolled = on;
-};
-stageEl.addEventListener('scroll', markScrolled, { passive: true });
-addEventListener('scroll', markScrolled, { passive: true });
-new MutationObserver(markScrolled).observe(stageEl, { attributes: true, attributeFilter: ['data-mounted'], childList: true });
-
 brain.addEventListener('click', () => go('/worlds'));
 cue.addEventListener('click', () => go(camera.committed ? '/' : '/worlds'));
 

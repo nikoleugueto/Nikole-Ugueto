@@ -1,6 +1,6 @@
 import { about } from '../../../content/pages.js';
 import { prefs } from '../prefs.js';
-import { observerRoot } from '../page-scroll.js';
+import { observerRoot, flowMQ } from '../page-scroll.js';
 
 /**
  * About.
@@ -507,9 +507,14 @@ export function aboutView({ onBack, onContact }) {
     }
     const toggle = (el) => (inBook(el) ? unplace(el) : place(el));
 
-    /* Dragging (fine pointer only): carried with a transform, leaning a
-       little into the direction of travel. Released over the book, it goes
-       to its own entry; anywhere else, it glides back to where it was. */
+    /* Dragging: carried with a transform, leaning a little into the
+       direction of travel. Released over the book, it goes to its own entry;
+       anywhere else, it glides back to where it was.
+       With a mouse on the wide layout, a card moves as soon as it is dragged.
+       With a finger (phones and tablets) it is picked up by pressing on it for
+       a moment, then carried the same way: a swipe that starts moving at once
+       is left to scroll the page, and a quick tap still places the card. */
+    const HOLD = 170;                         // ms a finger rests before the pick-up
     function handle(el) {
       let g = null;
       let suppressClick = false;
@@ -520,6 +525,17 @@ export function aboutView({ onBack, onContact }) {
 
       const down = (ev) => {
         suppressClick = false;
+        if (ev.pointerType === 'touch' && flowMQ.matches) {
+          const t = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, far: false, vx: 0, lx: ev.clientX, touch: true };
+          t.timer = setTimeout(() => {
+            if (g !== t) return;
+            t.armed = t.far = true;
+            el.classList.add('is-held', 'is-moving');
+            el.style.transform = 'scale(1.04)';
+          }, HOLD);
+          g = t;
+          return;
+        }
         if (!canDrag() || ev.button !== 0) return;
         g = { id: ev.pointerId, x: ev.clientX, y: ev.clientY, far: false, vx: 0, lx: ev.clientX };
         el.setPointerCapture(ev.pointerId);
@@ -527,6 +543,10 @@ export function aboutView({ onBack, onContact }) {
       const move = (ev) => {
         if (!g || ev.pointerId !== g.id) return;
         const dx = ev.clientX - g.x, dy = ev.clientY - g.y;
+        if (g.touch && !g.armed) {             // moving before the pick-up: a scroll
+          if (Math.hypot(dx, dy) > 8) { clearTimeout(g.timer); g = null; }
+          return;
+        }
         if (!g.far) {
           if (Math.hypot(dx, dy) < 6) return;
           g.far = true;
@@ -541,6 +561,7 @@ export function aboutView({ onBack, onContact }) {
       const up = (ev) => {
         if (!g || ev.pointerId !== g.id) return;
         const { far } = g;
+        clearTimeout(g.timer);
         g = null;
         book.dataset.over = 'false';
         if (!far) return;                   // a click: the click handler toggles
@@ -556,6 +577,8 @@ export function aboutView({ onBack, onContact }) {
       };
       const cancel = (ev) => {
         if (!g || ev.pointerId !== g.id) return;
+        clearTimeout(g.timer);
+        if (g.touch && !g.armed) { g = null; return; }   // the page scrolled instead
         g = null; book.dataset.over = 'false';
         moveTo(el, el.parentElement, el.getBoundingClientRect());
       };
@@ -570,6 +593,9 @@ export function aboutView({ onBack, onContact }) {
       on(el, 'pointercancel', cancel);
       on(el, 'click', click);
       on(el, 'dragstart', (ev) => ev.preventDefault());
+      // Once a finger has picked the card up, the page holds still under it.
+      on(el, 'touchmove', (ev) => { if (g?.armed) ev.preventDefault(); }, { passive: false });
+      on(el, 'contextmenu', (ev) => { if (g?.touch) ev.preventDefault(); });
     }
     cards.forEach(handle);
 

@@ -64,6 +64,10 @@ const CAR = {
 };
 const angleShape = (a) => (/side/i.test(a) ? CAR.side : CAR.head);
 
+/* On a portrait iPad the nine stages share one line, and the departments'
+   full names run into one another; there they are shortened. */
+const SHORT_TEAM = { production: 'Prod', finance: 'Fin', management: 'Mgmt' };
+
 /** Lets each scrap on the board be dragged anywhere inside the board, with a
  *  short glide on release. Uses the CSS `translate` property, so the scraps'
  *  own tilt and hover lift (which live in `transform`) are untouched. */
@@ -256,7 +260,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
                         aria-label="Show the ${st.label} stage in the app">
                   <span class="cps-rail__dot" aria-hidden="true"></span>
                   <span class="cps-rail__label">${st.label}</span>
-                  <span class="cps-rail__team">${team.label}</span>
+                  <span class="cps-rail__team"><span class="cps-rail__full">${team.label}</span><span class="cps-rail__short" aria-hidden="true">${SHORT_TEAM[team.id] || team.label}</span></span>
                 </button>
               </li>`;
             }).join('')}

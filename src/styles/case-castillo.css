@@ -1239,6 +1239,9 @@
   .chg-split__half--real { border-right: 0; border-bottom: 1px solid var(--rule-soft); }
 
   .chg-work__grid { grid-template-columns: 1fr; }
+  /* supporting images, a little smaller, each centred over its caption */
+  .chg-work__img { width: 80%; margin-inline: auto; }
+  .chg-work__grid .chg-work__cap { text-align: center; }
 
   .chg-duals { grid-template-columns: 1fr; padding-bottom: clamp(2rem, 6vh, 3rem); }
   .chg-dual { padding: clamp(1.25rem, 3vh, 1.75rem) 0; }

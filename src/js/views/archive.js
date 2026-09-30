@@ -1,6 +1,6 @@
 import { archive as a } from '../../../content/pages.js';
 import { prefs } from '../prefs.js';
-import { observerRoot, lockScroll } from '../page-scroll.js';
+import { observerRoot, lockScroll, flowMQ } from '../page-scroll.js';
 
 /**
  * Creative archive — a marble workboard.
@@ -10,8 +10,9 @@ import { observerRoot, lockScroll } from '../page-scroll.js';
  * little glide), or clicked to bring it up close with the rest of its images.
  *
  * Positions are kept as percentages of the board, so a rearranged desk keeps
- * its arrangement when the window resizes. On phones the prints simply stack
- * and a tap opens them: dragging would fight the page's own scroll.
+ * its arrangement when the window resizes. On phones the desk stands upright
+ * (PHONE_PLACE). A finger picks a print up by resting on it for a moment, so
+ * a swipe across the desk still scrolls the page; a tap opens it.
  *
  * Scoped `cab-` throughout. The close-up view is attached to <body> so it can
  * sit above the stage (which is transformed, and would otherwise trap it).
@@ -366,6 +367,24 @@ const OBJECTS = [
   { id: 'clip',    svg: PAPERCLIP, place: { x: 1.5, y: 86, w: 2.6, r: 22 },  ar: '24 / 68' },
 ];
 
+/* Phones: the same desk turned upright, everything a little smaller, the
+   prints two to a row around the LifeWorx post. Percentages of the board. */
+const PHONE_PLACE = {
+  maurie:     { x: 3,   y: 4,    w: 46, r: -2.4 },
+  belle:      { x: 51,  y: 8,    w: 46, r: -1.5 },
+  lifeworx:   { x: 29,  y: 33,   w: 42, r: 1.6 },
+  nutrivital: { x: 4,   y: 61,   w: 46, r: -1.8 },
+  casablanca: { x: 50,  y: 64.5, w: 46, r: 2.6 },
+  sketch:     { x: -7,  y: 29,   w: 30, r: -6 },
+  markers:    { x: 73,  y: 36,   w: 28, r: -24 },
+  matcha:     { x: 80,  y: -5,   w: 21, r: 0 },
+  pencil:     { x: 27,  y: 57.5, w: 44, r: -7 },
+  book:       { x: 85,  y: 49,   w: 23, r: 8 },
+  glasses:    { x: -8,  y: 81,   w: 22, r: -12 },
+  flowers:    { x: 73,  y: 83.5, w: 26, r: 6 },
+  clip:       { x: 47,  y: 5,    w: 4,  r: 22 },
+};
+
 const objectHtml = (o) => `
           <div class="cab-obj cab-obj--${o.id}" data-obj="${o.id}" aria-hidden="true"
                style="--x:${o.place.x}; --y:${o.place.y}; --w:${o.place.w}; --rot:${o.place.r}; --ar:${o.ar}">${o.svg}</div>`;
@@ -389,7 +408,6 @@ export function archiveView({ onBack, onUp }) {
         <p class="cab-sub">${a.body}</p>
       </header>
 
-      <div class="cab-pan" data-pan>
       <div class="cab-board" data-board>
         ${OBJECTS.filter((o) => o.under).map(objectHtml).join('')}
         ${pieces.map((p, i) => `
@@ -400,7 +418,7 @@ export function archiveView({ onBack, onUp }) {
               <span class="cab-sheet cab-sheet--${k + 1}" aria-hidden="true"><img src="${smallest(x)}" alt="" draggable="false" loading="lazy" decoding="async"></span>`).join('')}
             <span class="cab-print">
               <img src="${smallest(p.img)}" srcset="${srcset(p.img)}"
-                   sizes="(max-width: 46rem) 88vw, ${Math.ceil(p.place.w * 0.95)}vw" width="${p.img.w}" height="${p.img.h}"
+                   sizes="(max-width: 46rem) 48vw, ${Math.ceil(p.place.w * 0.95)}vw" width="${p.img.w}" height="${p.img.h}"
                    alt="" draggable="false" decoding="async">
               <span class="cab-tag"><b>${p.label}</b><span>${p.name}</span></span>
             </span>
@@ -413,7 +431,6 @@ export function archiveView({ onBack, onUp }) {
           </p>
           <button class="cab-reset" type="button" data-reset hidden>Put everything back</button>
         </div>
-      </div>
       </div>
 
       <div class="cab-foot">
@@ -470,26 +487,39 @@ export function archiveView({ onBack, onUp }) {
       set(el, '--y', Math.min(Math.max(num(el, '--y'), -m), 100 + m - h));
     }
 
+    const HOLD = 170;    // ms a finger rests on a print before it is picked up
     function handle(el) {
       let g = null;      // the grip while held
       let raf = 0;
       const rest = () => num(el, '--rest');
       set(el, '--rest', num(el, '--rot'));
+      const lift = () => { el.style.zIndex = String(++top); el.classList.add('is-held'); };
 
       const down = (e) => {
-        // A finger pans the table and taps a print closer; only a mouse or
-        // pen picks pieces up and moves them.
-        if (narrow() || e.pointerType === 'touch' || (e.button !== undefined && e.button !== 0)) return;
+        if (e.button !== undefined && e.button !== 0) return;
+        // A mouse or pen picks a piece up at once (not on a phone-sized
+        // window). A finger (phones and tablets) rests on it for a moment
+        // first: a swipe that sets off straight away is the page scrolling.
+        const finger = e.pointerType === 'touch';
+        if (finger ? !flowMQ.matches : narrow()) return;
         cancelAnimationFrame(raf);
-        g = { id: e.pointerId, px: e.clientX, py: e.clientY, x: num(el, '--x'), y: num(el, '--y'),
-              t: performance.now(), t0: performance.now(), vx: 0, vy: 0, far: false };
+        const grip = { id: e.pointerId, px: e.clientX, py: e.clientY, x: num(el, '--x'), y: num(el, '--y'),
+              t: performance.now(), t0: performance.now(), vx: 0, vy: 0, far: false, finger, armed: !finger };
+        g = grip;
+        if (finger) {
+          grip.timer = setTimeout(() => { if (g === grip) { grip.armed = true; lift(); } }, HOLD);
+          return;
+        }
         el.setPointerCapture(e.pointerId);
-        el.style.zIndex = String(++top);
-        el.classList.add('is-held');
+        lift();
       };
       const move = (e) => {
         if (!g || e.pointerId !== g.id) return;
         const dx = e.clientX - g.px, dy = e.clientY - g.py;
+        if (!g.armed) {                   // moving before the pick-up: a scroll
+          if (Math.hypot(dx, dy) > 8) { clearTimeout(g.timer); g = null; }
+          return;
+        }
         if (!g.far && Math.hypot(dx, dy) > 5) { g.far = true; el.classList.add('is-moving'); }
         if (!g.far) return;
         const now = performance.now(), dt = Math.max(1, now - g.t);
@@ -505,6 +535,7 @@ export function archiveView({ onBack, onUp }) {
       const up = (e) => {
         if (!g || e.pointerId !== g.id) return;
         const { far, vx, vy, t0 } = g;
+        clearTimeout(g.timer);
         g = null;
         el.classList.remove('is-held', 'is-moving');
         set(el, '--rot', rest());
@@ -537,35 +568,65 @@ export function archiveView({ onBack, onUp }) {
         moved.add(el); resetBtn.hidden = false;
       };
 
+      // The browser took the gesture (a scroll): nothing opens, and a print
+      // already on the move is set down where it is.
+      const cancel = (e) => {
+        if (!g || e.pointerId !== g.id) return;
+        clearTimeout(g.timer);
+        if (g.far) return up(e);
+        g = null;
+        el.classList.remove('is-held', 'is-moving');
+        set(el, '--rot', rest());
+      };
+      // Once a finger has picked a print up, the page holds still under it.
+      const hold = (e) => { if (g?.finger && g.armed) e.preventDefault(); };
+      const noMenu = (e) => { if (g?.finger) e.preventDefault(); };
+
       el.addEventListener('pointerdown', down);
       el.addEventListener('pointermove', move);
       el.addEventListener('pointerup', up);
-      el.addEventListener('pointercancel', up);
+      el.addEventListener('pointercancel', cancel);
+      el.addEventListener('touchmove', hold, { passive: false });
+      el.addEventListener('contextmenu', noMenu);
       el.addEventListener('click', click);
       el.addEventListener('keydown', key);
       el.addEventListener('dragstart', (e) => e.preventDefault());
       cleanup.push(() => {
         cancelAnimationFrame(raf);
+        clearTimeout(g?.timer);
         el.removeEventListener('pointerdown', down);
         el.removeEventListener('pointermove', move);
         el.removeEventListener('pointerup', up);
-        el.removeEventListener('pointercancel', up);
+        el.removeEventListener('pointercancel', cancel);
+        el.removeEventListener('touchmove', hold, { passive: false });
+        el.removeEventListener('contextmenu', noMenu);
         el.removeEventListener('click', click);
         el.removeEventListener('keydown', key);
       });
     }
     board.querySelectorAll('.cab-piece, .cab-obj').forEach(handle);
 
-    // Everything back where it started, gently.
-    const home = Object.fromEntries([...pieces, ...OBJECTS].map((p) => [p.id, p.place]));
-    resetBtn.addEventListener('click', () => {
-      board.classList.add('is-tidying');
+    // Where everything starts: the desk as laid out, or upright on a phone.
+    const desk = Object.fromEntries([...pieces, ...OBJECTS].map((p) => [p.id, p.place]));
+    const phoneMQ = matchMedia('(max-width: 46rem)');
+    const home = () => (phoneMQ.matches ? PHONE_PLACE : desk);
+    const arrange = () => {
+      const h = home();
       board.querySelectorAll('.cab-piece, .cab-obj').forEach((el) => {
-        const p = home[el.dataset.id || el.dataset.obj];
-        set(el, '--x', p.x); set(el, '--y', p.y); set(el, '--rot', p.r); set(el, '--rest', p.r);
+        const p = h[el.dataset.id || el.dataset.obj];
+        set(el, '--x', p.x); set(el, '--y', p.y); set(el, '--w', p.w); set(el, '--rot', p.r); set(el, '--rest', p.r);
         el.style.zIndex = '';
       });
       moved.clear(); resetBtn.hidden = true;
+    };
+    if (phoneMQ.matches) arrange();
+    phoneMQ.addEventListener('change', arrange);
+    cleanup.push(() => phoneMQ.removeEventListener('change', arrange));
+
+    // Everything back where it started, gently.
+    resetBtn.addEventListener('click', () => {
+      board.classList.add('is-tidying');
+      arrange();
       setTimeout(() => board.classList.remove('is-tidying'), 800);
     });
 
@@ -710,24 +771,17 @@ export function archiveView({ onBack, onUp }) {
     document.addEventListener('keydown', onKey, true);
     cleanup.push(() => { document.removeEventListener('keydown', onKey, true); lockScroll(root, false); });
 
-    // A finger doesn't drag, so a plain tap brings the print closer.
+    // A mouse on a phone-sized window doesn't drag, so a plain click brings
+    // the print closer (a finger's tap is handled with the pick-up above).
     let touching = false;
     const noteTouch = (e) => { touching = e.pointerType === 'touch'; };
     board.addEventListener('pointerdown', noteTouch, true);
     const tap = (e) => {
       const el = e.target.closest('.cab-piece');
-      if (el && (narrow() || touching)) open(el.dataset.id);
+      if (el && narrow() && !touching) open(el.dataset.id);
     };
     board.addEventListener('click', tap);
     cleanup.push(() => { board.removeEventListener('click', tap); board.removeEventListener('pointerdown', noteTouch, true); });
-
-    /* Other devices: the desk keeps its desktop size inside a view you swipe
-       across (see archive.css), so it opens on the middle of the table, where
-       the hint and the first prints are. */
-    const pan = $('[data-pan]');
-    requestAnimationFrame(() => {
-      if (pan.scrollWidth > pan.clientWidth) pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2;
-    });
 
     requestAnimationFrame(() => { page.dataset.ready = 'true'; });
     return () => cleanup.forEach((fn) => fn());

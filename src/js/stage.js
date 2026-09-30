@@ -24,6 +24,7 @@ export function createStage(el, { behind } = {}) {
   const html = document.documentElement;
   function flow(on) {
     on = on && flowMQ.matches;
+    edge(on);
     if (on === (html.dataset.flow === 'true')) return;
     if (on) {
       const y = el.scrollTop;
@@ -38,6 +39,25 @@ export function createStage(el, { behind } = {}) {
     }
   }
   flowMQ.addEventListener('change', () => flow(arrived));
+
+  /* ...and the browser's own bars and the page's edges take the colour of
+     the page being read, so it never sits inside a band of another colour.
+     A page under a photographed sky names its edge colour (--edge); any
+     other has a plain background of its own. */
+  const tint = document.querySelector('meta[name="theme-color"][data-edge]');
+  const solid = (c) => !!c && c !== 'transparent' && !/,\s*0\)$/.test(c);
+  function edge(on) {
+    const root = el.firstElementChild;
+    const c = !on || !root ? ''
+      : getComputedStyle(root).getPropertyValue('--edge').trim()
+        || [el, root].map((x) => getComputedStyle(x).backgroundColor).find(solid) || '';
+    if (html.style.getPropertyValue('--page-edge') !== c) {
+      if (c) html.style.setProperty('--page-edge', c); else html.style.removeProperty('--page-edge');
+    }
+    const next = c || tint?.dataset.edge;
+    if (tint && tint.content !== next) tint.content = next;
+  }
+
   /** Arrive: in the document's scroll, a newly opened page starts at its top. */
   function settle(fresh) {
     arrived = true;

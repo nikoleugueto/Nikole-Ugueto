@@ -356,6 +356,8 @@
 .abt-card__glyph { display: block; width: 100%; height: 100%; overflow: visible; }
 
 .abt[data-drag="on"] .abt-card { cursor: grab; touch-action: none; }
+/* touch: holding a sticker picks it up (about.js), never a system callout */
+@media (hover: none) and (pointer: coarse) { .abt-card { -webkit-touch-callout: none; } }
 .abt-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 @media (hover: hover) and (pointer: fine) {
   .abt-card:hover { --lift: -3px; --rot: calc(var(--r) * .35); }
@@ -540,6 +542,20 @@
 @media (max-width: 22.5rem) {
   .abt-close__title { font-size: 1.45rem; }
 }
+/* Portrait tablets (iPad): the opening, a single column here, is one centred
+   composition, the portrait above the words, rather than a column that stops
+   short of the right edge. And the two interests in the second row sit
+   centred under the three above, at the very same width (a grid of halves). */
+@media (min-width: 46.01rem) and (max-width: 62rem) {
+  .abt-hero { justify-items: center; text-align: center; }
+  .abt-hero__words { max-width: 34rem; }
+  .abt-title, .abt-intro { margin-inline: auto; }
+  .abt-facts { justify-content: center; }
+  .abt-notes { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .abt-note { grid-column: span 2; }
+  .abt-note:nth-child(4) { grid-column: 2 / span 2; }
+}
+
 /* Tablet landscape: the school column is narrow beside the path, so the seal
    sits above the name, as on a phone, and the name gets the full column. */
 @media (min-width: 62.01rem) and (max-width: 1179px) {

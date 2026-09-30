@@ -282,35 +282,17 @@
 .cab-focus__nav--next { right: var(--gutter); }
 .cab-focus[data-many="false"] .cab-focus__nav { display: none; }
 
-/* The desk's pan view: nothing on the desktop, where the board lays out as
-   it always has. */
-.cab-pan { display: contents; }
-
-/* --- other devices: the same worktable, at the desktop's scale -------------
-   The board keeps its desktop size, composition and every object on it, and
-   sits in a view you swipe across; a tap brings a print closer. Pieces are
-   not dragged by finger, so a swipe on one pans the table. */
+/* --- other devices: the whole worktable on screen ---------------------------
+   The desk fits the width, its pieces as much smaller as that needs. A finger
+   rests on a piece for a moment to pick it up (archive.js); until then a
+   swipe across the desk scrolls the page, and a tap brings a print closer.
+   Phones stand the desk upright, laid out for it (PHONE_PLACE). */
 @media (max-width: 1179px), (hover: none) and (pointer: coarse) {
-  .cab-pan {
-    display: block;
-    /* the table's width must not widen the page around it */
-    contain: inline-size;
-    overflow-x: auto; overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    padding: 0 var(--gutter) .75rem;
-    /* the table carries on past the edges */
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent 100%);
-            mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent 100%);
-  }
-  .cab-board {
-    width: max(70rem, min(84rem, 100vw - 2 * var(--gutter), max(56rem, (100svh - 17rem) * 2.1)));
-  }
-  .cab-piece, .cab-obj { touch-action: pan-x pan-y; }
+  .cab-piece, .cab-obj { touch-action: pan-x pan-y; -webkit-touch-callout: none; }
+  .cab-hint { white-space: nowrap; }   /* one line, as on the desktop */
 }
-@media (hover: none) and (pointer: coarse) {
-  .cab-pan { scrollbar-width: none; }
-  .cab-pan::-webkit-scrollbar { display: none; }
+@media (max-width: 46rem) {
+  .cab-board { aspect-ratio: .62; }
 }
 
 /* --- phones: the close-up fits the screen -------------------------------- */

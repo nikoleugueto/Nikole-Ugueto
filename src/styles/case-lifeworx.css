@@ -516,6 +516,7 @@
    link beneath it, as one block in the middle of the column. */
 @media (max-width: 1179px) {
   .lw-id dd { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: .45rem; }
+  .lw-live { align-self: center; white-space: nowrap; }   /* the link on the centre line, on one line */
 }
 /* With motion reduced the laptop scene stops pinning, and its oversized
    frame would widen the page sideways; it is cropped the way the live scene
