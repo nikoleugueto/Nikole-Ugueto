@@ -255,6 +255,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
           <p class="cps-lab__sub">${P.body}</p>
         </div>
 
+        <p class="cps-ipad-hint u-label" aria-hidden="true">Swipe across the app <span>&harr;</span></p>
         <div class="cps-ipad" data-reveal>
           <button class="cps-expand" type="button" data-expand aria-expanded="false"
                   aria-label="Enlarge the app" title="Enlarge the app" data-cursor="Enlarge">${ICON_EXPAND}</button>

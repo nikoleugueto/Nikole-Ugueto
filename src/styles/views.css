@@ -52,6 +52,13 @@
   position: absolute; left: var(--gutter); top: var(--header-h);
 }
 
+/* Under the desktop width the Worlds and world screens run edge to edge (their
+   sky reaches every side and the bottom of the page); they bring their own
+   padding, so the stage adds none. */
+@media (max-width: 1179px) {
+  .stage:has(> .worlds), .stage:has(> .world) { padding: 0; place-items: start stretch; }
+}
+
 @media (max-width: 46rem) {
   .stage { place-items: safe start center; }
   .stage > .worlds__crumb { position: static; margin-bottom: 1.25rem; }

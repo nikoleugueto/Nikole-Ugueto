@@ -325,6 +325,13 @@
   .worlds__index { display: block; border-top: 1px solid var(--rule-soft); }
 }
 
+/* Under the desktop width the page spans the screen and the sky covers all of
+   it, down to the last row of the index. */
+@media (max-width: 1179px) {
+  .worlds { position: relative; width: 100%; justify-self: stretch; }
+  .worlds__grid { width: 100%; max-width: 40rem; margin-inline: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* The departure timings are hand-written in ms, so the duration tokens do
      not reach them. Cut them here rather than leaving one stray animation. */

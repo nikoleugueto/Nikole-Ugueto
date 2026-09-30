@@ -1277,6 +1277,11 @@
 
 .chg [data-expanded] { position: relative; z-index: 60; }
 .chg-phone[data-expanded] > .chg-expand { opacity: 0; pointer-events: none; }
+/* Tablets: when the phone sits near the screen's edge, the enlarge control
+   moves above its corner instead of past the edge of the page. */
+@media (max-width: 1179px) and (min-width: 46.01rem) {
+  .chg-phone > .chg-expand { top: -3.5rem; left: auto; right: 0; }
+}
 
 .chg-focus {
   position: fixed; left: 0; right: 0; top: var(--focus-top, 0px); height: 100vh; z-index: 55;
@@ -1298,6 +1303,19 @@
 
 @media (max-width: 46rem) {
   .chg-expand { display: none; }
+  /* One testimonial fits the screen, so each is read whole as it drifts by. */
+  .chg-testimonials__track { gap: 3rem; }
+  .chg-testimonial { width: calc(100vw - 2 * var(--gutter)); padding-inline: .25rem; }
+  .chg-testimonial__quote { font-size: 1.0625rem; }
+}
+/* Touch: the prototype's round steppers keep their size, but a finger gets a
+   44px target around each one. */
+@media (hover: none) and (pointer: coarse) {
+  .chg-step__ctrl button { position: relative; }
+  .chg-step__ctrl button::after { content: ""; position: absolute; inset: -9px; }
+  /* the home-size dots: same dot and stem, a wider column to tap */
+  .chg-dot { width: 2.4rem; }
+  .chg-live { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

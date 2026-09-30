@@ -284,6 +284,19 @@ mountAnnotations(plate, index, {
   },
 });
 
+/* Below the desktop composition the header gets a frosted backdrop once the
+   page has scrolled (see base.css). Only the flag lives here; the desktop
+   stylesheet never reads it. Pages scroll inside the stage; home scrolls the
+   document in the stacked layout. */
+const markScrolled = () => {
+  const y = stageEl.dataset.mounted === 'true' ? stageEl.scrollTop : (document.scrollingElement?.scrollTop || 0);
+  const on = y > 8 ? 'true' : 'false';
+  if (header.dataset.scrolled !== on) header.dataset.scrolled = on;
+};
+stageEl.addEventListener('scroll', markScrolled, { passive: true });
+addEventListener('scroll', markScrolled, { passive: true });
+new MutationObserver(markScrolled).observe(stageEl, { attributes: true, attributeFilter: ['data-mounted'], childList: true });
+
 brain.addEventListener('click', () => go('/worlds'));
 cue.addEventListener('click', () => go(camera.committed ? '/' : '/worlds'));
 

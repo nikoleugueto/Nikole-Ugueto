@@ -167,6 +167,19 @@ a.ch__row:hover .ch__icon { color: #73765F; }
 @media (max-width: 62rem) {
   .ct__grid { grid-template-columns: 1fr; gap: 2.5rem; align-content: start; }
 }
+/* Phones: the links sit on a quiet paper panel so they read clearly over the
+   skyline, and every row is a comfortable finger-sized target. */
+@media (max-width: 46rem) {
+  .ct__channels {
+    padding: .25rem 1rem;
+    background: rgba(248, 246, 242, .66);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-radius: 4px;
+  }
+  .ch:last-child { border-bottom: 0; }
+  .ch__row { min-height: 48px; }
+}
+
 @media (max-width: 34rem) {
   .tiles { grid-template-columns: repeat(2, 1fr); }
 }

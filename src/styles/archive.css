@@ -283,6 +283,12 @@
 .cab-focus[data-many="false"] .cab-focus__nav { display: none; }
 
 /* --- phones: the prints stack, and a tap opens them ------------------------- */
+/* Tablets: the board keeps its composition, but the print labels and the
+   hint stay legible instead of shrinking with it. */
+@media (max-width: 1179px) and (min-width: 46.01rem) {
+  .cab-tag { font-size: clamp(9px, .95cqw, 10.5px); }
+}
+
 @media (max-width: 46rem) {
   .cab-board {
     aspect-ratio: auto; container-type: normal;
@@ -293,7 +299,7 @@
   .cab-piece:nth-child(odd)  { --rot: -1.2 !important; }
   .cab-piece:nth-child(even) { --rot: 1.4 !important; }
   .cab-print { padding: 6px 6px 0; }
-  .cab-tag { padding: 7px 2px 8px; font-size: 10px; }
+  .cab-tag { padding: 7px 2px 8px; font-size: 11px; }
   .cab-piece--bare .cab-tag { padding-inline: 8px; }
   .cab-clip { top: -14px; width: 36px; }
   .cab-obj, .cab-sheet { display: none; }

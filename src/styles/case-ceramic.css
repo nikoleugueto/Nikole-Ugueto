@@ -303,6 +303,12 @@
 /* At rest the iPad sits in the page at about two-thirds of the screen's height,
    which leaves the enlarge control real room to open it up. */
 .cps-ipad { width: 100%; max-width: min(66rem, 66svh * 4 / 3); margin: clamp(2.25rem, 6vh, 3.5rem) auto 0; }
+/* Phones only (shown in the narrow rules below): says the app pans sideways. */
+.cps-ipad-hint {
+  display: none; justify-content: center; align-items: center; gap: .5rem;
+  margin: 1.75rem 0 -1rem; color: rgba(242, 240, 238, .7);
+}
+.cps-ipad-hint span { font-size: 1rem; letter-spacing: 0; }
 .cps-ipad__frame {
   position: relative;
   padding: clamp(.7rem, 1.4vw, 1.15rem);
@@ -745,9 +751,21 @@
   .cps-rail__go { grid-template-columns: .85rem 1fr auto; justify-items: start; align-items: center; gap: .75rem; text-align: left; }
   .cps-rail__step::before { top: -.9rem; bottom: auto; left: .38rem; right: auto; width: 2px; height: .9rem; }
 
-  /* The iPad keeps its true proportions; on a phone you swipe across it. */
+  /* The iPad keeps its true proportions; on a phone you swipe across it. The
+     app is laid out at 1024 × 768, so fitting it to a phone would shrink its
+     text to a few pixels: panning keeps it readable. The hint says so. */
   .cps-ipad { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: .5rem; }
   .cps-ipad__frame { width: 52rem; }
+  .cps-ipad-hint { display: flex; }
+
+  /* One testimonial fits the screen, so each is read whole as it drifts by. */
+  .cps-testimonials__track { gap: 3rem; }
+  .cps-testimonial { width: calc(100vw - 2 * var(--gutter)); padding-inline: .25rem; }
+  .cps-testimonial__quote { font-size: 1.0625rem; }
+
+  /* The stages are a list here: each row a finger-sized target. */
+  .cps-rail__go { min-height: 44px; }
+  .cps-rail__team { font-size: .6875rem; }
 
   .cps-ripple__list { grid-template-columns: 1fr 1fr; }
   .cps-points { grid-template-columns: 1fr; }
@@ -801,6 +819,12 @@
 
 @media (max-width: 46rem) {
   .cps-expand { display: none; }
+}
+/* Touch: the app's small "Viewing as" switches keep their look, with a
+   finger-sized target around each. */
+@media (hover: none) and (pointer: coarse) {
+  .cps-seg button { position: relative; }
+  .cps-seg button::after { content: ""; position: absolute; inset: -10px -2px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

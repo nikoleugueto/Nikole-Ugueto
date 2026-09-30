@@ -280,6 +280,15 @@
   }
 }
 
+/* Under the desktop width the artwork starts below the navigation, so the
+   links sit on sky rather than on the city in her hair. */
+@media (max-width: 1179px) {
+  .plate { margin-top: calc(var(--header-h) * .7); }
+}
+@media (hover: none) and (pointer: coarse) {
+  .enter-cue { min-height: 44px; }
+}
+
 @media (max-width: 640px) {
   .plate { width: 124%; right: -10%; max-height: 56svh; }
   .hero__lede { max-width: 24rem; }

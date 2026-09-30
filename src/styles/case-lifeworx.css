@@ -478,6 +478,37 @@
   .lw-design { text-align: left; }
 }
 
+/* Portrait phones and tablets: the motion study is a landscape film, and
+   `cover` on a tall screen crops it to its middle fifth. It takes the same
+   shape it has with motion reduced: the film at its true 16:9, the caption
+   beneath. It still plays when it scrolls into view. */
+@media (max-width: 1179px) and (orientation: portrait) {
+  .lw-film { height: auto; }
+  .lw-film .lw-pin { position: static; height: auto; overflow: visible; flex-direction: column; align-items: stretch; }
+  .lw-film .lw-pin--film { padding: 0; }
+  .lw-film .lw-pin--film::after { display: none; }
+  .lw-film .lw-film__video { position: static; transform: none; height: auto; aspect-ratio: 16 / 9; }
+  .lw-film .lw-film__cap { position: static; padding: 1.25rem var(--gutter) 1.75rem; max-width: none; text-shadow: none; }
+}
+
+/* Phones: one testimonial fits the screen, so each is read whole as it drifts
+   past rather than always cut off at the edge. */
+@media (max-width: 46rem) {
+  .lw-testimonials__track { gap: 3rem; }
+  .lw-testimonial { width: calc(100vw - 2 * var(--gutter)); padding: 0 .25rem; }
+  .lw-testimonial__quote { font-size: 1.0625rem; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .lw-live { min-height: 44px; }
+}
+/* With motion reduced the laptop scene stops pinning, and its oversized
+   frame would widen the page sideways; it is cropped the way the live scene
+   is. (Touch screens of any size, and anything under the desktop width.) */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  .lw-act[data-motion="static"] { overflow-x: clip; }
+  .lw-film[data-motion="static"] .lw-pin { flex-direction: column; align-items: stretch; }   /* caption under the film */
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lw[data-ready="true"],
   .lw [data-reveal][data-in="true"] { transition-duration: 1ms; }

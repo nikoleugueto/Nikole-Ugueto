@@ -152,8 +152,53 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 46rem) {
   :root { --header-h: 3.75rem; }
   .brand__rule, .brand__name { display: none; }
-  .site-nav { gap: 1.15rem; }
-  .site-nav a { font-size: var(--t-micro); }
+  .site-nav { gap: .35rem; }
+  /* Finger-sized: each link is a 44px target, the words stay the same */
+  .site-nav a { font-size: var(--t-label); display: inline-flex; align-items: center; min-height: 44px; padding: 0 .5rem; }
+  .site-nav a::after { left: .5rem; right: .5rem; bottom: .55rem; }
+  .brand { min-height: 44px; min-width: 44px; }
+}
+
+/* ==========================================================================
+   Below the desktop composition (under 1180px) and on any touch screen.
+   Everything here is scoped by these conditions, so the desktop is untouched.
+   ========================================================================== */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  /* Modern phones: keep the chrome clear of the notch and the home bar. */
+  .site-header {
+    padding-left: max(var(--gutter), env(safe-area-inset-left));
+    padding-right: max(var(--gutter), env(safe-area-inset-right));
+    transition: opacity var(--dur-m) var(--ease-out), background-color var(--dur-m) var(--ease-out),
+                box-shadow var(--dur-m) var(--ease-out);
+  }
+  /* Once the page scrolls, the header gets a quiet frosted backdrop so its
+     links never sit on top of body text. At the top of a page it stays
+     transparent, exactly as designed. (main.js sets data-scrolled.) */
+  .site-header[data-scrolled="true"] {
+    mix-blend-mode: normal;
+    background: rgba(244, 241, 236, .84);
+    -webkit-backdrop-filter: saturate(1.15) blur(14px);
+            backdrop-filter: saturate(1.15) blur(14px);
+    box-shadow: 0 1px 0 rgba(22, 25, 30, .07);
+  }
+
+  /* The small portrait is a brand accent, not a control: taps go through it,
+     it clears the home bar, and it steps aside on inner pages, where it would
+     otherwise sit on top of text and buttons. */
+  .portrait-badge {
+    pointer-events: none;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom));
+    right: max(var(--gutter), env(safe-area-inset-right));
+    width: 46px; height: 46px;
+    transition: opacity var(--dur-m) var(--ease-out), visibility var(--dur-m);
+  }
+  body:has(#stage[data-mounted="true"]) .portrait-badge { opacity: 0; visibility: hidden; }
+}
+
+/* Touch: small text links become finger-sized targets without moving a pixel
+   (the padding is paid back by an equal negative margin). */
+@media (hover: none) and (pointer: coarse) {
+  .crumb__link { padding: .8rem .3rem; margin: -.8rem -.3rem; }
 }
 
 /* ==========================================================================

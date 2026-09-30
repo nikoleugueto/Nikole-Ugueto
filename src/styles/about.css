@@ -138,8 +138,8 @@
 .abt-tools__view.is-held .abt-tool__name { opacity: 0; }   /* no labels flickering past mid-drag */
 /* no hover on touch screens: names sit quietly under every mark instead */
 @media (hover: none) {
-  .abt-tool__name { opacity: .9; transform: translate(-50%, 0); font-weight: 500; font-size: .62rem; }
-  .abt-tool { padding: 0 2.75rem; }   /* room for the longest name, Adobe Premiere Pro */
+  .abt-tool__name { opacity: .9; transform: translate(-50%, 0); font-weight: 500; font-size: .6875rem; }
+  .abt-tool { padding: 0 3.1rem; }   /* room for the longest name, Adobe Premiere Pro */
 }
 
 /* -------------------------------------------------------------- sections --- */
@@ -499,7 +499,14 @@
   .abt-studio { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem .75rem; max-width: 30rem; margin: 0 auto; }
   .abt-homes { display: contents; }
   .abt-home { translate: none; }
-  .abt-book { grid-column: 1 / -1; order: 1; margin-top: 1rem; }   /* after all six cards */
+  /* Around the book, as on the desktop: three stickers above it and three
+     below, the middle one of each row set a little lower or higher so they
+     read as placed by hand rather than laid on a grid. */
+  .abt-homes--b .abt-home { order: 2; }
+  .abt-homes--a .abt-home:nth-child(2) { translate: 0 .55rem; }
+  .abt-homes--b .abt-home:nth-child(2) { translate: 0 -.55rem; }
+  .abt-step__where { font-size: .6875rem; }   /* company names stay legible on a phone */
+  .abt-book { grid-column: 1 / -1; order: 1; margin-block: .75rem; }   /* between the two rows */
   .abt-points { grid-template-columns: 1fr; }
 }
 @media (max-width: 40rem) {
@@ -513,6 +520,12 @@
   .abt-note, .abt-note:nth-child(4) { padding: 0 1rem; border-left: 1px solid var(--line); }
   .abt-note:nth-child(odd) { padding-left: 0; border-left: 0; }
   .abt-note:last-child { grid-column: 1 / -1; }
+}
+
+/* Tablet landscape: the school column is narrow beside the path, so the
+   honour stays on one line rather than breaking between its two words. */
+@media (max-width: 1179px) {
+  .abt-school__degree strong { white-space: nowrap; }
 }
 
 @media (prefers-reduced-motion: reduce) {

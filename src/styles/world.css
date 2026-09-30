@@ -240,6 +240,14 @@
   .beat__disc { grid-row: 1 / 3; }
 }
 
+/* Under the desktop width the world spans the screen, so its sky reaches the
+   bottom of the page instead of stopping at the first screenful (which left a
+   bare cream box under the button). The words keep their measure. */
+@media (max-width: 1179px) {
+  .world { position: relative; width: 100%; justify-self: stretch; }
+  .world__grid { width: 100%; max-width: 34rem; margin-inline: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scene { transition-duration: 1ms; }
   .world[data-leaving] .scene__img,
