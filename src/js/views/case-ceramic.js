@@ -1,6 +1,7 @@
 import { ceramic as c } from '../../../content/ceramic.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
+import { observerRoot, revealMargin, scrollTopOf, scrollPageTo, lockScroll } from '../page-scroll.js';
 
 /* Phones show the company's short name in testimonial credits (Ceramic Pro); the
    full name stays everywhere else. Both are in the markup; CSS picks one. */
@@ -127,16 +128,26 @@ function pinboard(board) {
       raf = requestAnimationFrame(glide);
     };
 
+    // On a touch screen a vertical swipe belongs to the page (touch-action:
+    // pan-y): when the browser takes it, the scrap goes back where it was.
+    const cancel = (e) => {
+      if (e.pointerType !== 'touch') return up(e);
+      if (!grab || e.pointerId !== grab.id) return;
+      x = grab.x; y = grab.y; set();
+      grab = null;
+      el.classList.remove('is-dragging');
+    };
+
     el.addEventListener('pointerdown', down);
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerup', up);
-    el.addEventListener('pointercancel', up);
+    el.addEventListener('pointercancel', cancel);
     offs.push(() => {
       cancelAnimationFrame(raf);
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
       el.removeEventListener('pointerup', up);
-      el.removeEventListener('pointercancel', up);
+      el.removeEventListener('pointercancel', cancel);
     });
   });
   return () => offs.forEach((fn) => fn());
@@ -235,7 +246,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
           <div class="cps-record__top">
             <span class="cps-record__id">${H.id}</span>
             <span class="cps-record__who">${H.customer} &middot; ${H.vehicle}</span>
-            <span class="cps-record__what">${H.services.map((s) => s.name).join(' + ')}</span>
+            <span class="cps-record__what">${H.services.map((s) => s.name).join(' + ').replace(/ coating$/, '<span class="cps-record__coat"> coating</span>')}</span>
           </div>
           <ol class="cps-rail">
             ${S.map((st) => {
@@ -427,12 +438,12 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
           en.target.dataset.in = 'true';
           io.unobserve(en.target);
         }
-      }, { root, rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+      }, { root: observerRoot(root), rootMargin: revealMargin('0px 0px -10% 0px'), threshold: 0.06 });
       targets.forEach((el) => io.observe(el));
       cleanup.push(() => io.disconnect());
     }
 
-    cleanup.push(slotRoll($('.cps-metric__value'), { root }));
+    cleanup.push(slotRoll($('.cps-metric__value'), { root: observerRoot(root) }));
     cleanup.push(draggableMarquee($('.cps-testimonials__track'), $('.cps-testimonials__scroll')));
 
     /* --- the paper trail can be picked up and moved around its board ------- */
@@ -484,9 +495,9 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
 
     function openFull(trigger) {
       if (full) return;
-      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      scrollPageTo(root, scrollTopOf(root));
       full = { trigger };
-      root.style.overflow = 'hidden';
+      lockScroll(root, true);
       document.documentElement.dataset.appFull = 'true';
       article.dataset.appFull = 'true';
       ipad.dataset.full = 'true';
@@ -508,7 +519,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
       delete article.dataset.appFull;
       delete document.documentElement.dataset.appFull;
       ipad.style.removeProperty('--full-top');
-      root.style.overflow = '';
+      lockScroll(root, false);
       closeBtn.dataset.on = 'false';
       closeBtn.hidden = true;
       expandBtn.setAttribute('aria-expanded', 'false');
@@ -528,10 +539,10 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
 
     function expand() {
       if (fullMQ.matches) return openFull(expandBtn);
-      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });   // halt any glide first
+      scrollPageTo(root, scrollTopOf(root));   // halt any glide first
       const r = ipad.getBoundingClientRect();
       clearTimeout(settle);
-      root.style.overflow = 'hidden';
+      lockScroll(root, true);
       root.style.scrollbarGutter = 'stable';
       lab.dataset.focus = 'true';                       // let the iPad leave its section
       article.style.setProperty('--focus-top', '0px');
@@ -569,7 +580,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
         delete ipad.dataset.expanded;
         delete lab.dataset.focus;
         ipad.style.transition = '';
-        root.style.overflow = '';
+        lockScroll(root, false);
         root.style.scrollbarGutter = '';
         closeBtn.hidden = true;
       }, ms + 60);
@@ -613,7 +624,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
       document.removeEventListener('keydown', onKey, true);
       removeEventListener('resize', onResize);
       clearTimeout(settle);
-      root.style.overflow = '';
+      lockScroll(root, false);
       root.style.scrollbarGutter = '';
     });
 
@@ -957,7 +968,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
       render();
       if (last) ripple(last.sees, last.customer);
       const lab = $('.cps-lab');
-      root.scrollTo({ top: root.scrollTop + lab.getBoundingClientRect().top, behavior: prefs.reducedMotion ? 'auto' : 'smooth' });
+      scrollPageTo(root, scrollTopOf(root) + lab.getBoundingClientRect().top, prefs.reducedMotion ? 'auto' : 'smooth');
     }));
 
     $('[data-reset]').addEventListener('click', () => {

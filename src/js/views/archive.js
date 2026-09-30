@@ -1,5 +1,6 @@
 import { archive as a } from '../../../content/pages.js';
 import { prefs } from '../prefs.js';
+import { observerRoot, lockScroll } from '../page-scroll.js';
 
 /**
  * Creative archive — a marble workboard.
@@ -388,6 +389,7 @@ export function archiveView({ onBack, onUp }) {
         <p class="cab-sub">${a.body}</p>
       </header>
 
+      <div class="cab-pan" data-pan>
       <div class="cab-board" data-board>
         ${OBJECTS.filter((o) => o.under).map(objectHtml).join('')}
         ${pieces.map((p, i) => `
@@ -411,6 +413,7 @@ export function archiveView({ onBack, onUp }) {
           </p>
           <button class="cab-reset" type="button" data-reset hidden>Put everything back</button>
         </div>
+      </div>
       </div>
 
       <div class="cab-foot">
@@ -447,7 +450,7 @@ export function archiveView({ onBack, onUp }) {
         io.disconnect();
         board.dataset.deal = 'go';
         setTimeout(() => { delete board.dataset.deal; }, 1600);
-      }, { root, threshold: 0.12 });
+      }, { root: observerRoot(root), threshold: 0.12 });
       io.observe(board);
       cleanup.push(() => io.disconnect());
     }
@@ -474,7 +477,9 @@ export function archiveView({ onBack, onUp }) {
       set(el, '--rest', num(el, '--rot'));
 
       const down = (e) => {
-        if (narrow() || (e.button !== undefined && e.button !== 0)) return;
+        // A finger pans the table and taps a print closer; only a mouse or
+        // pen picks pieces up and moves them.
+        if (narrow() || e.pointerType === 'touch' || (e.button !== undefined && e.button !== 0)) return;
         cancelAnimationFrame(raf);
         g = { id: e.pointerId, px: e.clientX, py: e.clientY, x: num(el, '--x'), y: num(el, '--y'),
               t: performance.now(), t0: performance.now(), vx: 0, vy: 0, far: false };
@@ -644,7 +649,7 @@ export function archiveView({ onBack, onUp }) {
       lay.dataset.many = String(list.length > 1);
       show(cur.start);
       lay.hidden = false;
-      root.style.overflow = 'hidden';
+      lockScroll(root, true);
       requestAnimationFrame(() => {
         lay.dataset.on = 'true';
         // The print travels from where it lies on the desk to the middle of the screen.
@@ -666,7 +671,7 @@ export function archiveView({ onBack, onUp }) {
       const done = () => {
         lay.hidden = true; delete lay.dataset.on;
         el.classList.remove('is-away');
-        root.style.overflow = '';
+        lockScroll(root, false);
         el.focus({ preventScroll: true });
         cur = null;
       };
@@ -703,15 +708,26 @@ export function archiveView({ onBack, onUp }) {
       }
     };
     document.addEventListener('keydown', onKey, true);
-    cleanup.push(() => { document.removeEventListener('keydown', onKey, true); root.style.overflow = ''; });
+    cleanup.push(() => { document.removeEventListener('keydown', onKey, true); lockScroll(root, false); });
 
-    // On phones there's no dragging, so a plain tap opens the print.
+    // A finger doesn't drag, so a plain tap brings the print closer.
+    let touching = false;
+    const noteTouch = (e) => { touching = e.pointerType === 'touch'; };
+    board.addEventListener('pointerdown', noteTouch, true);
     const tap = (e) => {
       const el = e.target.closest('.cab-piece');
-      if (el && narrow()) open(el.dataset.id);
+      if (el && (narrow() || touching)) open(el.dataset.id);
     };
     board.addEventListener('click', tap);
-    cleanup.push(() => board.removeEventListener('click', tap));
+    cleanup.push(() => { board.removeEventListener('click', tap); board.removeEventListener('pointerdown', noteTouch, true); });
+
+    /* Other devices: the desk keeps its desktop size inside a view you swipe
+       across (see archive.css), so it opens on the middle of the table, where
+       the hint and the first prints are. */
+    const pan = $('[data-pan]');
+    requestAnimationFrame(() => {
+      if (pan.scrollWidth > pan.clientWidth) pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2;
+    });
 
     requestAnimationFrame(() => { page.dataset.ready = 'true'; });
     return () => cleanup.forEach((fn) => fn());

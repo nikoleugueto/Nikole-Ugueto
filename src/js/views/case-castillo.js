@@ -1,6 +1,7 @@
 import { castillo as c } from '../../../content/castillo.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
+import { observerRoot, revealMargin, scrollTopOf, scrollPageTo, lockScroll } from '../page-scroll.js';
 
 /* Phones show the company's short name in testimonial credits (CHG); the
    full name stays everywhere else. Both are in the markup; CSS picks one. */
@@ -345,7 +346,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
     cleanup.push(draggableMarquee(root.querySelector('.chg-testimonials__track'), root.querySelector('.chg-testimonials__scroll')));
 
     /* --- the impact figure rolls in like a slot machine ------------------- */
-    cleanup.push(slotRoll(root.querySelector('.chg-metric__value'), { root }));
+    cleanup.push(slotRoll(root.querySelector('.chg-metric__value'), { root: observerRoot(root) }));
 
     /* --- reveals (same contract as the other case study) ------------------ */
     const targets = [...root.querySelectorAll('[data-reveal]')];
@@ -359,7 +360,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           en.target.dataset.in = 'true';
           io.unobserve(en.target);
         }
-      }, { root, rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+      }, { root: observerRoot(root), rootMargin: revealMargin('0px 0px -10% 0px'), threshold: 0.06 });
       targets.forEach((el) => io.observe(el));
       cleanup.push(() => io.disconnect());
     }
@@ -386,7 +387,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       const vio = new IntersectionObserver(([en]) => {
         if (en.isIntersecting) office.play().catch(() => {});
         else office.pause();
-      }, { root, threshold: 0.25 });
+      }, { root: observerRoot(root), threshold: 0.25 });
       vio.observe(office);
       cleanup.push(() => { vio.disconnect(); cancelAnimationFrame(raf); });
     }
@@ -1063,9 +1064,9 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
 
     function openFull(trigger, target) {
       if (full) return;
-      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      scrollPageTo(root, scrollTopOf(root));
       full = { target, trigger };
-      root.style.overflow = 'hidden';
+      lockScroll(root, true);
       document.documentElement.dataset.appFull = 'true';
       article.dataset.appFull = 'true';
       target.dataset.full = 'true';
@@ -1087,7 +1088,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       delete article.dataset.appFull;
       delete document.documentElement.dataset.appFull;
       target.style.removeProperty('--full-top');
-      root.style.overflow = '';
+      lockScroll(root, false);
       closeBtn.dataset.on = 'false';
       closeBtn.hidden = true;
       trigger.setAttribute('aria-expanded', 'false');
@@ -1097,10 +1098,10 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
     function expand(trigger, target) {
       if (phoneMQ.matches) return openFull(trigger, target);
       // Halt any smooth scroll still in flight, so nothing moves after measuring.
-      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      scrollPageTo(root, scrollTopOf(root));
       const r = target.getBoundingClientRect();
       clearTimeout(settle);
-      root.style.overflow = 'hidden';
+      lockScroll(root, true);
       root.style.scrollbarGutter = 'stable';
       // The stage is transformed, which makes "fixed" relative to its scrolled
       // content rather than the screen — so measure where the backdrop lands
@@ -1142,7 +1143,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       const ms = parseFloat(getComputedStyle(target).transitionDuration) * 1000 || 0;
       settle = setTimeout(() => {
         delete target.dataset.expanded;
-        root.style.overflow = '';
+        lockScroll(root, false);
         root.style.scrollbarGutter = '';
         closeBtn.hidden = true;
       }, ms + 60);
@@ -1172,7 +1173,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       document.removeEventListener('keydown', onKey, true);
       removeEventListener('resize', onResize);
       clearTimeout(settle);
-      root.style.overflow = '';
+      lockScroll(root, false);
       root.style.scrollbarGutter = '';
     });
 

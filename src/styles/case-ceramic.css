@@ -62,6 +62,10 @@
   opacity: 1; transform: none;
   transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
 }
+/* Phones and tablets: the same rise, quicker, so it never trails the scroll. */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  .cps [data-reveal][data-in="true"] { transition-duration: .5s; }
+}
 
 .cps-label {
   display: flex; align-items: baseline; justify-content: center; gap: .9rem;
@@ -818,6 +822,9 @@
 @media (hover: none) and (pointer: coarse) {
   .cps-seg button { position: relative; }
   .cps-seg button::after { content: ""; position: absolute; inset: -10px -2px; }
+  /* A vertical swipe over the paper trail scrolls the page; a sideways drag
+     still moves the scrap. */
+  .cps-scrap { touch-action: pan-y; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -832,6 +839,12 @@
    sideways like any mobile board. Nothing here applies until the app is
    opened (data-full), and it is never opened this way on the desktop.
    ========================================================================== */
+/* Other devices: the solution card's service line ends at "Ceramic Pro Gold",
+   so it holds on one line. */
+@media (max-width: 1179px) {
+  .cps-record__coat { display: none; }
+}
+
 .cps-full-wrap { display: none; margin: 1.15rem 0 0; text-align: center; }
 .cps-full-btn {
   display: inline-flex; align-items: center; gap: .55rem;

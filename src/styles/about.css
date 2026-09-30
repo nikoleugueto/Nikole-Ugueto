@@ -482,6 +482,10 @@
   transition: opacity .9s var(--ease-out), transform 1s var(--ease-out);
 }
 .abt[data-reveal="on"] .abt-rv[data-in="true"] { opacity: 1; transform: none; }
+/* Phones and tablets: the same arrival, quicker, so it never trails the scroll. */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  .abt[data-reveal="on"] .abt-rv { transition-duration: .5s, .55s; }
+}
 
 /* ============================================================== smaller === */
 @media (max-width: 62rem) {
@@ -529,6 +533,7 @@
 /* Tablet landscape: the school column is narrow beside the path, so the
    honour stays on one line rather than breaking between its two words. */
 @media (max-width: 1179px) {
+  .abt-intro__br { display: none; }   /* one paragraph: "…UX and AI, I connect…" */
   .abt-school__degree strong { white-space: nowrap; }
   .abt-title { text-wrap: pretty; }   /* long on a small phone: more lines than balance handles */
 }

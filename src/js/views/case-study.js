@@ -1,5 +1,6 @@
 import { caseStudyById } from '../../../content/case-studies.js';
 import { byId } from '../../../content/worlds.js';
+import { observerRoot } from '../page-scroll.js';
 
 /**
  * A case study.
@@ -171,7 +172,7 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
         if (en.isIntersecting) seen.add(id); else seen.delete(id);
       }
       dots.forEach((a, id) => a.toggleAttribute('data-current', seen.has(id)));
-    }, { root, rootMargin: '-45% 0px -45% 0px' });
+    }, { root: observerRoot(root), rootMargin: '-45% 0px -45% 0px' });
     root.querySelectorAll('.cs__chapter').forEach((s) => io.observe(s));
     cleanup.push(() => io.disconnect());
 
@@ -186,7 +187,7 @@ export function caseStudyView({ caseId, onBack, onUp, onWorld }) {
         if (en.target === hero) railEl.dataset.hidden = String(en.isIntersecting);
         if (en.target === foot && en.isIntersecting) railEl.dataset.hidden = 'true';
       }
-    }, { root, rootMargin: '0px 0px -60% 0px' });
+    }, { root: observerRoot(root), rootMargin: '0px 0px -60% 0px' });
     if (hero) edges.observe(hero);
     if (foot) edges.observe(foot);
     cleanup.push(() => edges.disconnect());

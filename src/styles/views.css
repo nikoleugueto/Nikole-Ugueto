@@ -63,3 +63,18 @@
   .stage { place-items: safe start center; }
   .stage > .worlds__crumb { position: static; margin-bottom: 1.25rem; }
 }
+
+/* Phones and tablets, once a page has arrived (stage.js sets the flag, and
+   never on the desktop): the page scrolls the document itself instead of a
+   fixed layer, so the browser's toolbars can tuck away while you read and
+   the scroll is the browser's own. The portrait underneath steps out of the
+   page until you go back to it. The layer is the same; only who scrolls it
+   changes, and nothing is left promoted or transformed while you read. */
+html[data-flow] body { overflow-x: hidden; overflow-y: auto; }
+html[data-flow] :is(#main, .backdrop, .veil) { display: none; }
+html[data-flow] .stage {
+  position: relative; inset: auto;
+  min-height: 100svh;
+  overflow: visible; overflow-x: clip;
+  opacity: 1; transform: none; will-change: auto;
+}

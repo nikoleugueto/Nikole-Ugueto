@@ -163,6 +163,8 @@ const camera = createCamera({
     brain.focus({ preventScroll: true });
   },
   onProgress: (p) => {
+    // While the camera moves, the stage is the fixed layer (see stage.js).
+    if (p > 0.001 && p < 0.999) stage.unsettle();
     // Build the destination while the camera is still travelling, so the
     // arrival has something to fade in rather than appearing all at once.
     if (p > 0.38) stage.prepare(viewFor(stageRoute()));
@@ -240,12 +242,14 @@ function apply(path) {
       stage.show(view);
       live.textContent = announceFor(pathname);
     } else {
+      stage.unsettle();                                // the portrait back in place first
       camera.enter();                                  // onCommit announces on arrival
     }
     return;
   }
 
   // home
+  stage.unsettle();
   if (camera.progress > 0) camera.exit();              // onRelease clears the stage
   else stage.hide();
 }
@@ -328,10 +332,13 @@ tieSoon();
 
 /* Below the desktop composition the header gets a frosted backdrop once the
    page has scrolled (see base.css). Only the flag lives here; the desktop
-   stylesheet never reads it. Pages scroll inside the stage; home scrolls the
-   document in the stacked layout. */
+   stylesheet never reads it. Pages scroll inside the stage, or on phones and
+   tablets the document itself (see stage.js). */
 const markScrolled = () => {
-  const y = stageEl.dataset.mounted === 'true' ? stageEl.scrollTop : (document.scrollingElement?.scrollTop || 0);
+  // Home keeps its navigation fully transparent, scrolled or not: only the
+  // inner pages (shown in the stage) get the backdrop.
+  const y = stageEl.dataset.mounted !== 'true' ? 0
+          : document.documentElement.dataset.flow === 'true' ? scrollY : stageEl.scrollTop;
   const on = y > 8 ? 'true' : 'false';
   if (header.dataset.scrolled !== on) header.dataset.scrolled = on;
 };

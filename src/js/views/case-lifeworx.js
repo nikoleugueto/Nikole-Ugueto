@@ -1,6 +1,7 @@
 import { lifeworx as c } from '../../../content/lifeworx.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
+import { observerRoot, revealMargin, onPageScroll } from '../page-scroll.js';
 
 /**
  * The LifeWorx Events case study.
@@ -173,7 +174,7 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
     cleanup.push(draggableMarquee(root.querySelector('.lw-testimonials__track'), root.querySelector('.lw-testimonials__scroll')));
 
     /* --- the impact figure rolls in like a slot machine ------------------- */
-    cleanup.push(slotRoll(root.querySelector('.lw-metric__value'), { root }));
+    cleanup.push(slotRoll(root.querySelector('.lw-metric__value'), { root: observerRoot(root) }));
 
     /* --- reveals ---------------------------------------------------------
        Applied here rather than in the stylesheet, so a page whose observer
@@ -189,7 +190,7 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
           en.target.dataset.in = 'true';
           io.unobserve(en.target);
         }
-      }, { root, rootMargin: '0px 0px -10% 0px', threshold: 0.06 });
+      }, { root: observerRoot(root), rootMargin: revealMargin('0px 0px -10% 0px'), threshold: 0.06 });
       targets.forEach((el) => io.observe(el));
       cleanup.push(() => io.disconnect());
     }
@@ -213,7 +214,7 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
               film.pause();
             }
           }
-        }, { root, rootMargin: '25% 0px' });
+        }, { root: observerRoot(root), rootMargin: '25% 0px' });
         fio.observe(film);
         cleanup.push(() => fio.disconnect());
       } else {
@@ -240,11 +241,14 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
       let raf = 0;
       const render = () => {
         raf = 0;
-        for (const act of acts) {
-          const pin = act.firstElementChild;
-          const travel = act.offsetHeight - pin.offsetHeight;
-          if (travel <= 0) continue;
-          const p = clamp01(-act.getBoundingClientRect().top / travel);
+        // Every measurement first, then every write: one layout per frame.
+        const at = acts.map((act) => {
+          const travel = act.offsetHeight - act.firstElementChild.offsetHeight;
+          return travel > 0 ? clamp01(-act.getBoundingClientRect().top / travel) : -1;
+        });
+        for (const [i, act] of acts.entries()) {
+          const p = at[i];
+          if (p < 0) continue;
           const s = act.style;
           s.setProperty('--p', p.toFixed(4));
           // The laptop settles early and then holds still; only the page moves.
@@ -253,9 +257,8 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
         }
       };
       const schedule = () => { if (!raf) raf = requestAnimationFrame(render); };
-      root.addEventListener('scroll', schedule, { passive: true });
+      cleanup.push(onPageScroll(root, schedule));
       addEventListener('resize', schedule, { passive: true });
-      cleanup.push(() => root.removeEventListener('scroll', schedule));
       cleanup.push(() => removeEventListener('resize', schedule));
       cleanup.push(() => raf && cancelAnimationFrame(raf));
       render();

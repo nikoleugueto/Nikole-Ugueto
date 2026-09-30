@@ -245,6 +245,9 @@
    bare cream box under the button). The words keep their measure. */
 @media (max-width: 1179px) {
   .world { position: relative; width: 100%; justify-self: stretch; }
+  /* Healthcare's island trails vines low enough to brush "01 — Healthcare":
+     its words sit a little lower. The island itself does not move. */
+  .world[data-world="healthcare"] .world__intro { margin-top: calc(-1 * clamp(2.5rem, 10vh, 4.5rem) + 1.75rem); }
   .world__grid { width: 100%; max-width: 34rem; margin-inline: auto; }
 }
 

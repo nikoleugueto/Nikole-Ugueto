@@ -50,6 +50,10 @@
   opacity: 1; transform: none;
   transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
 }
+/* Phones and tablets: the same rise, quicker, so it never trails the scroll. */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  .lw [data-reveal][data-in="true"] { transition-duration: .5s; }
+}
 
 /* The section label, centred wherever it appears. */
 .lw-label {
@@ -161,6 +165,10 @@
   height: 100svh; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
 }
+/* Phones and tablets scroll the document (views.css), so the browser's
+   toolbars tuck away mid-scene: the pinned frame covers the tall screen, so
+   no strip of page shows beneath it. Anything more specific still wins. */
+:where(html[data-flow]) .lw-pin { height: 100lvh; }
 
 /* The scene is the section, so it is framed by geometry rather than by width.
    Wide enough and it covers the viewport outright; portrait and it is scaled
@@ -503,6 +511,11 @@
 }
 @media (hover: none) and (pointer: coarse) {
   .lw-live { min-height: 44px; }
+}
+/* The role block is centred as Ceramic Pro's is: ROLE, the title, then the
+   link beneath it, as one block in the middle of the column. */
+@media (max-width: 1179px) {
+  .lw-id dd { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: .45rem; }
 }
 /* With motion reduced the laptop scene stops pinning, and its oversized
    frame would widen the page sideways; it is cropped the way the live scene

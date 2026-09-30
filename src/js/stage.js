@@ -1,3 +1,5 @@
+import { flowMQ } from './page-scroll.js';
+
 /**
  * The destination layer.
  *
@@ -11,6 +13,37 @@
  */
 export function createStage(el, { behind } = {}) {
   let current = null;        // { id, cleanup }
+  let arrived = false;
+  let homeY = 0;             // where the home page was scrolled to
+
+  /* Phones and tablets: once a page has arrived, the document scrolls it
+     rather than this fixed layer (views.css, html[data-flow]), so the
+     browser's toolbars can tuck away and the scroll is the native one. The
+     layer is the fixed scroller again for every transition, and the scroll
+     position crosses over each way so nothing jumps. Never on the desktop. */
+  const html = document.documentElement;
+  function flow(on) {
+    on = on && flowMQ.matches;
+    if (on === (html.dataset.flow === 'true')) return;
+    if (on) {
+      const y = el.scrollTop;
+      homeY = scrollY;
+      html.dataset.flow = 'true';
+      scrollTo({ top: y, behavior: 'instant' });
+    } else {
+      const y = scrollY;
+      delete html.dataset.flow;
+      el.scrollTo({ top: y, behavior: 'instant' });
+      scrollTo({ top: homeY, behavior: 'instant' });
+    }
+  }
+  flowMQ.addEventListener('change', () => flow(arrived));
+  /** Arrive: in the document's scroll, a newly opened page starts at its top. */
+  function settle(fresh) {
+    arrived = true;
+    if (fresh && html.dataset.flow === 'true') scrollTo({ top: 0, behavior: 'instant' });
+    flow(true);
+  }
 
   /* The home stage stays in the DOM underneath this layer, so without this a
      keyboard user tabs straight into controls they cannot see. `inert` takes
@@ -25,10 +58,11 @@ export function createStage(el, { behind } = {}) {
     // Nothing should reach here without a view, but a blank screen with a
     // console error is the worst possible failure mode for a portfolio.
     if (!view) { console.warn('[stage] asked to render nothing'); return; }
-    if (current?.id === view.id) return;
+    if (current?.id === view.id) return false;
     current?.cleanup?.();
     el.innerHTML = view.html;
     current = { id: view.id, cleanup: view.mount?.(el) || null };
+    return true;
   }
 
   function clear() {
@@ -49,27 +83,34 @@ export function createStage(el, { behind } = {}) {
 
     /** You have arrived: announce it and move focus in. */
     show(view) {
-      render(view);
+      const fresh = render(view);
       el.style.removeProperty('--stage-in');
       el.style.removeProperty('--stage-s');
       el.removeAttribute('aria-hidden');
       el.dataset.mounted = 'true';
       occlude(true);
       el.focus({ preventScroll: true });
+      settle(fresh);
     },
 
     /** A screen reached directly rather than through the camera. */
     showStandalone(view) {
-      render(view);
+      const fresh = render(view);
       el.removeAttribute('aria-hidden');
       el.dataset.mounted = 'true';
       el.style.setProperty('--stage-in', '1');
       el.style.setProperty('--stage-s', '1');
       occlude(true);
       el.focus({ preventScroll: true });
+      settle(fresh);
     },
 
+    /** Hand the scrolling back to the fixed layer before the camera moves. */
+    unsettle() { arrived = false; flow(false); },
+
     hide() {
+      arrived = false;
+      flow(false);
       el.setAttribute('aria-hidden', 'true');
       el.dataset.mounted = 'false';
       el.style.removeProperty('--stage-in');

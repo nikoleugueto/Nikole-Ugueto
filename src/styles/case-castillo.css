@@ -49,6 +49,10 @@
   opacity: 1; transform: none;
   transition: opacity var(--dur-l) var(--ease-out), transform var(--dur-l) var(--ease-out);
 }
+/* Phones and tablets: the same rise, quicker, so it never trails the scroll. */
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+  .chg [data-reveal][data-in="true"] { transition-duration: .5s; }
+}
 
 .chg-label {
   display: flex; align-items: baseline; justify-content: center; gap: .9rem;
@@ -1124,9 +1128,11 @@
   .chg-metric__value { font-size: clamp(3.75rem, 27vw, 7.5rem); }
   /* The longer role line wraps under the link rather than running off a phone. */
   .chg-id dd { flex-wrap: wrap; row-gap: .45rem; }
-  /* centred like the rest of the opening: the role, then the link beneath */
-  .chg-id { align-items: center; text-align: center; }
-  .chg-id dd { flex-direction: column; align-items: center; }
+}
+/* The role block is centred as Ceramic Pro's is: ROLE, the title, then the
+   link beneath it, as one block in the middle of the column. */
+@media (max-width: 1179px) {
+  .chg-id dd { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: .45rem; }
 }
 .chg-close__list {
   list-style: none; margin: clamp(1.75rem, 5vh, 2.5rem) 0 0; padding: 0;

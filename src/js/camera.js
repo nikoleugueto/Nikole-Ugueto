@@ -1,4 +1,5 @@
 import { prefs } from './prefs.js';
+import { flowMQ } from './page-scroll.js';
 
 /**
  * The camera — the one piece of motion the whole site is built around.
@@ -15,6 +16,7 @@ import { prefs } from './prefs.js';
  *   click on the brain    a timed run to 1
  *   keyboard + text CTA   the same timed run, no hover required
  *   Escape / scroll up    back to 0
+ *   two-finger pinch      continuous, reversible (touch, on the portrait)
  *
  * Performance: only `transform` and `opacity` are written, all on layers that
  * are already promoted. The blur at the end of the push-in is a cross-fade to
@@ -186,11 +188,57 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
   // over the hero part-way through the journey, and a hero-bound listener
   // would stop receiving events at precisely that moment.
   addEventListener('wheel', onWheel, { passive: false, capture: true });
-  addEventListener('resize', () => { rest = null; measure(); render(); }, { passive: true });
+
+  /* Touch: a two-finger pinch on the portrait is the same dolly the wheel
+     drives on the desktop. Spreading the fingers moves the camera into the
+     head as they move, and it can be reversed mid-gesture; letting go past
+     a quarter of the way finishes the journey into the worlds, otherwise the
+     camera settles back. Only a pinch centred on the portrait counts, so the
+     rest of the page keeps the browser's own zoom. */
+  const PINCH_GAIN = 0.85;     // spreading to ~2.2x the starting distance ≈ all the way
+  let pinch = null;
+  const span = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  const onPlate = (t) => {
+    const r = plate.getBoundingClientRect();
+    const mx = (t[0].clientX + t[1].clientX) / 2, my = (t[0].clientY + t[1].clientY) / 2;
+    return mx >= r.left && mx <= r.right && my >= r.top && my <= r.bottom;
+  };
+  function onTouchStart(e) {
+    if (committed || tween || e.touches.length !== 2 || !onPlate(e.touches)) return;
+    measure();
+    pinch = { d0: span(e.touches) || 1, p0: p };
+  }
+  function onTouchMove(e) {
+    if (!pinch || e.touches.length !== 2) return;
+    e.preventDefault();                          // this pinch is ours, not the page's zoom
+    const k = span(e.touches) / pinch.d0;
+    if (prefs.reducedMotion) { if (k > 1.25) { pinch = null; api.enter(); } return; }
+    target = clamp01(pinch.p0 + (k - 1) * PINCH_GAIN);
+    schedule();
+  }
+  function onTouchEnd(e) {
+    if (!pinch || e.touches.length >= 2) return;
+    pinch = null;
+    if (target > 0.25) { live.textContent = 'Entering the worlds inside the portrait.'; to(1, { duration: 620 }); }
+    else to(0, { duration: 420 });
+  }
+  hero.addEventListener('touchstart', onTouchStart, { passive: true });
+  hero.addEventListener('touchmove', onTouchMove, { passive: false });
+  hero.addEventListener('touchend', onTouchEnd, { passive: true });
+  hero.addEventListener('touchcancel', onTouchEnd, { passive: true });
+  // iOS Safari's own pinch gesture, on the portrait only
+  hero.addEventListener('gesturestart', (e) => { if (pinch) e.preventDefault(); });
+  addEventListener('resize', () => {
+    // On phones and tablets the browser's toolbars resize the window while a
+    // page scrolls. The portrait can only be measured at rest, so while the
+    // camera is inside, the last measurement stands for the way back out.
+    if (flowMQ.matches && p > 0.001 && rest) return;
+    rest = null; measure(); render();
+  }, { passive: true });
 
   measure(); render(); setCueLabel();
 
-  return {
+  const api = {
     enter() {
       if (committed || (tween && tween.to === 1)) return;
       live.textContent = 'Entering the worlds inside the portrait.';
@@ -204,4 +252,5 @@ export function createCamera({ hero, plate, header, cue, cueLabel, live, onCommi
     get committed() { return committed; },
     remeasure() { rest = null; measure(); render(); },
   };
+  return api;
 }

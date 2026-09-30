@@ -1,5 +1,6 @@
 import { about } from '../../../content/pages.js';
 import { prefs } from '../prefs.js';
+import { observerRoot } from '../page-scroll.js';
 
 /**
  * About.
@@ -210,7 +211,7 @@ export function aboutView({ onBack, onContact }) {
           ${eyebrow(a.eyebrow)}
           <p class="abt-hello">${a.hello}</p>
           <h2 class="abt-title">${a.title}</h2>
-          <p class="abt-intro">${a.intro.lead}<br>${a.intro.rest}</p>
+          <p class="abt-intro">${a.intro.lead}<br class="abt-intro__br"> ${a.intro.rest}</p>
           <p class="abt-facts u-label">${a.facts.map((f) => `<span>${f}</span>`).join('<span class="abt-dot" aria-hidden="true">·</span>')}</p>
           <button class="btn abt-btn" type="button" data-contact data-cursor="Get in touch">
             Get in touch <span aria-hidden="true">&rarr;</span>
@@ -387,7 +388,7 @@ export function aboutView({ onBack, onContact }) {
       const start = () => { if (running) return; running = true; last = 0; raf = requestAnimationFrame(tick); };
       const stop = () => { running = false; cancelAnimationFrame(raf); };
       // only animate while the row is on screen
-      const io = new IntersectionObserver(([en]) => (en.isIntersecting ? start() : stop()), { root });
+      const io = new IntersectionObserver(([en]) => (en.isIntersecting ? start() : stop()), { root: observerRoot(root) });
       io.observe(view);
       cleanup.push(() => { io.disconnect(); stop(); });
 
@@ -427,7 +428,7 @@ export function aboutView({ onBack, onContact }) {
           en.target.dataset.in = 'true';
           io.unobserve(en.target);
         }
-      }, { root, threshold: 0.08 });
+      }, { root: observerRoot(root), threshold: 0.08 });
       page.querySelectorAll('.abt-rv').forEach((el) => io.observe(el));
       cleanup.push(() => io.disconnect());
     }
