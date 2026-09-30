@@ -489,6 +489,9 @@
   .lw-film .lw-pin--film::after { display: none; }
   .lw-film .lw-film__video { position: static; transform: none; height: auto; aspect-ratio: 16 / 9; }
   .lw-film .lw-film__cap { position: static; padding: 1.25rem var(--gutter) 1.75rem; max-width: none; text-shadow: none; }
+  /* the caption sits on the page itself: no dark band, black type */
+  .lw-film .lw-pin--film { background: transparent; }
+  .lw-film .lw-film__cap { color: var(--ink); }
 }
 
 /* Phones: one testimonial fits the screen, so each is read whole as it drifts
@@ -507,6 +510,8 @@
 @media (max-width: 1179px), (hover: none) and (pointer: coarse) {
   .lw-act[data-motion="static"] { overflow-x: clip; }
   .lw-film[data-motion="static"] .lw-pin { flex-direction: column; align-items: stretch; }   /* caption under the film */
+  .lw-film[data-motion="static"] .lw-pin--film { background: transparent; }
+  .lw-film[data-motion="static"] .lw-film__cap { color: var(--ink); }
 }
 
 @media (prefers-reduced-motion: reduce) {

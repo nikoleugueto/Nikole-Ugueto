@@ -2,6 +2,11 @@ import { ceramic as c } from '../../../content/ceramic.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
 
+/* Phones show the company's short name in testimonial credits (Ceramic Pro); the
+   full name stays everywhere else. Both are in the markup; CSS picks one. */
+const coLabel = (title) => title.replace('Ceramic Pro Sarasota',
+  '<span class="co-full">Ceramic Pro Sarasota</span><span class="co-short">Ceramic Pro</span>');
+
 /**
  * Ceramic Pro Sarasota — Connected Operations.
  *
@@ -255,7 +260,6 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
           <p class="cps-lab__sub">${P.body}</p>
         </div>
 
-        <p class="cps-ipad-hint u-label" aria-hidden="true">Swipe across the app <span>&harr;</span></p>
         <div class="cps-ipad" data-reveal>
           <button class="cps-expand" type="button" data-expand aria-expanded="false"
                   aria-label="Enlarge the app" title="Enlarge the app" data-cursor="Enlarge">${ICON_EXPAND}</button>
@@ -287,6 +291,10 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
             </div>
           </div>
         </div>
+
+        <p class="cps-full-wrap">
+          <button class="cps-full-btn" type="button" data-open-full>${ICON_EXPAND}<span>Open the app full screen</span></button>
+        </p>
 
         <div class="cps-now" data-reveal>
           <p class="cps-now__step" data-step></p>
@@ -359,7 +367,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
                 <blockquote class="cps-testimonial__quote">${t.quote}</blockquote>
                 <p class="cps-testimonial__attribution">
                   <span class="cps-testimonial__name">${t.name}</span>
-                  <span class="cps-testimonial__title">${t.title}</span>
+                  <span class="cps-testimonial__title">${coLabel(t.title)}</span>
                 </p>
               </div>
             `).join('')}
@@ -368,7 +376,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
                 <blockquote class="cps-testimonial__quote">${t.quote}</blockquote>
                 <p class="cps-testimonial__attribution">
                   <span class="cps-testimonial__name">${t.name}</span>
-                  <span class="cps-testimonial__title">${t.title}</span>
+                  <span class="cps-testimonial__title">${coLabel(t.title)}</span>
                 </p>
               </div>
             `).join('')}
@@ -464,7 +472,62 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
       ipad.style.transform = `translate(${open.dx}px, ${open.cy - open.mid}px) scale(${open.s})`;
     };
 
+    /* --- full screen on phones and portrait tablets ------------------------
+       There the enlarge control does something different: the live app fills
+       the screen and reflows into a phone layout (tab bar, one column), so it
+       reads at full size instead of as a shrunken iPad. The stage is
+       transformed, so "fixed" is relative to its scrolled content: the app is
+       measured and pulled onto the screen, as the focus view does. */
+    const fullMQ = matchMedia('(max-width: 46rem), (max-width: 1179px) and (orientation: portrait)');
+    const phoneMQ = matchMedia('(max-width: 46rem)');
+    let full = null;     // { trigger }
+
+    function openFull(trigger) {
+      if (full) return;
+      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      full = { trigger };
+      root.style.overflow = 'hidden';
+      document.documentElement.dataset.appFull = 'true';
+      article.dataset.appFull = 'true';
+      ipad.dataset.full = 'true';
+      ipad.style.setProperty('--full-top', '0px');
+      const top = `${-ipad.getBoundingClientRect().top}px`;
+      ipad.style.setProperty('--full-top', top);
+      article.style.setProperty('--focus-top', top);
+      closeBtn.hidden = false;
+      requestAnimationFrame(() => { closeBtn.dataset.on = 'true'; });
+      expandBtn.setAttribute('aria-expanded', 'true');
+      closeBtn.focus({ preventScroll: true });
+    }
+
+    function closeFull() {
+      if (!full) return;
+      const { trigger } = full;
+      full = null;
+      delete ipad.dataset.full;
+      delete article.dataset.appFull;
+      delete document.documentElement.dataset.appFull;
+      ipad.style.removeProperty('--full-top');
+      root.style.overflow = '';
+      closeBtn.dataset.on = 'false';
+      closeBtn.hidden = true;
+      expandBtn.setAttribute('aria-expanded', 'false');
+      fit();
+      trigger?.focus?.({ preventScroll: true });
+    }
+
+    // Phones: the iPad is a preview, so a tap anywhere on it opens the app.
+    const onPreviewTap = (e) => {
+      if (full || !phoneMQ.matches || e.target.closest('[data-expand]')) return;
+      openFull(ipad);
+    };
+    ipad.addEventListener('click', onPreviewTap);
+    const openBtn = $('[data-open-full]');
+    openBtn.addEventListener('click', () => openFull(openBtn));
+    cleanup.push(() => { if (full) closeFull(); ipad.removeEventListener('click', onPreviewTap); });
+
     function expand() {
+      if (fullMQ.matches) return openFull(expandBtn);
       root.scrollTo({ top: root.scrollTop, behavior: 'instant' });   // halt any glide first
       const r = ipad.getBoundingClientRect();
       clearTimeout(settle);
@@ -519,7 +582,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
     };
 
     expandBtn.addEventListener('click', expand);
-    closeBtn.addEventListener('click', collapse);
+    closeBtn.addEventListener('click', () => (full ? closeFull() : collapse()));
     focusBg.addEventListener('click', collapse);
 
     // The app's own lists still scroll first; the wheel moves the iPad otherwise.
@@ -533,6 +596,7 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
     // Escape closes the enlarged view first, before the site's own Escape
     // (which leaves the case study) gets to see it. Arrows move a tall iPad.
     const onKey = (e) => {
+      if (full && e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeFull(); return; }
       if (!open) return;
       if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); collapse(); }
       else if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); pan(e.key === 'PageDown' ? 400 : 80); }
@@ -540,7 +604,9 @@ export function ceramicCaseView({ onBack, onUp, onWorld }) {
     };
     document.addEventListener('wheel', onWheel, { capture: true, passive: false });
     document.addEventListener('keydown', onKey, true);
-    const onResize = () => collapse();
+    // Full screen survives a resize (a phone's toolbar or keyboard moving);
+    // the in-page enlargement does not.
+    const onResize = () => { if (!full) collapse(); };
     addEventListener('resize', onResize);
     cleanup.push(() => {
       document.removeEventListener('wheel', onWheel, { capture: true });

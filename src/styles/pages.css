@@ -172,9 +172,22 @@ a.ch__row:hover .ch__icon { color: #73765F; }
 @media (max-width: 46rem) {
   .ct__channels {
     padding: .25rem 1rem;
-    background: rgba(248, 246, 242, .66);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    background: rgba(248, 246, 242, .55);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
     border-radius: 4px;
+  }
+  /* The photograph sits lower on a phone, so the skyline lands in the open
+     space below the links instead of behind them; its top dissolves into the
+     page's cream, where the headline already sat on a heavy lightening. */
+  .ct__sky {
+    background:
+      linear-gradient(to bottom,
+        rgb(242, 239, 234) 0%, rgba(242, 239, 234, .94) 30%, rgba(242, 239, 234, .5) 46%,
+        rgba(242, 239, 234, 0) 60%, rgba(242, 239, 234, 0) 90%, rgba(242, 239, 234, .3) 100%),
+      image-set(url("/assets/img/contact-sky-640.webp")  1x,
+                url("/assets/img/contact-sky-960.webp")  1.5x,
+                url("/assets/img/contact-sky-1254.webp") 2x) 50% calc(24svh + 1.3rem) / auto 100% no-repeat,
+      #EEEBE7;
   }
   .ch:last-child { border-bottom: 0; }
   .ch__row { min-height: 48px; }

@@ -506,6 +506,10 @@
   .abt-homes--a .abt-home:nth-child(2) { translate: 0 .55rem; }
   .abt-homes--b .abt-home:nth-child(2) { translate: 0 -.55rem; }
   .abt-step__where { font-size: .6875rem; }   /* company names stay legible on a phone */
+  /* sized so the university's name breaks as "Florida / International University" */
+  .abt-school__name { font-size: clamp(1.55rem, 7.8vw, 2.1rem); }
+  /* the interests' names fit their column on one line */
+  .abt-note__title { font-size: 1.05rem; }
   .abt-book { grid-column: 1 / -1; order: 1; margin-block: .75rem; }   /* between the two rows */
   .abt-points { grid-template-columns: 1fr; }
 }
@@ -517,7 +521,7 @@
   .abt-school { padding-right: 0; }
   .abt-seal { position: static; display: block; width: 5rem; height: 5rem; margin-bottom: 1rem; }
   .abt-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .abt-note, .abt-note:nth-child(4) { padding: 0 1rem; border-left: 1px solid var(--line); }
+  .abt-note, .abt-note:nth-child(4) { padding: 0 .7rem; border-left: 1px solid var(--line); }
   .abt-note:nth-child(odd) { padding-left: 0; border-left: 0; }
   .abt-note:last-child { grid-column: 1 / -1; }
 }
@@ -526,6 +530,16 @@
    honour stays on one line rather than breaking between its two words. */
 @media (max-width: 1179px) {
   .abt-school__degree strong { white-space: nowrap; }
+  .abt-title { text-wrap: pretty; }   /* long on a small phone: more lines than balance handles */
+}
+@media (max-width: 22.5rem) {
+  .abt-close__title { font-size: 1.45rem; }
+}
+/* Tablet landscape: the school column is narrow beside the path, so the seal
+   sits above the name, as on a phone, and the name gets the full column. */
+@media (min-width: 62.01rem) and (max-width: 1179px) {
+  .abt-school { padding-right: 0; }
+  .abt-seal { position: static; display: block; width: 5rem; height: 5rem; margin-bottom: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

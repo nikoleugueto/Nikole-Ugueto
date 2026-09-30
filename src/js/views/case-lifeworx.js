@@ -56,7 +56,7 @@ export function lifeworxCaseView({ onBack, onUp, onWorld }) {
           <dd>
             <span class="lw-id__value">${c.role.value}</span>
             <a class="lw-live" href="${c.live.href}" target="_blank" rel="noopener noreferrer"
-               data-cursor="Open the live site">${c.live.label}<span aria-hidden="true">&#8599;</span></a>
+               data-cursor="Open the live site">${c.live.label}<span aria-hidden="true">&#8599;&#xFE0E;</span></a>
           </dd>
         </dl>
       </header>

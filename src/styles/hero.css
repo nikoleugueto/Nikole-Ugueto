@@ -280,6 +280,45 @@
   }
 }
 
+/* Phones and tablets: the worlds live on the head, as on the desktop. Each
+   world's name sits beside its point in the hair as a small label, and the
+   list of rows under the portrait goes. Tapping a name opens that world;
+   tapping anywhere else on the head zooms into all of them. (Nested so it
+   applies only to the stacked composition below the desktop, or on touch.) */
+@media not all and (min-width: 1180px) and (min-aspect-ratio: 3/2) {
+  @media (max-width: 1179px), (hover: none) and (pointer: coarse) {
+    .hero__mobile-index { display: none; }
+    .annot { pointer-events: auto; --dot: 8px; }
+    .annot[data-side] .annot__label {
+      display: block;
+      left: auto; right: .75rem; top: 50%;
+      transform: translateY(-50%);
+      padding: .42rem .7rem .4rem;
+      border-radius: 999px;
+      background: rgba(250, 249, 247, .88);
+      -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+      box-shadow: 0 1px 2px rgba(12, 16, 22, .08), 0 10px 22px -12px rgba(12, 16, 22, .5);
+      text-align: left;
+    }
+    /* a finger-sized target around each label */
+    .annot__label::after { content: ""; position: absolute; inset: -.45rem -.3rem; }
+    .annot__title { font-size: .6875rem; letter-spacing: .1em; line-height: 1.2; white-space: nowrap; }
+    .annot__sub { display: none; }
+    /* the two upper names sit close together: one steps up, one down */
+    .annot[data-world="healthcare"] .annot__label { transform: translateY(-78%); }
+    .annot[data-world="ai"] .annot__label { transform: translateY(-18%); }
+    /* Technology's point is at the very edge of the hair, past the screen on
+       a phone: its label steps in, with a short leader out to the point. */
+    .annot[data-world="product"] .annot__label { right: calc(.75rem + 11cqw); }
+    .annot[data-world="product"] .annot__line {
+      display: block; left: auto; right: .35rem; width: calc(11cqw + .4rem);
+      transform: none; background: rgba(255, 255, 255, .85);
+    }
+    .annot:is(:hover, :focus-within) .annot__label,
+    .annot[data-active="true"] .annot__label { background: #fff; }
+  }
+}
+
 /* Under the desktop width the artwork starts below the navigation, so the
    links sit on sky rather than on the city in her hair. */
 @media (max-width: 1179px) {
@@ -291,6 +330,9 @@
 
 @media (max-width: 640px) {
   .plate { width: 124%; right: -10%; max-height: 56svh; }
+  /* sized so each of the headline's three lines holds on a phone, rather
+     than breaking into single words */
+  .hero__title { font-size: clamp(1.65rem, 8.5vw, 2.75rem); line-height: 1.08; }
   .hero__lede { max-width: 24rem; }
   .world-row { grid-template-columns: 2rem 1fr; }
   .world-row__go { display: none; }        /* the whole row is the target */

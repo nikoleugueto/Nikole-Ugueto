@@ -1124,6 +1124,9 @@
   .chg-metric__value { font-size: clamp(3.75rem, 27vw, 7.5rem); }
   /* The longer role line wraps under the link rather than running off a phone. */
   .chg-id dd { flex-wrap: wrap; row-gap: .45rem; }
+  /* centred like the rest of the opening: the role, then the link beneath */
+  .chg-id { align-items: center; text-align: center; }
+  .chg-id dd { flex-direction: column; align-items: center; }
 }
 .chg-close__list {
   list-style: none; margin: clamp(1.75rem, 5vh, 2.5rem) 0 0; padding: 0;
@@ -1301,8 +1304,24 @@
 .chg-expand--close[data-on="true"] { opacity: 1; }
 .chg-expand--close[hidden] { display: none; }
 
+/* Desktop and tablets: the control is the round icon alone. */
+.chg-expand__txt { display: none; }
+
 @media (max-width: 46rem) {
-  .chg-expand { display: none; }
+  /* Phones: a labelled "Full screen" control beneath each surface. */
+  .chg-expand {
+    display: inline-flex; gap: .5rem; width: auto; height: auto; min-height: 44px;
+    padding: .55rem 1rem; border-radius: 999px;
+  }
+  .chg-expand__txt { display: inline; font-size: .875rem; font-weight: 500; letter-spacing: 0; }
+  .chg-phone > .chg-expand {
+    position: absolute; top: calc(100% + .9rem); left: 0; right: 0;
+    width: max-content; margin-inline: auto;
+  }
+  .chg-phone { margin-bottom: 4.25rem; }
+  .chg-surface { flex-direction: column; align-items: center; }
+  .chg-surface > .chg-expand { position: static; order: 2; margin-top: 1rem; }
+  .chg-expand--close { width: 2.75rem; height: 2.75rem; padding: 0; min-height: 0; }
   /* One testimonial fits the screen, so each is read whole as it drifts by. */
   .chg-testimonials__track { gap: 3rem; }
   .chg-testimonial { width: calc(100vw - 2 * var(--gutter)); padding-inline: .25rem; }
@@ -1323,4 +1342,39 @@
   .chg [data-reveal][data-in="true"] { transition-duration: 1ms; }
   .chg-scr, .chg-bar__fill, .chg-drawer { animation: none; }
   .chg-dot { transition: none; }
+}
+
+/* ==========================================================================
+   Full screen on phones
+   The surface fills the screen: the homeowner's app without its phone frame,
+   the builder's desk without its margins. Only ever set on a phone.
+   ========================================================================== */
+.chg-phone[data-full],
+.chg-desk[data-full] {
+  position: fixed; left: 0; top: var(--full-top, 0px); z-index: 65;
+  width: 100%; max-width: none; height: 100%; margin: 0;
+  transform: none;
+}
+.chg-phone[data-full] > .chg-expand { display: none; }
+.chg-phone[data-full] .chg-phone__frame { aspect-ratio: auto; height: 100%; padding: 0; border-radius: 0; box-shadow: none; }
+.chg-phone[data-full] .chg-phone__island { display: none; }
+.chg-phone[data-full] .chg-phone__screen { border-radius: 0; }
+.chg-phone[data-full] .chg-app__bar {
+  padding-top: calc(.9rem + env(safe-area-inset-top));
+  padding-right: 3.6rem;                          /* room for the close control */
+}
+.chg-phone[data-full] .chg-app__body { padding-bottom: calc(1.4rem + env(safe-area-inset-bottom)); }
+.chg-desk[data-full] {
+  display: flex; flex-direction: column;
+  border-radius: 0; box-shadow: none;
+}
+.chg-desk[data-full] .chg-desk__chrome { padding-top: calc(.6rem + env(safe-area-inset-top)); padding-right: 3.6rem; }
+.chg-desk[data-full] .chg-desk__screen {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.chg[data-app-full] .chg-expand--close {
+  display: grid; right: .5rem; z-index: 70;
+  top: calc(var(--focus-top, 0px) + .45rem + env(safe-area-inset-top));
 }

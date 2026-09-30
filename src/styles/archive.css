@@ -303,6 +303,24 @@
   .cab-piece--bare .cab-tag { padding-inline: 8px; }
   .cab-clip { top: -14px; width: 36px; }
   .cab-obj, .cab-sheet { display: none; }
+  /* A few desk objects stay, placed in the stack's margins and gaps and
+     always under the prints, so the table still feels like a table without
+     anything covering the work or catching a tap. */
+  .cab-piece { z-index: 1; }
+  .cab-piece:nth-child(1 of .cab-piece) { order: 2; }
+  .cab-piece:nth-child(2 of .cab-piece) { order: 4; }
+  .cab-piece:nth-child(3 of .cab-piece) { order: 6; }
+  .cab-piece:nth-child(4 of .cab-piece) { order: 8; }
+  .cab-piece:nth-child(5 of .cab-piece) { order: 10; }
+  .cab-piece:nth-child(n + 6 of .cab-piece) { order: 12; }
+  .cab-controls { order: 20; }
+  .cab-obj--matcha, .cab-obj--pencil, .cab-obj--markers {
+    display: block; position: relative; left: auto; top: auto; z-index: 0;
+    pointer-events: none; cursor: default;
+  }
+  .cab-obj--matcha  { order: 1; justify-self: end; width: 4.4rem; margin: -.5rem -2rem -3.1rem 0; }
+  .cab-obj--pencil  { order: 5; justify-self: center; width: 74%; margin-block: -1.3rem; --rot: -3 !important; }
+  .cab-obj--markers { order: 9; justify-self: start; width: 40%; margin: -1.9rem 0 -1.9rem -.6rem; --rot: -10 !important; }
   .cab-controls { position: static; transform: none; flex-direction: column; align-items: center; gap: .75rem; white-space: normal; text-align: center; }
   .cab-focus__print { padding: 6px; }
   .cab-focus__print img { max-width: 92vw; max-height: 60vh; }

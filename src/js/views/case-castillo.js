@@ -2,6 +2,11 @@ import { castillo as c } from '../../../content/castillo.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
 
+/* Phones show the company's short name in testimonial credits (CHG); the
+   full name stays everywhere else. Both are in the markup; CSS picks one. */
+const coLabel = (title) => title.replace('Castillo Housing Group',
+  '<span class="co-full">Castillo Housing Group</span><span class="co-short">CHG</span>');
+
 /**
  * Castillo Housing Group — AI Home Design.
  *
@@ -127,7 +132,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           <dd>
             <span class="chg-id__value">${c.role.value}</span>
             <a class="chg-live" href="${c.live.href}" target="_blank" rel="noopener noreferrer"
-               data-cursor="Open the live site">${c.live.label}<span aria-hidden="true">&#8599;</span></a>
+               data-cursor="Open the live site">${c.live.label}<span aria-hidden="true">&#8599;&#xFE0E;</span></a>
           </dd>
         </dl>
       </header>
@@ -167,7 +172,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           <div class="chg-stage" data-reveal>
             <div class="chg-phone">
               <button class="chg-expand" type="button" data-expand aria-expanded="false"
-                    aria-label="Enlarge the prototype" title="Enlarge the prototype" data-cursor="Enlarge">${ICON_EXPAND}</button>
+                    aria-label="Enlarge the prototype" title="Enlarge the prototype" data-cursor="Enlarge">${ICON_EXPAND}<span class="chg-expand__txt" aria-hidden="true">Full screen</span></button>
               <div class="chg-phone__frame">
                 <span class="chg-phone__island" aria-hidden="true"></span>
                 <div class="chg-phone__screen">
@@ -216,7 +221,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
           <div class="chg-surface" data-surface="owner">
             <div class="chg-phone chg-phone--owner">
               <button class="chg-expand" type="button" data-expand aria-expanded="false"
-                    aria-label="Enlarge the homeowner view" title="Enlarge the homeowner view" data-cursor="Enlarge">${ICON_EXPAND}</button>
+                    aria-label="Enlarge the homeowner view" title="Enlarge the homeowner view" data-cursor="Enlarge">${ICON_EXPAND}<span class="chg-expand__txt" aria-hidden="true">Full screen</span></button>
               <div class="chg-phone__frame">
                 <span class="chg-phone__island" aria-hidden="true"></span>
                 <div class="chg-phone__screen">
@@ -236,7 +241,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
 
           <div class="chg-surface" data-surface="builder" hidden>
             <button class="chg-expand" type="button" data-expand aria-expanded="false"
-                    aria-label="Enlarge the builder view" title="Enlarge the builder view" data-cursor="Enlarge">${ICON_EXPAND}</button>
+                    aria-label="Enlarge the builder view" title="Enlarge the builder view" data-cursor="Enlarge">${ICON_EXPAND}<span class="chg-expand__txt" aria-hidden="true">Full screen</span></button>
             <div class="chg-desk">
               <div class="chg-desk__chrome" aria-hidden="true">
                 <span></span><span></span><span></span>
@@ -301,7 +306,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
                 <blockquote class="chg-testimonial__quote">${t.quote}</blockquote>
                 <p class="chg-testimonial__attribution">
                   <span class="chg-testimonial__name">${t.name}</span>
-                  <span class="chg-testimonial__title">${t.title}</span>
+                  <span class="chg-testimonial__title">${coLabel(t.title)}</span>
                 </p>
               </div>
             `).join('')}
@@ -310,7 +315,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
                 <blockquote class="chg-testimonial__quote">${t.quote}</blockquote>
                 <p class="chg-testimonial__attribution">
                   <span class="chg-testimonial__name">${t.name}</span>
-                  <span class="chg-testimonial__title">${t.title}</span>
+                  <span class="chg-testimonial__title">${coLabel(t.title)}</span>
                 </p>
               </div>
             `).join('')}
@@ -1047,7 +1052,50 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
     let settle = 0;
     const EDGE = 24, MAX_SCALE = 1.8;
 
+    /* --- full screen on phones ---------------------------------------------
+       On a phone the enlarge control opens the surface full screen instead:
+       the homeowner's app loses its phone frame and fills the screen, and the
+       builder's desk gets the whole screen to itself. Same live element, so
+       everything inside keeps working. The stage is transformed, so "fixed"
+       is relative to its scrolled content: measured and pulled on screen. */
+    const phoneMQ = matchMedia('(max-width: 46rem)');
+    let full = null;     // { target, trigger }
+
+    function openFull(trigger, target) {
+      if (full) return;
+      root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
+      full = { target, trigger };
+      root.style.overflow = 'hidden';
+      document.documentElement.dataset.appFull = 'true';
+      article.dataset.appFull = 'true';
+      target.dataset.full = 'true';
+      target.style.setProperty('--full-top', '0px');
+      const top = `${-target.getBoundingClientRect().top}px`;
+      target.style.setProperty('--full-top', top);
+      article.style.setProperty('--focus-top', top);
+      closeBtn.hidden = false;
+      requestAnimationFrame(() => { closeBtn.dataset.on = 'true'; });
+      trigger.setAttribute('aria-expanded', 'true');
+      closeBtn.focus({ preventScroll: true });
+    }
+
+    function closeFull() {
+      if (!full) return;
+      const { target, trigger } = full;
+      full = null;
+      delete target.dataset.full;
+      delete article.dataset.appFull;
+      delete document.documentElement.dataset.appFull;
+      target.style.removeProperty('--full-top');
+      root.style.overflow = '';
+      closeBtn.dataset.on = 'false';
+      closeBtn.hidden = true;
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus({ preventScroll: true });
+    }
+
     function expand(trigger, target) {
+      if (phoneMQ.matches) return openFull(trigger, target);
       // Halt any smooth scroll still in flight, so nothing moves after measuring.
       root.scrollTo({ top: root.scrollTop, behavior: 'instant' });
       const r = target.getBoundingClientRect();
@@ -1106,18 +1154,21 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       const target = b.closest('.chg-phone') || b.closest('.chg-surface')?.querySelector('.chg-desk');
       if (target) expand(b, target);
     });
-    closeBtn.addEventListener('click', collapse);
+    closeBtn.addEventListener('click', () => (full ? closeFull() : collapse()));
     focusBg.addEventListener('click', collapse);
 
     // Escape closes the enlarged view first, before the site's own Escape
     // (which leaves the case study) gets to see it.
     const onKey = (e) => {
+      if (full && e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeFull(); return; }
       if (open && e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); collapse(); }
     };
     document.addEventListener('keydown', onKey, true);
-    const onResize = () => collapse();
+    // Full screen survives a resize (a phone's toolbar or keyboard moving).
+    const onResize = () => { if (!full) collapse(); };
     addEventListener('resize', onResize);
     cleanup.push(() => {
+      if (full) closeFull();
       document.removeEventListener('keydown', onKey, true);
       removeEventListener('resize', onResize);
       clearTimeout(settle);

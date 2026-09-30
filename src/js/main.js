@@ -284,6 +284,48 @@ mountAnnotations(plate, index, {
   },
 });
 
+/* No lone last words below the desktop width.
+   The last two words of each heading and paragraph are joined by a no-break
+   space, so a line never ends with a single word on its own (the copy is
+   unchanged: only the space is). CSS text-wrap does most of this, but not
+   reliably across browsers. If a joined pair would not fit its box it is
+   left alone, and everything is restored when the window reaches the
+   desktop layout, so the desktop never sees a changed character. */
+const tieMQ = matchMedia('(max-width: 1179px)');
+const tied = new Map();                        // text node -> original text
+const TIE_SEL = 'h1, h2, h3, h4, p, li, blockquote, dd, figcaption';
+function tieWords(scope) {
+  if (!tieMQ.matches || !scope) return;
+  for (const node of tied.keys()) if (!node.isConnected) tied.delete(node);   // views that left
+  const done = [];
+  for (const el of scope.querySelectorAll(TIE_SEL)) {
+    if (el.closest('.cps-app, .chg-app, .chg-desk')) continue;   // live product UI stays as built
+    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let last = null;
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) if (n.textContent.trim()) last = n;
+    if (!last || tied.has(last)) continue;
+    const text = last.textContent;
+    const body = text.replace(/\s+$/, '');
+    const cut = body.search(/\s\S+$/);
+    if (cut <= 0 || !body.slice(0, cut).trim()) continue;
+    tied.set(last, text);
+    last.textContent = body.slice(0, cut) + ' ' + body.slice(cut + 1) + text.slice(body.length);
+    done.push([el, last]);
+  }
+  // A pair too long for its box would overflow: untie those (one layout read).
+  for (const [el, node] of done) {
+    if (el.scrollWidth > el.clientWidth + 1) { node.textContent = tied.get(node); tied.delete(node); }
+  }
+}
+function untieAll() {
+  for (const [node, text] of tied) node.textContent = text;
+  tied.clear();
+}
+const tieSoon = () => requestAnimationFrame(() => { tieWords(stageEl); tieWords(hero); });
+new MutationObserver(tieSoon).observe(stageEl, { childList: true });
+tieMQ.addEventListener('change', () => (tieMQ.matches ? tieSoon() : untieAll()));
+tieSoon();
+
 /* Below the desktop composition the header gets a frosted backdrop once the
    page has scrolled (see base.css). Only the flag lives here; the desktop
    stylesheet never reads it. Pages scroll inside the stage; home scrolls the
