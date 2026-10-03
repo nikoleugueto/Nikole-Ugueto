@@ -47,6 +47,7 @@ const HOME = () => go('/');
 const FLAT = new Set(['/about', '/contact', '/archive']);
 
 let route = location.pathname + location.search;
+let dropping = false;   // the router is dropping the camera to open a flat page
 
 /* While you are at home, the camera is already travelling somewhere — the
    worlds. Naming that destination is what makes scrolling arrive: without it
@@ -158,7 +159,10 @@ const camera = createCamera({
   },
   onRelease: () => {
     stage.hide();
-    syncUrl('/');                       // scrolled back out: the URL follows
+    // Scrolled back out: the URL follows. Not when the router drops the
+    // camera to open a page of its own (About, Contact, the archive, a 404):
+    // the URL is already that page's.
+    if (!dropping) syncUrl('/');
     live.textContent = 'Back at the portrait.';
     brain.focus({ preventScroll: true });
   },
@@ -231,7 +235,9 @@ function apply(path) {
   /* A dead link should not make you sit through a cinematic push-in before it
      admits nothing is there — so this is checked before the camera routes. */
   if (FLAT.has(pathname) || view?.id.startsWith('404:')) {
-    if (camera.progress > 0) camera.set(0);            // drop out of the journey
+    if (camera.progress > 0) {                         // drop out of the journey
+      dropping = true; camera.set(0); dropping = false;
+    }
     stage.showStandalone(view);
     live.textContent = announceFor(pathname);
     return;

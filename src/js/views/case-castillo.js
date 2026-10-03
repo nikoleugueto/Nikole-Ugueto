@@ -1,7 +1,7 @@
 import { castillo as c } from '../../../content/castillo.js';
 import { prefs } from '../prefs.js';
 import { slotRoll, draggableMarquee } from '../case-motion.js';
-import { observerRoot, revealMargin, scrollTopOf, scrollPageTo, lockScroll } from '../page-scroll.js';
+import { observerRoot, revealMargin, scrollTopOf, scrollPageTo, lockScroll, flowMQ } from '../page-scroll.js';
 
 /* Phones show the company's short name in testimonial credits (CHG); the
    full name stays everywhere else. Both are in the markup; CSS picks one. */
@@ -1048,6 +1048,10 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
     closeBtn.setAttribute('aria-label', 'Return to the page');
     closeBtn.title = 'Return to the page';
     article.append(focusBg, closeBtn);
+    /* Closed, the backdrop is taken out of the page, not just made clear:
+       on phones and tablets Safari tints its own bars from full-width fixed
+       layers at the screen's edges, invisible ones included. */
+    focusBg.hidden = flowMQ.matches;
 
     let open = null;
     let settle = 0;
@@ -1106,6 +1110,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
       // The stage is transformed, which makes "fixed" relative to its scrolled
       // content rather than the screen — so measure where the backdrop lands
       // and pull it onto the screen exactly, whichever way the browser resolves it.
+      focusBg.hidden = false;
       article.style.setProperty('--focus-top', '0px');
       article.style.setProperty('--focus-top', `${-focusBg.getBoundingClientRect().top}px`);
       closeBtn.hidden = false;
@@ -1146,6 +1151,7 @@ export function castilloCaseView({ onBack, onUp, onWorld }) {
         lockScroll(root, false);
         root.style.scrollbarGutter = '';
         closeBtn.hidden = true;
+        focusBg.hidden = flowMQ.matches;
       }, ms + 60);
     }
 

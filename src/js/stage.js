@@ -42,20 +42,27 @@ export function createStage(el, { behind } = {}) {
 
   /* ...and the browser's own bars and the page's edges take the colour of
      the page being read, so it never sits inside a band of another colour.
-     A page under a photographed sky names its edge colour (--edge); any
-     other has a plain background of its own. */
+     Safari on iOS 26 ignores theme-color (older Safari and Chrome on Android
+     still read it): it fills its status-bar strip, and tints its bottom bar,
+     from the page's own background, and follows a change only when the
+     colour is written on <html>/<body> themselves, not when a stylesheet
+     changes it, so it is written there. A page under a photographed sky
+     names its edge colour (--edge); any other has a plain background of its
+     own; Home is its sky (data-edge, index.html). Never on the desktop. */
   const tint = document.querySelector('meta[name="theme-color"][data-edge]');
+  const homeEdge = tint?.dataset.edge || '';
   const solid = (c) => !!c && c !== 'transparent' && !/,\s*0\)$/.test(c);
+  let painted = '';
   function edge(on) {
     const root = el.firstElementChild;
-    const c = !on || !root ? ''
-      : getComputedStyle(root).getPropertyValue('--edge').trim()
-        || [el, root].map((x) => getComputedStyle(x).backgroundColor).find(solid) || '';
-    if (html.style.getPropertyValue('--page-edge') !== c) {
-      if (c) html.style.setProperty('--page-edge', c); else html.style.removeProperty('--page-edge');
-    }
-    const next = c || tint?.dataset.edge;
-    if (tint && tint.content !== next) tint.content = next;
+    const c = !flowMQ.matches ? ''
+      : (on && root && (getComputedStyle(root).getPropertyValue('--edge').trim()
+          || [el, root].map((x) => getComputedStyle(x).backgroundColor).find(solid))) || homeEdge;
+    if (c === painted) return;
+    painted = c;
+    html.style.backgroundColor = c;
+    document.body.style.backgroundColor = c;
+    if (tint && c) tint.content = c;
   }
 
   /** Arrive: in the document's scroll, a newly opened page starts at its top. */

@@ -521,11 +521,21 @@ try {
         || msg.params.exceptionDetails.text);
     } else if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'error') {
       consoleErrors.push(msg.params.args.map((a) => a.value ?? a.description).join(' '));
+    } else if (msg.method === 'Fetch.requestPaused') {
+      // An analytics hit: answered here, so it never reaches the real property.
+      send('Fetch.fulfillRequest', { requestId: msg.params.requestId, responseCode: 204, responseHeaders: [] })
+        .catch(() => {});
     }
   };
 
   await send('Page.enable');
   await send('Runtime.enable');
+  // The site's Google tag would report every page the tests open as a real
+  // visit; its hits are stopped at the network (see Fetch.requestPaused).
+  await send('Fetch.enable', { patterns: [
+    { urlPattern: '*google-analytics.com/g/collect*' },
+    { urlPattern: '*analytics.google.com/g/collect*' },
+  ] });
   code = await run();
 } catch (e) {
   console.error('\nharness error:', e.message, '\n');

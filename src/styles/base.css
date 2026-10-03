@@ -181,13 +181,14 @@ a { color: inherit; text-decoration: none; }
    Everything here is scoped by these conditions, so the desktop is untouched.
    ========================================================================== */
 @media (max-width: 1179px), (hover: none) and (pointer: coarse) {
-  /* Modern phones: keep the chrome clear of the notch and the home bar. */
   /* The edges of the page (overscroll, and what the browser tints its own
-     bars from) are the page's own colour: Home's sky here, the current page
-     once one arrives (stage.js sets --page-edge). */
-  body { background-color: var(--page-edge, #BBBCC0); }
+     bars from) are the page's own colour: Home's sky here, as the page
+     loads; the current page once one arrives (stage.js writes it onto
+     <html> and <body>). Both are set: a transparent root can read as white. */
+  html, body { background-color: #BBBCC0; }
 
-  /* The navigation stays fully transparent, scrolled or not: no panel
+  /* Modern phones: keep the chrome clear of the notch and the home bar.
+     The navigation stays fully transparent, scrolled or not: no panel
      behind it, just the words over the page, as on the desktop. */
   .site-header {
     padding-left: max(var(--gutter), env(safe-area-inset-left));
