@@ -189,10 +189,18 @@ a { color: inherit; text-decoration: none; }
 
   /* Modern phones: keep the chrome clear of the notch and the home bar.
      The navigation stays fully transparent, scrolled or not: no panel
-     behind it, just the words over the page, as on the desktop. */
+     behind it, just the words over the page, as on the desktop.
+     Its (invisible) box starts a little below the top of the screen: iOS
+     Safari treats a full-width fixed element touching the top edge as a
+     toolbar and fills the status-bar strip with a colour it samples from it
+     once and then keeps for the whole visit (WebKit's fixedContainerEdges),
+     which drew Home's grey sky above every other page. Clear of the edge,
+     Safari shows the page itself there. Same centre, so the words and the
+     links sit exactly where they did. */
   .site-header {
     padding-left: max(var(--gutter), env(safe-area-inset-left));
     padding-right: max(var(--gutter), env(safe-area-inset-right));
+    top: .75rem; height: calc(var(--header-h) - 1.5rem);
   }
 
   /* The small portrait is a brand accent, not a control: taps go through it,
